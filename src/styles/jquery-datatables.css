@@ -1,0 +1,24 @@
+.dataTables_wrapper {
+	margin:1em 0;
+}
+
+.dataTables_filter {
+	margin-bottom:0.3em;
+}
+
+.sorting, .sorting_asc, .sorting_desc {
+	padding-left:25px;
+	background-repeat:no-repeat;
+	background-position:5px center;
+	cursor:pointer;
+	outline:0;
+}
+
+.sorting_asc {
+	background-image:url(/themes/theme1/misc/arrow_decrease.gif);
+}
+
+.sorting_desc {
+	background-image:url(/themes/theme1/misc/arrow_increase.gif);
+}
+

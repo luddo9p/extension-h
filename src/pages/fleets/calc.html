@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hyperiums Extension - Fleet Calculator</title>
+		<script src="/extlibs/jquery/jquery.js"></script>
+		<script src="/extlibs/momentjs/moment.js"></script>
+		<script src="/extlibs/numeraljs/numeral.js"></script>
+		<script src="/classes/moment.js"></script>
+		<script src="/classes/Hyp.js"></script>
+		<script src="/scripts/pages/fleets/calc.js"></script>
+		<style>
+			body {
+				background: #000;
+				color: #fff;
+			}
+			input,select {
+				padding: 5px;
+				background: #CCC;
+				border: none;
+			}
+		</style>
+	</head>
+	<body>
+		<table>
+			<tr>
+				<th><label for="productId">Product</label></th>
+				<td><select id="productId"></select></td>
+			</tr>
+			<tr>
+				<th><label for="governmentId">Government</label></th>
+				<td><select id="governmentId">Government</label></td>
+			</tr>
+			<tr>
+				<th>Stasis</th>
+				<td>
+					<label><input type="radio" name="stasis" value="0" checked> Stasis off</label>
+					<label><input type="radio" name="stasis" value="1"> Stasis on</label>
+				</td>
+			</tr>
+			<tr>
+				<th><label for="numFactories">Number of Factories</label></th>
+				<td><input id="numFactories" type="number" min="1" value="3"></td>
+			</tr>
+		</table>
+		<table id="units">
+			<thead>
+				<tr><th>Unit \ Race</th></tr>
+			</thead>
+			<tfoot>
+				<tr id="spaceAvgP"><th>Space AvgP</th></tr>
+				<tr id="groundAvgP"><th>Ground AvgP</th></tr>
+				<tr id="buildCosts"><th>Build Costs</th></tr>
+				<tr id="upkeepCosts"><th>Upkeep Costs</th></tr>
+				<tr id="timeToBuild"><th>Time to build</th></tr>
+				<tr id="fleetLevel"><th>Fleet Level</th></tr>
+				<tr id="gaLevel"><th>GA level</th></tr>
+			</tfoot>
+			<tbody>
+			</tbody>
+		</table>
+	</body>
+</html>
+

@@ -1,0 +1,239 @@
+{
+  "manifest_version": 2,
+
+  "name": "Hyperiums 11",
+  "description": "UI/UX improvements for Hyperiums (unofficial)",
+  "version": "0.1.0",
+
+  "background": {
+    "scripts": [
+      "extlibs/momentjs/moment.js",
+      "extlibs/lodash/lodash.min.js",
+      "scripts/background/messages.js",
+      "extlibs/jquery/jquery.js",
+      "extlibs/jquery-ui/jquery-ui.js",
+      "classes/Hyp.js"
+    ]
+  },
+
+  "browser_action": {
+    "default_icon": {
+      "19": "assets/icon_19.png",
+      "38": "assets/icon_38.png"
+    },
+    "default_popup": "pages/popup.html"
+  },
+
+  "options_page": "",
+
+  "content_scripts": [
+    {
+      "matches": ["https://hyperiums.com/*"],
+      "js": [
+        "extlibs/axios.js",
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "extlibs/datatables.js",
+        "extlibs/momentjs/moment.js",
+        "extlibs/numeraljs/numeral.js",
+        "extlibs/lodash/lodash.min.js",
+        "extlibs/utils.js",
+        "classes/Hyp.js",
+        "scripts/contentscripts/menu.js",
+        "extlibs/localforage.min.js",
+        "classes/database.js",
+        "scripts/contentscripts/ticks.js",
+        "scripts/contentscripts/textmarkup.js",
+        "scripts/contentscripts/battlereports.js",
+        "extlibs/bootstrap/js/bootstrap.min.js"
+      ],
+      "css": [
+        "styles/ticks.css",
+        "styles/fix-layout.css",
+        "styles/datatables.css"
+      ]
+    },
+    {
+      "matches": ["https://hyperiums.com/servlet/Preferences"],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/redirect.js"
+      ]
+    },
+    {
+      "matches": ["https://hyperiums.com/servlet/Home"],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/homepage.js",
+        "scripts/contentscripts/pop.js",
+        "scripts/contentscripts/tag.js"
+      ]
+    },
+    {
+      "matches": ["https://hyperiums.com/servlet/Planet?globalgov="],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/globalgov.js"
+      ]
+    },
+    {
+      "matches": ["https://hyperiums.com/servlet/Trading?globalwtr="],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/globalwtr.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://hyperiums.com/servlet/Cash",
+        "https://hyperiums.com/servlet/Cash?pagetype=statement"
+      ],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/cash.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://hyperiums.com/servlet/Player",
+        "https://hyperiums.com/servlet/Player*",
+        "https://hyperiums.com/servlet/Forums",
+        "https://hyperiums.com/servlet/Forums*"
+      ],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/messages.js",
+        "scripts/contentscripts/forums.js",
+        "scripts/contentscripts/copy.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://hyperiums.com/servlet/Planetfloats",
+        "https://hyperiums.com/servlet/Planetfloats?*",
+        "https://hyperiums.com/servlet/Floatorders",
+        "https://hyperiums.com/servlet/Floatorders?*",
+        "https://hyperiums.com/servlet/Fleets",
+        "https://hyperiums.com/servlet/Fleets?*"
+      ],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/militaryPage.js",
+        "scripts/contentscripts/spread.js"
+      ]
+    },    
+    {
+      "matches": [
+        "https://hyperiums.com/servlet/Fleets",
+        "https://hyperiums.com/servlet/Fleets?*",
+        "https://hyperiums.com/servlet/Fleets?pagetype=global_armygen"
+      ],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/armygen.js"
+      ]
+    },    
+    {
+      "matches": [
+        "https://hyperiums.com/servlet/Planetinf",
+        "https://hyperiums.com/servlet/Planetinf?*"
+      ],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/infiltrations.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://hyperiums.com/servlet/Fleets?pagetype=foreign_fleets"
+      ],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/foreign.js",
+        "scripts/contentscripts/copy.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://hyperiums.com/servlet/Fleets?pagetype=moving_fleets"
+      ],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/moving.js"
+      ]
+    },
+    {
+      "matches": ["https://hyperiums.com/servlet/Alliance?*"],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/alliance.js"
+      ],
+      "css": ["styles/contentscripts/maps.css"]
+    },
+    {
+      "matches": [
+        "https://hyperiums.com/servlet/Maps",
+        "https://hyperiums.com/servlet/Maps?*"
+      ],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/maps.js",
+        "scripts/contentscripts/copy.js"
+      ],
+      "css": ["styles/contentscripts/maps.css"]
+    },
+    {
+      "matches": ["https://hyperiums.com/servlet/Trading?globalexploit="],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "extlibs/js-cookie/js-cookie.js",
+        "scripts/contentscripts/explomgr.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://hyperiums.com/servlet/Planetprod",
+        "https://hyperiums.com/servlet/Planetprod?*"
+      ],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/trades.js"
+      ]
+    }
+  ],
+
+  "icons": {
+    "16": "assets/icon_16.png",
+    "48": "assets/icon_48.png",
+    "128": "assets/icon_128.png"
+  },
+
+  "permissions": [
+    "https://hyperiums.com/",
+    "https://hyp2.hyperiums.com/",
+    "alarms",
+    "cookies",
+    "storage",
+    "tts",
+    "unlimitedStorage"
+  ],
+
+  "web_accessible_resources": [
+    "pages/fleets/calc.html"
+  ]
+}

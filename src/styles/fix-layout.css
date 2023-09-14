@@ -1,0 +1,764 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+body,
+td,
+div,
+p,
+span,
+table,
+li ul,
+a,
+.solidblockmenu {
+  line-height: auto !important;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+.solidblockmenu .megaTextItem {
+  max-width: 200px !important;
+}
+.solidblockmenu {
+  display: flex !important;
+  justify-content: center !important;
+  background: #222 !important;
+}
+.solidblockmenu2 .megaTextItem {
+  max-width: 250px !important;
+  padding-top: 11px !important;
+}
+.solidblockmenu2 li a {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  font-size: 11px !important;
+}
+#htopmenu2 {
+  display: flex !important;
+  justify-content: center !important;
+}
+/* #htopmenu2 li:nth-child(2), #htopmenu2 li:nth-child(3), #htopmenu2 li:nth-child(1) {
+  display: none;
+} */
+#LogoutIcon:last-child {
+  padding-top: 0px !important;
+}
+#queryForm {
+  width: 100%;
+  max-width: 800px;
+}
+*,
+::after,
+::before {
+  box-sizing: content-box !important;
+}
+body > center {
+  margin-top: 1em;
+}
+
+.civ td {
+  height: 22px;
+}
+.civ .bars {
+  height: 22px;
+}
+.avoid-bh {
+  height: 20px;
+  width: 70px;
+  padding: 0;
+  font-size: 10px;
+  border: none;
+  background: none;
+}
+.planetCard3 {
+  border: none !important;
+  padding: 10px 0 !important;
+}
+
+.solidblockmenu li a {
+  border-right: 1px solid #333 !important;
+}
+.solidblockmenu2 li a {
+  border-right: 1px solid #333 !important;
+}
+
+.megaMenu2Div {
+  border-top: none !important;
+  border-bottom: 1px solid #333 !important;
+}
+ul.tabbernav li.tabberactive a {
+  font-weight: normal !important;
+}
+ul.tabbernav li.tabberactive a,
+ul.tabbernav li a {
+  border: 1px solid #333 !important;
+  border-bottom: none !important;
+}
+
+ul.tabbernav {
+  border-bottom: 1px solid #333 !important;
+}
+
+.movingFleetCard br {
+  margin: 5px 0 !important;
+  display: block !important;
+  height: 20px !important;
+}
+
+.movingFleetCard table.bars {
+  margin-top: 5px !important;
+}
+
+hr {
+  display: none !important;
+}
+
+.banner,
+.bannerTransp {
+  border: none !important;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+input,
+button,
+#checkButton {
+  border: 0px solid #111 !important;
+  background-color: #222 !important;
+}
+
+table.movingFleetGroupTitle {
+  margin-top: 25px !important;
+  width: 600px !important;
+}
+
+table.movingFleetGroupTitle td {
+  padding: 15px 30px !important;
+}
+
+table.movingFleetGroupTitle tr {
+  background: #141414 !important;
+  border: none !important;
+}
+
+.movingFleetCard {
+  background: #141414 !important;
+  width: 600px !important;
+}
+
+.movingFleetCard .visib_background {
+  opacity: 0 !important;
+}
+
+form[name='movingFleetsForm'] table:last-of-type td.hr:not(.vc) {
+  width: 600px !important;
+  padding-top: 20px !important;
+}
+
+.mega .ulmenu a {
+  border: none !important;
+}
+.mega li.separator {
+  height: 0px !important;
+}
+td.playerTitle {
+  padding: 10px !important;
+}
+td.playerTitle,
+td.player {
+  border: none !important;
+  padding: 10px !important;
+}
+
+div.cashTotals,
+tr.bgLine,
+td.bgLine {
+  border: none !important;
+}
+
+div.cashTotals {
+  background: #141414;
+}
+
+.ulmenu .separator {
+  padding: 0 !important;
+}
+
+.forum-page .hc .vt:last-child table:not(.bar):not(.bars):not(.militFlags) {
+  width: 600px !important;
+}
+.forum-page table.forumArray td {
+  padding: 4px 6px;
+}
+
+.forum-page textarea {
+  margin: 10px 0;
+  border: none;
+}
+
+.forum-page input[name='subject'] {
+  width: 100%;
+  border: none !important;
+  padding: 2px;
+}
+
+table.stdArray td,
+table.array td,
+table.alternArray td,
+table.spaced td {
+  padding: 2px !important;
+}
+
+.managePanel {
+  margin-top: 20px !important;
+}
+
+/*.buildButtons {
+    display: none;
+}*/
+
+div.buildButton {
+  margin-right: 8px !important;
+  border: #222 1px solid !important;
+}
+
+table.militFlags td > div {
+  border: none !important;
+  height: 24px !important;
+  line-height: 24px !important;
+}
+table.militFlags td > div:hover {
+  color: #fff !important;
+}
+#overDiv {
+  display: none !important;
+}
+a.help {
+  display: none !important;
+}
+
+div.dataarea {
+  border: #222 1px solid !important;
+}
+
+.planet-page .pane {
+  display: block;
+}
+
+.planet-page .subtitle {
+  display: none;
+}
+
+.planet-page .pane:last-child .vt {
+  vertical-align: inherit !important;
+}
+.custom-button {
+  font-size: 9pt;
+  font-weight: normal;
+  font-family: verdana, arial, sans-serif;
+  font-weight: bold;
+  padding-left: 17px;
+  padding-right: 17px;
+  cursor: pointer;
+  margin: 1px 0px 1px 0px;
+  background-color: rgb(34, 34, 34) !important;
+  border-width: 0px !important;
+  border-style: solid !important;
+  border-color: rgb(17, 17, 17) !important;
+  border-image: initial !important;
+  display: block;
+  padding: 6px 10px;
+  text-decoration: none;
+  width: 40px;
+  padding: 5px 8px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.custom-button:hover {
+  color: #fff;
+}
+.bannerLarge {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.planet-page .pane:last-child div:first-child {
+  margin-bottom: 20px !important;
+}
+
+table.stdArray {
+  border: none !important;
+}
+
+td.polMapZone {
+  border: transparent solid 1px !important;
+  background: #141414;
+}
+
+.solidblocktheme {
+  border-top: 0px solid #777777 !important;
+}
+
+table.msgToBlock {
+  border: none !important;
+}
+
+.msgToBlock input.checkbox {
+  margin-right: 5px !important;
+}
+select {
+  border: none !important;
+  background: #000 !important;
+}
+.msgFormItem {
+  margin-top: 10px !important;
+  border: none !important;
+}
+
+table.militFlags div.flagBattle {
+  background-color: #f34f4f !important;
+}
+td.tacMapZone {
+  background-color: #141414 !important;
+  border: none !important;
+}
+.sc.zoneSizeBut,
+.sc {
+  border: none !important;
+}
+
+.totalFleet {
+  width: 80%;
+  margin: 25px auto;
+  text-align: left;
+}
+
+.player div:first-child {
+  width: 100% !important;
+}
+.camo {
+  margin: 5px 0;
+  font-weight: bold;
+}
+.camo-off {
+  color: red;
+}
+.camo-on {
+  color: green;
+}
+table.tacBar {
+  border: #333 1px solid !important;
+}
+
+.span-info {
+  /*padding: 0 4px;*/
+  display: inline-block;
+}
+.tacMapZone {
+  padding: 4px;
+  margin: 1px;
+}
+.tacMapZone b {
+  display: inline-block;
+  margin-bottom: 4px;
+}
+td.tacMapZone {
+  border: #000 3px solid !important;
+}
+.blue {
+  color: #5a89ff;
+}
+
+/* .ally-planet {
+    background: #07476d;
+} */
+
+tr.line1,
+td.line1,
+tr.line0,
+td.line0 {
+  border-top: #3a3a3a 0px solid !important;
+  padding: 5px !important;
+  margin-top: 2px !important;
+  background: #141414 !important;
+}
+
+.line0 .vt,
+.line1 .vt {
+  padding: 5px 10px !important;
+}
+
+.pane {
+  border: 0px solid #000 !important;
+}
+
+div.section > div.tab {
+  border: none !important;
+}
+.cashArray .line0:nth-last-child(0) td {
+  padding: 10px !important;
+}
+.cashArray .line0:first-child {
+  background: #000 !important;
+}
+
+.battleReport .stdArray.line0 {
+  background: #333 !important;
+}
+.battleReport .stdArray.line1 {
+  background: #222 !important;
+}
+
+.br_colStart,
+.br_lastCol,
+.br_ally,
+.br_enemy,
+.br_own {
+  border: none !important;
+}
+
+.cashArray tr:not(:nth-child(1)):not(:nth-last-child(1)) {
+  border: none !important;
+}
+
+.battleReport .hc {
+  background: #212121 !important;
+}
+
+.bh-infos {
+  padding: 5px 0 10px !important;
+}
+
+.bh-infos .btn {
+  height: 22px !important;
+}
+
+.solidblockmenu {
+  z-index: 5 !important;
+}
+
+.rc_box {
+  border: #333 1px solid !important;
+}
+.formTitle {
+  border: none !important;
+}
+.dashboard .element {
+  border: none !important;
+  background: #121212;
+}
+
+.moves {
+  max-width: 830px;
+  width: 100%;
+  text-align: left;
+  padding: 10px 30px;
+  box-sizing: border-box;
+  padding: 10px !important;
+  margin-bottom: 20px !important;
+}
+
+.red {
+  color: red !important;
+}
+.yellow {
+  color: goldenrod;
+}
+.green {
+  color: green !important;
+}
+div.visib_content {
+  padding: 10px;
+}
+div.visib_content > table > tbody > tr > td.hc.vt {
+  display: none;
+}
+input,
+button,
+#checkButton,
+input[type='submit'] {
+  /* height: 24px; */
+  white-space: normal !important;
+  box-sizing: border-box;
+  padding: 5px;
+}
+.megawrapper {
+  height: 300px !important;
+}
+.banner {
+  margin: auto !important;
+  display: block !important;
+}
+
+.dashboard-hyp {
+  margin: auto;
+  width: 1000px;
+  margin-top: 70px;
+}
+.dashboard-hyp .moves.banner {
+  max-width: inherit !important;
+}
+body > div:nth-child(3) {
+  display: none;
+}
+.buttons {
+  margin: auto;
+  text-align: center;
+  width: 94%;
+  margin-top: 10px;
+  background: #111;
+  position: relative;
+  z-index: 1;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+.army,
+.plunder,
+.ci,
+.prep-bh,
+.change-gov,
+.leech,
+.tag,
+.ab,
+.leech-start {
+  font-size: 11px;
+  padding: 2px 6px;
+  margin: 0 5px;
+  font-weight: bold;
+  position: relative;
+  z-index: 1;
+  background: #252525 !important;
+  border-width: 0px !important;
+  border-style: solid !important;
+  border-color: rgb(17, 17, 17) !important;
+  border-image: initial !important;
+  display: inline-block;
+  text-decoration: none;
+  height: auto;
+}
+.army:hover,
+.plunder:hover,
+.ci:hover,
+.prep-bh:hover,
+.change-gov:hover,
+.leech:hover,
+.leech-start:hover {
+  color: #fff !important;
+}
+a.planet {
+  line-height: 2;
+  border: none;
+  text-decoration: underline;
+}
+div.basedata {
+  line-height: 22px;
+  padding: 0px 0px 0px 0px;
+  height: 25px;
+  margin-top: 5px;
+}
+
+.fmsg {
+  width: 568px;
+  overflow-x: hidden;
+}
+.banner {
+  margin: auto;
+}
+
+.banner.showTable {
+  height: auto;
+}
+
+.forumArray tr:nth-child(odd) {
+  background-color: #121212 !important;
+}
+
+.banner {
+  width: 100%;
+}
+
+.Rankpage .banner {
+  max-width: 520px;
+}
+tr.line0,
+td.line0 {
+  background-color: #252525 !important;
+  border-top: #3a3a3a 1px solid;
+}
+.drop,
+.add {
+  padding-left: 10px;
+  padding-right: 10px;
+  margin: 0 5px;
+}
+
+.right {
+  text-align: right;
+}
+
+table.array {
+  width: 100%;
+}
+
+tr.friend {
+  background: rgba(107, 212, 20, 0.3) !important;
+}
+
+tr.me {
+  background: rgba(20, 81, 212, 0.3) !important;
+}
+
+tr.inpipe {
+  height: 19px;
+}
+
+div.button {
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+  background-color: #222;
+  padding: 10px;
+  border-radius: 5px;
+}
+.button:hover,
+button:hover {
+  background-color: #111;
+}
+
+table.tinytext td {
+  font-size: 10px !important;
+}
+
+.income-list {
+  font-family: monospace;
+}
+
+.income-list li {
+  border-bottom: 1px solid #333;
+  padding: 5px 0;
+}
+
+.income-list .overexploited {
+  background-color: #4c0100;
+}
+
+.t-center {
+  text-align: center;
+}
+.banner ul {
+  padding: 0;
+  margin: 0;
+}
+.banner table {
+  width: 100%;
+}
+.banner td {
+  padding: 5px !important;
+  font-size: 12px;
+}
+.banner li {
+  padding: 4px 0;
+  list-style: none;
+}
+.banner tr {
+  background-color: #111 !important;
+}
+.banner .switch-hyp {
+  background-color: rgba(3, 155, 229, 0.4) !important;
+}
+.banner .switch-hyp td,
+.switch-hyp a {
+  color: #ccc !important;
+}
+.banner .switch-dict {
+  color: #fff !important;
+  background-color: rgba(183, 28, 28, 0.4) !important;
+}
+.banner .switch-dict-core {
+  background-color: rgba(183, 28, 28, 0.2) !important;
+}
+.income-list {
+  width: 100%;
+}
+
+.dataTables_length,
+.dataTables_filter,
+.dataTables_paginate,
+.dataTables_info {
+  padding: 10px 0;
+}
+.income-list td {
+  padding: 5px !important;
+  font-size: 12px;
+}
+
+.fmsg {
+  line-height: 1.5rem;
+}
+
+.banner thead tr {
+  padding: 5px;
+  background-color: #aaaa77 !important;
+}
+.banner tr {
+  border-bottom: 2px solid #000 !important;
+  padding: 7px 0;
+}
+.banner td {
+  padding: 6px !important;
+}
+
+.banner thead td {
+  color: #000 !important;
+}
+
+.banner .switch-in-core {
+  padding: 10px;
+  background-color: #f34f4f !important;
+}
+.banner .switch-in-core td {
+  color: #111 !important;
+}
+
+h3,
+h4 {
+  font-size: 12x;
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.banner tr.check {
+  background-color: rgb(167, 93, 58) !important;
+}
+.banner tr.check td,
+.banner tr.check a {
+  color: #000 !important;
+}
+
+.banner tr.warning {
+  background-color: #f34f4f !important;
+}
+.banner tr.warning td,
+.banner tr.warning td a {
+  color: #000 !important;
+}
+
+.banner .dataTables_wrapper {
+  height: 10px;
+  overflow: hidden;
+  opacity: 0.8;
+}
+.banner h3 {
+  cursor: pointer;
+}
+
+.banner .dataTables_wrapper:hover {
+  opacity: 1;
+}
+
+.banner.showTable .dataTables_wrapper {
+  height: auto;
+  opacity: 1;
+}
+
+.megawrapper {
+  height: 330px !important;
+}

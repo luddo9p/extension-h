@@ -1,0 +1,20 @@
+/* .Azterk { color:#cccc49; }
+.Human { color:#a4bba4; }
+.Xillor { color:#88e; }
+
+.Agro { color:#33ab33; }
+.Techno { color:#33c; }
+.Minero { color:#aa9a23; }
+
+.Auth { color:#cc1; }
+.Demo { color:#1f1; }
+.Dict { color:#f11; }
+.Hyp { color:#8a8; } */
+
+.hyp {
+  background-color:#333 !important;
+}
+
+.ally-planet {
+  background-color: rgba(47, 63, 16, 0.5) !important;
+}

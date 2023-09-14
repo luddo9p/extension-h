@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hyperiums Extension - Spread Sheet</title>
+		<script src="/extlibs/jquery/jquery.js"></script>
+		<script src="/extlibs/numeraljs/numeral.js"></script>
+		<script src="/classes/Hyp.js"></script>
+		<script src="/extlibs/jquery-datatables/jquery.datatables.js"></script>
+		<link rel="stylesheet/less" type="text/css" href="/styles/pages.less">
+		<script src="/extlibs/less/less.js"></script>
+		<link rel="stylesheet" type="text/css" href="/styles/jquery-datatables.css">
+		<script src="/scripts/pages/fleets/spreadsheet.js"></script>
+	</head>
+	<body>
+		<p>Click the column headers for sorting. Use the <key>shift</key> key to
+			sort by multiple columns at once.</p>
+		<table>
+			<thead>
+				<tr>
+					<th>Planet name</th>
+					<th>Fleet owner</th>
+					<th>Fleet name</th>
+					<th>Fleet race</th>
+					<th>Starbases</th>
+					<th>Cruisers</th>
+					<th>Destroyers</th>
+					<th>Bombers</th>
+					<th>Scouts</th>
+					<th>Carried Armies</th>
+					<th>Ground Armies</th>
+				</tr>
+				<tr class="filter-row">
+					<td><input></td>
+					<td><input></td>
+					<td><input></td>
+					<td><input></td>
+					<td><input type="number" min="0"></td>
+					<td><input type="number" min="0"></td>
+					<td><input type="number" min="0"></td>
+					<td><input type="number" min="0"></td>
+					<td><input type="number" min="0"></td>
+					<td><input type="number" min="0"></td>
+					<td><input type="number" min="0"></td>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th colspan="4">Total</th>
+					<td class="number">0</td>
+					<td class="number">0</td>
+					<td class="number">0</td>
+					<td class="number">0</td>
+					<td class="number">0</td>
+					<td class="number">0</td>
+					<td class="number">0</td>
+				</tr>
+			</tfoot>
+			<tbody></tbody>
+		</table>
+	</body>
+</html>
+

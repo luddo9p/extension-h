@@ -1,0 +1,19 @@
+.ui-autocomplete {
+    overflow-x:hidden;
+    overflow-y:auto;
+    max-height:12em;
+    background:#141414;
+    border-style:solid;
+    border-color:#3a3a3a;
+}
+
+.ui-menu .ui-menu-item a {
+    color:#aa7;
+}
+
+.ui-menu .ui-menu-item a.ui-state-focus,
+.ui-menu .ui-menu-item a.ui-state-active {
+    border:1px solid #aaa;
+    background:#2a2a2a;
+}
+
