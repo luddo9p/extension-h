@@ -6,6 +6,9 @@ const customHeaders = {
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
 }
 
+const credentialsJson = Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64, 'base64').toString('utf-8');
+  const credentials = JSON.parse(credentialsJson);
+
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -19,7 +22,7 @@ exports.handler = async (event) => {
 
   // Configurez l'authentification
   const auth = new google.auth.GoogleAuth({
-    keyFile: './hypcores-8b844421a55e.json', // Chemin vers le fichier JSON de clés privées
+    credentials,
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   })
 
