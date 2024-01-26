@@ -6,6 +6,18 @@ const globalwtr = async () => {
   const azterks = [];
   const humans = [];
 
+  console.log(planets);
+
+  $('.line1, .line0').each((i, el) => {
+  
+    const $el = $(el);
+    const planetId = $el.find('.std').attr('href').split('=')[1];
+    const planet = planets.data.find(p => p.id === parseInt(planetId));
+    const wtr = planet.wtr;
+    $el.append(`<td><strong>${planet.pop}M</strong></td>`);
+    console.log(planet.pop);
+  });
+
   $('form').before(`
     <div class="select">Global wtr : 
       <select class="thin select-all" name="wtr_0" size="1">

@@ -1,0 +1,15 @@
+{
+  "name": "extension-h",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "netlify functions:serve -p 8885"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "googleapis": "^131.0.0"
+  }
+}

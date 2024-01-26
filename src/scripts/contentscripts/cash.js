@@ -1,7 +1,6 @@
 const setCash = async function () {
   const gameId = await localforage.getItem('currentGameId')
   const currentPlanets = await localforage.getItem(gameId + '-currentPlanets')
-  console.log(currentPlanets)
   var income = $('.cashTotals')
     .find('.hr')
     .eq(0)
@@ -87,7 +86,9 @@ const setCash = async function () {
     var prod = find.productId === 0 ? 'A' : 'M'
     prod = find.productId === 2 ? 'T' : prod
     var gov = find.governmentId === 2 ? 'demo' : 'dict'
-    gov = find.governmentId === 3 ? 'auth' : gov
+    gov = find.governmentId === 1 ? 'auth' : gov
+
+    console.log(find)
     var overExploited = find.numExploits * 10 > find.pop ? 'overexploited' : ''
     var govLeft = ''
     if (find.governmentDaysLeft > 0) {

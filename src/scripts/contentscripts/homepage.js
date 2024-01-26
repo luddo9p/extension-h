@@ -751,8 +751,8 @@ $(document).ready(function () {
 
   const displayMoves = async function () {
     const gameId = await localforage.getItem('currentGameId')
-    let moves = await localforage.getItem(gameId + '-moves')
-    moves = moves.data
+    // let moves = await localforage.getItem(gameId + '-moves')
+    // moves = moves.data
 
     var $wrapper = $('<div class="moves banner"></div>')
     var resumes = []
@@ -882,6 +882,7 @@ $(document).ready(function () {
   }
 
   Hyp.getSession().then((log) => {
+
     localforage.setItem('currentGameId', log.gameId).then((go) => {
       console.log(
         '%c *** Boot Game Id ' + log.gameId + ' ***',
@@ -899,6 +900,7 @@ $(document).ready(function () {
         await setAlliance()
         await new Promise((r) => setTimeout(r, 500))
         displayPlanetInfos()
+        // displayMoves();
       }
       getAll()
     })

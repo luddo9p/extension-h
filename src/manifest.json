@@ -45,7 +45,8 @@
         "scripts/contentscripts/ticks.js",
         "scripts/contentscripts/textmarkup.js",
         "scripts/contentscripts/battlereports.js",
-        "extlibs/bootstrap/js/bootstrap.min.js"
+        "extlibs/bootstrap/js/bootstrap.min.js",
+        "classes/Hapi.js"
       ],
       "css": [
         "styles/ticks.css",
@@ -68,7 +69,8 @@
         "extlibs/jquery-ui/jquery-ui.js",
         "scripts/contentscripts/homepage.js",
         "scripts/contentscripts/pop.js",
-        "scripts/contentscripts/tag.js"
+        "scripts/contentscripts/tag.js",
+        "scripts/contentscripts/moving.js"
       ]
     },
     {
