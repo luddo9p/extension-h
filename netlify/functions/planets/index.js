@@ -7,7 +7,7 @@ const customHeaders = {
 }
 
 const credentialsJson = Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64, 'base64').toString('utf-8');
-  const credentials = JSON.parse(credentialsJson);
+const credentials = JSON.parse(credentialsJson);
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -39,6 +39,16 @@ exports.handler = async (event) => {
       resource: { values: formattedData.planets },
     })
 
+    const formattedDataAlliance = formattedData.alliance.map(item => [item.player, item.planet]);
+
+    const alliance = formattedData.tag + '!A1' // La plage à mettre à jour
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: alliance,
+      valueInputOption: 'USER_ENTERED',
+      resource: { values: formattedDataAlliance },
+    })
+
     return {
       headers: customHeaders,
       statusCode: 200,
@@ -52,4 +62,6 @@ exports.handler = async (event) => {
       body: JSON.stringify(error),
     }
   }
+
+  
 }

@@ -12,7 +12,11 @@ async function scrapeData(url) {
   }
 }
 
+$button = $("<br/><button class='btn btn-primary'>").text('Update the spreadsheet')
+const pageTitle = $('.pageTitle').append($button)
+
 async function Hapi() {
+  $button.text('Updating the spreadsheet...');
   const cashHtml = await scrapeData(
     'https://hyperiums.com/servlet/Cash?pagetype=statement'
   )
@@ -21,6 +25,8 @@ async function Hapi() {
   await localforage.setItem('hapi', log.authKey)
   const hapiData = await localforage.getItem('hapi')
   const planets = await localforage.getItem(log.gameId + '-currentPlanets')
+
+  const getTag = planets.data[0].tag1;
 
   let incomes = []
   $(cashHtml)
@@ -80,6 +86,7 @@ async function Hapi() {
   }
   const getPlayer = await localforage.getItem(log.gameId + '-currentPlayer')
 
+
   const headers = ['name', 'civ', 'prod', 'activity', 'income', 'exploits', 'pop', 'gov']
   const formattedData = [headers].concat(
     rawPlanets.map((planet) => [
@@ -94,22 +101,32 @@ async function Hapi() {
     ])
   )
 
+  const alliancePlanetList = await localforage
+  .getItem(log.gameId + '-alliance')
+
+
   const netlifyFunctionUrl = 'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/planets'
+  // const netlifyFunctionUrl = 'http://localhost:8885/.netlify/functions/planets'
 
   fetch(netlifyFunctionUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ player: getPlayer, planets: formattedData }),
+    body: JSON.stringify({ player: getPlayer, planets: formattedData, alliance : alliancePlanetList.data, tag: getTag}),
   })
     .then((response) => response.json())
     .then((data) => {
       console.log('Réponse de la fonction Netlify:', data)
+      $button.text('The spreadhseet is updated !');
     })
     .catch((error) => {
       console.error('Erreur lors de l’envoi de la requête:', error)
     })
+
+
 }
 
-Hapi()
+$button.on('click', () => {
+  Hapi()
+});
