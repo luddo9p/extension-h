@@ -94,7 +94,7 @@ async function Hapi() {
     ])
   )
 
-  const netlifyFunctionUrl = 'http://localhost:8885/.netlify/functions/planets'
+  const netlifyFunctionUrl = 'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/planets'
 
   fetch(netlifyFunctionUrl, {
     method: 'POST',
