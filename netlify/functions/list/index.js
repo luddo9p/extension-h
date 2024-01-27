@@ -35,7 +35,7 @@ exports.handler = async (event) => {
     const formattedDataAlliance = formattedData.alliancePlanetList.map(item => [item.player, item.planet]);
 
     const alliance = formattedData.tag + '!A1' // La plage à mettre à jour
-    await sheets.spreadsheets.values.update({
+    const response = await sheets.spreadsheets.values.update({
       spreadsheetId,
       range: alliance,
       valueInputOption: 'USER_ENTERED',
