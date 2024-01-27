@@ -1,11 +1,12 @@
 const setMap = async function () {
 
-
   const gameId = await localforage.getItem('currentGameId')
   let tags = await localforage.getItem(gameId + '-tags')
   let moves = await localforage.getItem(gameId + '-moves')
   let switches = await localforage.getItem(gameId + '-switches')
   let alliance = await localforage.getItem(gameId + '-alliance')
+
+  const list = [];
 
 
   if($('.ecomap').length > 0) {
@@ -46,6 +47,9 @@ const setMap = async function () {
     })
 
     var planets = Hyp.getPlanetsFromTradingMap(document)
+
+    console.log(document);
+
 
     var systems = [],
       minX,

@@ -12,21 +12,22 @@ async function scrapeData(url) {
   }
 }
 
-$button = $("<br/><button class='btn btn-primary'>").text('Update the spreadsheet')
-const pageTitle = $('.pageTitle').append($button)
+let playerName = document.querySelector('a[rel="playerSubmenu"] b').textContent
+
+$button = $("<br/><button class='btn btn-primary'>").text(
+  playerName + ' : Update the spreadsheet'
+)
+$('.pageTitle').append($button)
 
 async function Hapi() {
-  $button.text('Updating the spreadsheet...');
+  $button.text('Updating the spreadsheet...')
   const cashHtml = await scrapeData(
     'https://hyperiums.com/servlet/Cash?pagetype=statement'
   )
 
   const log = await Hyp.getSession()
   await localforage.setItem('hapi', log.authKey)
-  const hapiData = await localforage.getItem('hapi')
   const planets = await localforage.getItem(log.gameId + '-currentPlanets')
-
-  const getTag = planets.data[0].tag1;
 
   let incomes = []
   $(cashHtml)
@@ -37,15 +38,16 @@ async function Hapi() {
           ? 1
           : 0
 
-      const income = $(table).find('.hr').eq(indexTr).text().replace(/\D/g, '')
-
+      const income = $(table).find('.highlight').text().replace(/\D/g, '')
       const planetName = $(table).parent().parent().find('.planet b').text()
 
-      incomes.push({
-        planet: planetName,
-        income: parseInt(income, 10),
-        incomeFormat: numeral(parseInt(income, 10)).format('0,0'),
-      })
+      if (planetName.length > 0) {
+        incomes.push({
+          planet: planetName,
+          income: parseInt(income, 10),
+          incomeFormat: numeral(parseInt(income, 10)).format('0,0'),
+        })
+      }
     })
 
   const rawPlanets = []
@@ -84,10 +86,17 @@ async function Hapi() {
     prod = prodId === 2 ? 'Techno' : prod
     return prod
   }
-  const getPlayer = await localforage.getItem(log.gameId + '-currentPlayer')
 
-
-  const headers = ['name', 'civ', 'prod', 'activity', 'income', 'exploits', 'pop', 'gov']
+  const headers = [
+    'name',
+    'civ',
+    'prod',
+    'activity',
+    'income',
+    'exploits',
+    'pop',
+    'gov',
+  ]
   const formattedData = [headers].concat(
     rawPlanets.map((planet) => [
       planet.name,
@@ -101,32 +110,95 @@ async function Hapi() {
     ])
   )
 
-  const alliancePlanetList = await localforage
-  .getItem(log.gameId + '-alliance')
-
-
-  const netlifyFunctionUrl = 'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/planets'
-  // const netlifyFunctionUrl = 'http://localhost:8885/.netlify/functions/planets'
+  const netlifyFunctionUrl =
+    'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/planets'
 
   fetch(netlifyFunctionUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ player: getPlayer, planets: formattedData, alliance : alliancePlanetList.data, tag: getTag}),
+    body: JSON.stringify({
+      player: playerName,
+      planets: formattedData,
+    }),
   })
     .then((response) => response.json())
     .then((data) => {
       console.log('Réponse de la fonction Netlify:', data)
-      $button.text('The spreadhseet is updated !');
+      $button.text('The spreadsheet of ' + playerName + ' is updated !')
     })
     .catch((error) => {
       console.error('Erreur lors de l’envoi de la requête:', error)
     })
-
-
 }
 
 $button.on('click', () => {
   Hapi()
-});
+})
+
+$mapBtn = $("<br/><button class='btn btn-primary'>").text('Generate the list')
+
+$('.pageTitle').append($mapBtn)
+
+const onMapClick = async (e) => {
+  const log = await Hyp.getSession()
+  const list = []
+  const response = await axios.get(
+    'https://hyperiums.com/servlet/Maps?pt=&reqx=0&reqy=0&c=1&d=10'
+  )
+
+  const myPlanets = await localforage.getItem(log.gameId + '-currentPlanets')
+  const getTag = myPlanets.data[0].tag1
+
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(response.data, 'text/html')
+
+  const planets = Hyp.getPlanetsFromTradingMap(doc)
+
+  const alliancePlanetList = await localforage.getItem(log.gameId + '-alliance')
+
+  alliancePlanetList.data.forEach((planet) => {
+    const find = planets.find((item) => item.name === planet.planet)
+    if (find) {
+      list.push({
+        player: planet.player,
+        planet:
+          find.name +
+          ' [' +
+          find.tag +
+          '] ' +
+          find.raceName[0] +
+          find.productName[0] +
+          ' ' +
+          find.govName,
+      })
+    }
+  })
+
+  const netlifyFunctionUrl =
+  'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/list'
+
+  fetch(netlifyFunctionUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      tag: getTag,
+      alliancePlanetList: list,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Réponse de la fonction Netlify:', data)
+      $button.text('The spreadsheet of ' + playerName + ' is updated !')
+    })
+    .catch((error) => {
+      console.error('Erreur lors de l’envoi de la requête:', error)
+    })
+}
+
+$mapBtn.on('click', () => {
+  onMapClick()
+})

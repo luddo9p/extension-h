@@ -1,6 +1,6 @@
 localforage.setDriver(localforage.INDEXEDDB)
 
-const refreshDelay = 600
+const refreshDelay = 60
 
 const setDBData_currentPlanets = async function () {
   const gameId = await localforage.getItem('currentGameId')

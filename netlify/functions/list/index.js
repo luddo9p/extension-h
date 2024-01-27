@@ -29,25 +29,18 @@ exports.handler = async (event) => {
   const sheets = google.sheets({ version: 'v4', auth })
 
   const spreadsheetId = '1tg5EYvmh8igOLAuhO5ZUJ06mfNwfoHvmJTgiw88f0lk' // L'ID de votre Google Sheet
-  const range = formattedData.player + '!A1' // La plage à mettre à jour
 
   try {
-    const response = await sheets.spreadsheets.values.update({
+
+    const formattedDataAlliance = formattedData.alliancePlanetList.map(item => [item.player, item.planet]);
+
+    const alliance = formattedData.tag + '!A1' // La plage à mettre à jour
+    await sheets.spreadsheets.values.update({
       spreadsheetId,
-      range,
+      range: alliance,
       valueInputOption: 'USER_ENTERED',
-      resource: { values: formattedData.planets },
+      resource: { values: formattedDataAlliance },
     })
-
-    // const formattedDataAlliance = formattedData.alliance.map(item => [item.player, item.planet]);
-
-    // const alliance = formattedData.tag + '!A1' // La plage à mettre à jour
-    // await sheets.spreadsheets.values.update({
-    //   spreadsheetId,
-    //   range: alliance,
-    //   valueInputOption: 'USER_ENTERED',
-    //   resource: { values: formattedDataAlliance },
-    // })
 
     return {
       headers: customHeaders,
@@ -63,5 +56,4 @@ exports.handler = async (event) => {
     }
   }
 
-  
 }
