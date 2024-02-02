@@ -50,6 +50,10 @@ async function Hapi() {
       }
     })
 
+    const upkeep = Math.abs($(cashHtml).find('.cashArray').eq(0).find('tr').eq(2).find('.hr').text().replace(/\D/g, ''))
+    const deployment = Math.abs($(cashHtml).find('.cashArray').eq(0).find('tr').eq(3).find('.hr').text().replace(/\D/g, ''))
+    console.log('upkeep', upkeep, deployment)
+
   const rawPlanets = []
   planets.data.forEach((planet) => {
     // Trouver les revenus correspondants pour la planète
@@ -113,6 +117,9 @@ async function Hapi() {
   const netlifyFunctionUrl =
     'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/planets'
 
+  // const netlifyFunctionUrl =
+  //   'http://localhost:8885/.netlify/functions/planets'
+
   fetch(netlifyFunctionUrl, {
     method: 'POST',
     headers: {
@@ -121,6 +128,8 @@ async function Hapi() {
     body: JSON.stringify({
       player: playerName,
       planets: formattedData,
+      upkeep: upkeep,
+      deployment: deployment
     }),
   })
     .then((response) => response.json())
@@ -202,3 +211,46 @@ const onMapClick = async (e) => {
 $mapBtn.on('click', () => {
   onMapClick()
 })
+
+function enregistrerConnexion() {
+  const maintenant = new Date();
+  localStorage.setItem('connexion', maintenant.getTime());
+
+  // Planifier les prochaines exécutions
+  const prochaineExecution1 = maintenant.getTime() + 8 * 60 * 60 * 1000; // 8 heures plus tard
+  const prochaineExecution2 = prochaineExecution1 + 8 * 60 * 60 * 1000; // Encore 8 heures plus tard
+
+  localStorage.setItem('prochaineExecution1', prochaineExecution1);
+  localStorage.setItem('prochaineExecution2', prochaineExecution2);
+}
+
+function verifierEtDeclencher() {
+  const maintenant = new Date().getTime();
+  const prochaineExecution1 = parseInt(localStorage.getItem('prochaineExecution1') || '0');
+  const prochaineExecution2 = parseInt(localStorage.getItem('prochaineExecution2') || '0');
+
+  if (maintenant >= prochaineExecution1 && prochaineExecution1 !== 0) {
+      onMapClick();
+      localStorage.setItem('prochaineExecution1', '0'); // Réinitialiser pour éviter des exécutions multiples
+  }
+
+  if (maintenant >= prochaineExecution2 && prochaineExecution2 !== 0) {
+      onMapClick();
+      localStorage.setItem('prochaineExecution2', '0'); // Réinitialiser pour éviter des exécutions multiples
+  }
+}
+
+function init() {
+  const connexion = localStorage.getItem('connexion');
+  const maintenant = new Date().getTime();
+
+  // Si c'est la première connexion de la journée ou pas encore enregistré
+  if (!connexion || maintenant >= parseInt(connexion) + 24 * 60 * 60 * 1000) {
+      enregistrerConnexion();
+      onMapClick(); // Déclencher immédiatement à la connexion
+  }
+
+  verifierEtDeclencher(); // Vérifier si on doit déclencher à nouveau
+}
+
+init();

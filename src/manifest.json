@@ -30,6 +30,7 @@
     {
       "matches": ["https://hyperiums.com/*"],
       "js": [
+        "extlibs/localforage.min.js",
         "extlibs/axios.js",
         "extlibs/jquery/jquery.js",
         "extlibs/jquery-ui/jquery-ui.js",
@@ -40,7 +41,6 @@
         "extlibs/utils.js",
         "classes/Hyp.js",
         "scripts/contentscripts/menu.js",
-        "extlibs/localforage.min.js",
         "classes/database.js",
         "scripts/contentscripts/ticks.js",
         "scripts/contentscripts/textmarkup.js",

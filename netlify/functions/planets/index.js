@@ -6,8 +6,11 @@ const customHeaders = {
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
 }
 
-const credentialsJson = Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64, 'base64').toString('utf-8');
-const credentials = JSON.parse(credentialsJson);
+const credentialsJson = Buffer.from(
+  process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64,
+  'base64'
+).toString('utf-8')
+const credentials = JSON.parse(credentialsJson)
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -29,7 +32,13 @@ exports.handler = async (event) => {
   const sheets = google.sheets({ version: 'v4', auth })
 
   const spreadsheetId = '1tg5EYvmh8igOLAuhO5ZUJ06mfNwfoHvmJTgiw88f0lk' // L'ID de votre Google Sheet
-  const range = formattedData.player + '!A1' // La plage à mettre à jour
+  const range = formattedData.player + '!A1'
+
+  const ranges = [
+    formattedData.player + '!B106',
+    formattedData.player + '!B107',
+    formattedData.player + '!A115',
+  ]
 
   try {
     const response = await sheets.spreadsheets.values.update({
@@ -39,15 +48,29 @@ exports.handler = async (event) => {
       resource: { values: formattedData.planets },
     })
 
-    // const formattedDataAlliance = formattedData.alliance.map(item => [item.player, item.planet]);
+    // Mise à jour de B106
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: ranges[0],
+      valueInputOption: 'USER_ENTERED',
+      resource: { values: [[formattedData.upkeep]] },
+    })
 
-    // const alliance = formattedData.tag + '!A1' // La plage à mettre à jour
-    // await sheets.spreadsheets.values.update({
-    //   spreadsheetId,
-    //   range: alliance,
-    //   valueInputOption: 'USER_ENTERED',
-    //   resource: { values: formattedDataAlliance },
-    // })
+    // Mise à jour de B107
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: ranges[1],
+      valueInputOption: 'USER_ENTERED',
+      resource: { values: [[formattedData.deployment]] },
+    })
+
+    // Mise à jour de A115
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: ranges[2],
+      valueInputOption: 'USER_ENTERED',
+      resource: { values: [[new Date()]] },
+    })
 
     return {
       headers: customHeaders,
@@ -62,6 +85,4 @@ exports.handler = async (event) => {
       body: JSON.stringify(error),
     }
   }
-
-  
 }

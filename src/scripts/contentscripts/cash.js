@@ -8,15 +8,6 @@ const setCash = async function () {
     .replace(',', '')
     .replace(',', '')
     .replace(',', '')
-  var ac = Math.abs(
-    $('.cashTotals')
-      .find('.hr')
-      .eq(1)
-      .text()
-      .replace(',', '')
-      .replace(',', '')
-      .replace(',', '')
-  )
   var dp = Math.abs(
     $('.cashTotals')
       .find('.hr')
@@ -26,29 +17,84 @@ const setCash = async function () {
       .replace(',', '')
       .replace(',', '')
   )
-  // $('.cashTotals')
-  //   .find('.line0')
-  //   .eq(0)
-  //   .find('td')
-  //   .eq(0)
-  //   .append(
-  //     `<tr>
-  //   <td>
-  // 		<small>demo cost : ` +
-  //       numeral(income - income * 0.988).format('0,0') +
-  //       `<br/>
-  // 		auth cost : ` +
-  //       numeral(income - income * 0.984).format('0,0') +
-  //       `<br/>
-  // 		dict cost : ` +
-  //       numeral(income - income * 0.98).format('0,0') +
-  //       `<br/>
-  // 		prot cost : ` +
-  //       numeral(income - income * 1).format('0,0') +
-  //       `</small>
-  // 	<td>
-  // </tr>`
-  //   )
+
+  let ac = Math.abs(
+    $('.cashArray')
+      .find('.line0')
+      .eq(0)
+      .find('td')
+      .eq(1)
+      .text()
+      .replace(',', '')
+      .replace(',', '')
+      .replace(',', '')
+  )
+  let ti = $('.cashTotals')
+    .find('.hr')
+    .eq(0)
+    .text()
+    .replace(',', '')
+    .replace(',', '')
+    .replace(',', '')
+
+  const totalAuth = currentPlanets.data.filter(
+    (planet) => planet.governmentId === 1
+  ).length
+  const totalDemo = currentPlanets.data.filter(
+    (planet) => planet.governmentId === 2
+  ).length
+  const totalDict = currentPlanets.data.filter(
+    (planet) => planet.governmentId === 0
+  ).length
+
+  const totalHyp = 1
+
+  let avgPop = Math.round(
+    _.sumBy(currentPlanets.data, 'pop') / currentPlanets.data.length
+  )
+
+  let demoCost =
+    ac -
+    (1 - 0.988 ** (totalDemo - 1) * 0.984 ** totalAuth * 0.98 ** totalDict) * ti
+  let authCost =
+    ac -
+    (1 - 0.988 ** totalDemo * 0.984 ** (totalAuth - 1) * 0.98 ** totalDict) * ti
+  let dictCost =
+    ac -
+    (1 - 0.988 ** totalDemo * 0.984 ** totalAuth * 0.98 ** (totalDict - 1)) * ti
+
+  const acTax =
+    (1 -
+      (0.988 - (avgPop / 1000) * 0.00002) ** totalDemo *
+        (0.98 - (avgPop / 1000) * 0.00002) ** totalDict *
+        (0.984 - (avgPop / 1000) * 0.00026) ** totalAuth *
+        (1 - (avgPop / 1000) * 0.002) ** totalHyp) *
+    100
+
+  acCalculated = (acTax / 100) * ti
+
+  console.log(`Coûts administratifs calculés: ${acCalculated}`);
+
+  $('.cashTotals')
+    .find('.line0')
+    .eq(0)
+    .find('td')
+    .eq(0)
+    .append(
+      `<tr>
+    <td>
+  		<small>demo cost : ` +
+        numeral(demoCost).format('0,0') +
+        `<br/>
+  		auth cost : ` +
+        numeral(authCost).format('0,0') +
+        `<br/>
+  		dict cost : ` +
+        numeral(dictCost).format('0,0') +
+        `</small>
+  	<td>
+  </tr>`
+    )
   let incomes = []
   $('.cashArray').each((index, table) => {
     if (index > 0 && index < $('.cashArray').length - 1) {
@@ -64,7 +110,6 @@ const setCash = async function () {
       incomes.push({
         planet: planetName,
         total: parseInt(income, 10),
-
         totalFormat: numeral(parseInt(income, 10)).format('0,0'),
       })
     }
@@ -80,7 +125,7 @@ const setCash = async function () {
       (item) => item.name === row.planet.trim()
     )
     if (!find) return
-    console.log(find)
+    // console.log(find)
     var race = find.raceId === 0 ? 'H' : 'A'
     race = find.raceId === 2 ? 'X' : race
     var prod = find.productId === 0 ? 'A' : 'M'
@@ -88,7 +133,7 @@ const setCash = async function () {
     var gov = find.governmentId === 2 ? 'demo' : 'dict'
     gov = find.governmentId === 1 ? 'auth' : gov
 
-    console.log(find)
+    // console.log(find)
     var overExploited = find.numExploits * 10 > find.pop ? 'overexploited' : ''
     var govLeft = ''
     if (find.governmentDaysLeft > 0) {
@@ -113,8 +158,8 @@ const setCash = async function () {
   let avg = _wtrs / incomes.length
   $('.cashTotals').append(`<h4>CT: ${numeral(dp / 3).format(
     '0,0'
-  )} - NET TI : ${numeral(income - ac).format('0,0')} - UK 25% : ${numeral(
-    (income - ac) * 0.25
+  )} - NET TI : ${numeral(income - ac).format('0,0')} - UK 15% : ${numeral(
+    (income - ac) * 0.15
   ).format('0,0')} - WTR AVG: ${avg.toFixed(2)}</h4>
    <table class="income-list switches" style="text-align:left"><thead>
     <tr>
