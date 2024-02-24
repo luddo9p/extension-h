@@ -24,6 +24,7 @@ Tick.prototype.getNextDate = function (serverDate) {
 
 var Hyp = {
   currentGameId: 0,
+  playerName: document.querySelector('a[rel="playerSubmenu"] b').textContent,
   url: function (servlet) {
     return 'https://hyperiums.com/servlet/' + servlet
   },
