@@ -2,8 +2,6 @@ const armyGen = async function () {
   const gameId = await localforage.getItem('currentGameId')
   let planets = await localforage.getItem(gameId + '-currentPlanets')
 
-  console.log(planets)
-
   let xillors = []
   let azterks = []
   let humans  = []

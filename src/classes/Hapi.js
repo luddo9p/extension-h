@@ -1,16 +1,4 @@
-async function scrapeData(url) {
-  try {
-    // Faire une requête HTTP pour obtenir le contenu de la page
-    const response = await axios.get(url)
-    const data = response.data
-    const $html = $(data)
 
-    return $html
-  } catch (error) {
-    console.error('Erreur lors du scraping :', error)
-    return null
-  }
-}
 
 let playerName = document.querySelector('a[rel="playerSubmenu"] b').textContent
 
@@ -21,7 +9,7 @@ $('.pageTitle').append($button)
 
 async function Hapi() {
   $button.text('Updating the spreadsheet...')
-  const cashHtml = await scrapeData(
+  const cashHtml = await Hyp.scrapeData(
     'https://hyperiums.com/servlet/Cash?pagetype=statement'
   )
 
@@ -52,7 +40,6 @@ async function Hapi() {
 
     const upkeep = Math.abs($(cashHtml).find('.cashArray').eq(0).find('tr').eq(2).find('.hr').text().replace(/\D/g, ''))
     const deployment = Math.abs($(cashHtml).find('.cashArray').eq(0).find('tr').eq(3).find('.hr').text().replace(/\D/g, ''))
-    console.log('upkeep', upkeep, deployment)
 
   const rawPlanets = []
   planets.data.forEach((planet) => {
@@ -230,12 +217,12 @@ function verifierEtDeclencher() {
   const prochaineExecution2 = parseInt(localStorage.getItem('prochaineExecution2') || '0');
 
   if (maintenant >= prochaineExecution1 && prochaineExecution1 !== 0) {
-      onMapClick();
+      Hapi();
       localStorage.setItem('prochaineExecution1', '0'); // Réinitialiser pour éviter des exécutions multiples
   }
 
   if (maintenant >= prochaineExecution2 && prochaineExecution2 !== 0) {
-      onMapClick();
+      Hapi();
       localStorage.setItem('prochaineExecution2', '0'); // Réinitialiser pour éviter des exécutions multiples
   }
 }
@@ -244,10 +231,13 @@ function init() {
   const connexion = localStorage.getItem('connexion');
   const maintenant = new Date().getTime();
 
+  console.log('Dernière connexion:', connexion);
+  console.log('Maintenant:', maintenant);
+
   // Si c'est la première connexion de la journée ou pas encore enregistré
-  if (!connexion || maintenant >= parseInt(connexion) + 24 * 60 * 60 * 1000) {
+  if (!connexion || maintenant >= parseInt(connexion) + 24 * 60 * 1000) {
       enregistrerConnexion();
-      onMapClick(); // Déclencher immédiatement à la connexion
+      Hapi(); // Déclencher immédiatement à la connexion
   }
 
   verifierEtDeclencher(); // Vérifier si on doit déclencher à nouveau

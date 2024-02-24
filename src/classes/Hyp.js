@@ -24,6 +24,7 @@ Tick.prototype.getNextDate = function (serverDate) {
 
 var Hyp = {
   currentGameId: 0,
+  playerName: document.querySelector('a[rel="playerSubmenu"] b').textContent,
   url: function (servlet) {
     return 'https://hyperiums.com/servlet/' + servlet
   },
@@ -68,7 +69,7 @@ var Hyp = {
       function (cookie) {
         if (cookie) {
           var chunks = cookie.value.split('Z')
-          
+
           promise.resolveWith(H, [
             {
               playerId: parseInt(chunks[0]),
@@ -125,7 +126,7 @@ var Hyp = {
   ].sort(function (a, b) {
     return a.name.localeCompare(b.name)
   }),
-  
+
   ticksR12: [
     new Tick('Build', 23),
     new Tick('CT', 31, 8, 6),
@@ -196,7 +197,7 @@ var Hyp = {
     [18000, 18000, 18000], // Cruisers
     [375, 375, 375], // Scouts
     [6250, 6250, 6250], // Bombers
-    [250000  , 250000 , 250000  ], // Starbases
+    [250000, 250000, 250000], // Starbases
     [5000, 5000, 5000], // Ground Armies
     [5000, 5000, 5000], // Carries Armies
   ],
@@ -1224,13 +1225,12 @@ var Hyp = {
     }
 
     var promise = $.Deferred(),
-    H = this
+      H = this
 
     $.ajax(url).done(function (data) {
       promise.resolveWith(H, [data])
     })
     return promise
-
   },
   getFleetsInfo: function (args) {
     var promise = $.Deferred()
@@ -1430,6 +1430,29 @@ var Hyp = {
 
     return totals
   },
+  async scrapeData(url) {
+    try {
+      // Faire une requête HTTP pour obtenir le contenu de la page
+      const response = await axios.get(url)
+      const data = response.data
+      const $html = $(data)
+  
+      return $html
+    } catch (error) {
+      console.error('Erreur lors du scraping :', error)
+      return null
+    }
+  },
+  async mergeAll(planetId) {
+    const result = await $.post('/servlet/Floatorders', {
+      merge: 'OK',
+      confirm: '',
+      nbarmies: 10,
+      mgt_order_done: '',
+      planetid: planetId,
+    })
+    return result
+  },
   hapi: function (args) {
     var promise = $.Deferred(),
       H = this
@@ -1438,13 +1461,13 @@ var Hyp = {
       args.gameid = args.gameid || session.gameId
       args.playerid = args.playerid || session.playerId
       args.authkey = args.authkey || session.authKey
-  
+
       H.request({
         url: this.url('HAPI'),
         data: args,
       }).done(function (data, textStatus, jqXHR) {
         var pairs = {}
-       // console.log(data)
+        // console.log(data)
         $.each(data.split('&'), function (_, pair) {
           var split = pair.split('=')
           pairs[split[0]] = split[1]

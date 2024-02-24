@@ -101,7 +101,7 @@ $(document).ready(function () {
       coords = coords.split(',')
       var x = coords[0].replace('(', '')
       var y = coords[1].replace(')', '')
-      
+
       var $formAttack =
         '<form action="/servlet/Floatorders" method="post">' +
         '<input name="planetid" value="' +
@@ -124,42 +124,30 @@ $(document).ready(function () {
       var _action = $this.find('.flagBattle').length > 0 ? 'defend' : 'attack'
       var _style = $this.find('.flagBattle').length > 0 ? 'green' : 'red'
       var _switch = $this.find('.flagBattle').length > 0 ? 'DEF' : 'ATT'
-     
 
       let args = {}
       args.planet = args.planet || '*'
       args.data = 'foreign_planets'
       args.request = 'getfleetsinfo'
       args.planet = planetName
-      // camoStatus = await Hyp.hapi(args)
-      // let camo = 0
-      // for (const [key, value] of Object.entries(camoStatus)) {
-      //   if(key.includes('camouf')) {
-      //     camo = value
-      //   }
-      // }
 
-      // console.log(camo)
-      // var _camo = camo > 0 ? 'OFF' : 'ON'
-      // var _styleCamo = camo > 0 ? 'red' : 'green'
+      $this
+        .find('.bars')
+        .parent()
+        .append(
+          `<br/><td><div class="flex-line"><button data-action="${_action}" data-id="${planetID}" style="color: ${_style}; text-transform:uppercase;font-size:9px;display:block; width:auto;" class="custom-button btn-switch">🔄 ${_switch}</buttm> <button data-action="merge" data-id="${planetID}" style="display:block; width:auto; text-transform:uppercase; font-size:9px" class="custom-button btn-gas">🧰 merge gas</button> <button style="display:block; width:auto; text-transform:uppercase; font-size:9px" data-action="drop" data-id="${planetID}" class="custom-button btn-drop">🚢 drop</button></div></td>`
+        )
 
-      // https://hyperiums.com/servlet/Floatorders?setCamouflage=0&planetid=15282&units=armies
-      // $this
-      //   .find('.planet')
-      //   .parent()
-      //   .parent()
-      //   .find('.militFlags tr')
-      //   .append(
-      //     `<td><button data-action="${_camo}" data-id="${planetID}" style="font-size:10px" class="custom-button btn-camo ${_styleCamo}">👻 ${_camo}</a></td>`
-      //   )
-        $this
+
+      $this
         .find('.planet')
         .parent()
         .parent()
         .find('.militFlags tr')
         .append(
-          `<td><button data-action="${_action}" data-id="${planetID}" style="color: ${_style}; text-transform:uppercase;font-size:10px" class="custom-button btn-switch">🔄 ${_switch}</a></td>`
+          `<td></td>`
         )
+
       $this
         .find('.planet')
         .parent()
@@ -223,6 +211,25 @@ $(document).ready(function () {
       })
     })
 
+    $(document).on('click', '.btn-gas', async function (e) {
+      const $this = $(this)
+      const id = $this.attr('data-id')
+      const result = await Hyp.mergeAll(id)
+      $this.text(`merged`)
+    })
+
+    $(document).on('click', '.btn-sell', async function (e) {
+      //first scrap page
+      const $this = $(this)
+      const id = $this.attr('data-id')
+      const planetHtml = await Hyp.scrapeData(
+        'https://hyperiums.com/servlet/Planetfloats?planetid=' + id
+      )
+      $pageHtml = $(planetHtml)
+      const links = $pageHtml.find('#manageArmiesForm').find('.array').find('a')
+      console.log(links)
+    })
+
     // Camo
     $(document).on('click', '.btn-camo', function (e) {
       const $this = $(this)
@@ -232,19 +239,20 @@ $(document).ready(function () {
       const _camoTxt = action == 'ON' ? 'OFF' : 'ON'
       var _styleCamo = action == 'ON' ? 'red' : 'green'
 
-      // https://hyperiums.com/servlet/Floatorders?setCamouflage=0&planetid=15282&units=armies
-      $.get(`/servlet/Floatorders?setCamouflage=${_camo}&planetid=${id}&units=armies`).done((response) => {
+      $.get(
+        `/servlet/Floatorders?setCamouflage=${_camo}&planetid=${id}&units=armies`
+      ).done((response) => {
         console.log(response)
         $this.removeClass('green').removeClass('red')
         if (_camo == 'ON') {
           $this
-            .attr('data-action',_camoTxt)
+            .attr('data-action', _camoTxt)
             .attr('style', 'font-size:10px')
             .addClass(_styleCamo)
             .text(`👻 ${_camoTxt}`)
         } else {
           $this
-            .attr('data-action',_camoTxt)
+            .attr('data-action', _camoTxt)
             .attr('style', 'font-size:10px')
             .addClass(_styleCamo)
             .text(`👻 ${_camoTxt}`)

@@ -1,4 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+body {
+  background: #000;
+  webkit-font-smoothing: antialiased !important;;
+}
 body,
 td,
 div,
@@ -761,4 +765,151 @@ h4 {
 
 .megawrapper {
   height: 330px !important;
+}
+
+.switch-race.active {
+  background: #999983 !important;
+  color: #141414;
+}
+
+.link-drop {
+  font-weight: bold;
+  color: darkturquoise;
+}
+
+.link-camo {
+  margin: 10px 0;
+  font-weight: bold;
+  color: forestgreen;
+  display: inline-block;
+  text-decoration: none;
+  padding: 5px 10px;
+  background: #222;
+  border-radius: 5px;
+}
+
+.link-camo:hover {
+  background: #333;
+}
+
+.link-camo.camo-0 {
+  color: crimson ;
+}
+
+.link-camo.camo-1 {
+  color: seagreen;
+}
+
+.movingFleetCard td[width="330"] {
+  background-color: #141414 !important;
+  width: 390px !important;
+}
+
+.highlighting {
+  color: cornflowerblue;
+  font-weight: bold; /* Texte en gras */
+}
+
+.visib_content {
+  padding: 0px !important;
+}
+
+.movingFleetCard {
+  padding-top: 0px !important;
+}
+
+.fleet-movement {
+  display: block;
+  margin: 0px 0 10px 0;
+}
+
+.recap {
+  width: 100%;
+  max-width: 600px;
+  border-collapse: collapse;
+  margin: 20px auto;
+  display: none;
+}
+
+.recap th, .recap td {
+  border: 1px solid black;
+  padding: 4px;
+  text-align: left;
+  color: #000;
+}
+
+.recap th {
+  background-color: #222222;
+  color: white;
+}
+
+.movingFleetCard {
+  width: 600px;
+  padding: 5px 0px 7px 0px;
+  padding-top: 15px !important;
+}
+
+
+.updated {
+  filter: brightness(1.25);
+}
+
+.warning {
+  background: red !important;
+  text-decoration: line-through;
+}
+
+.delay-true {
+  filter: invert(1);
+}
+
+.flex-line {
+  display: flex;
+}
+
+.flex-line a, .flex-line button {
+  margin: 0 5px;
+}
+
+
+
+.eco {
+  padding: 5px 10px;
+  margin: 0 5px;
+  font-weight: bold;
+  position: relative;
+  z-index: 1;
+  background: red !important;
+  border-width: 0px !important;
+  border-style: solid !important;
+  border-color: rgb(17, 17, 17) !important;
+  border-image: initial !important;
+  display: inline-block;
+  text-decoration: none;
+  height: auto;
+  color: #fff;
+}
+
+.eco-0, .eco-1, .eco-2, .eco-3, .eco-4, .eco-5, .eco-6, .eco-7, .eco-8, .eco-9, .eco-10,
+.eco-11, .eco-12, .eco-13, .eco-14, .eco-15, .eco-16, .eco-17, .eco-18, .eco-19, .eco-20,
+.eco-21, .eco-22, .eco-23, .eco-24, .eco-25, .eco-26, .eco-27, .eco-28, .eco-29, .eco-30,
+.eco-31, .eco-32, .eco-33, .eco-34, .eco-35, .eco-36, .eco-37, .eco-38, .eco-39, .eco-40 {
+  background: red !important;
+}
+
+.eco-41, .eco-42, .eco-43, .eco-44, .eco-45, .eco-46, .eco-47, .eco-48, .eco-49, .eco-50,
+.eco-51, .eco-52, .eco-53, .eco-54, .eco-55, .eco-56, .eco-57, .eco-58, .eco-59, .eco-60, 
+.eco-61, .eco-62, .eco-63, .eco-64, .eco-65, .eco-66, .eco-67, .eco-68, .eco-69, .eco-70,
+.eco-71, .eco-72, .eco-73, .eco-74, .eco-75, .eco-76, .eco-77, .eco-78, .eco-79, .eco-80 {
+  background: orange !important;
+}
+
+.eco-81, .eco-82, .eco-83, .eco-84, .eco-85, .eco-86, .eco-87, .eco-88, .eco-89, .eco-90, 
+.eco-91, .eco-92, .eco-93, .eco-94, .eco-95, .eco-96, .eco-97, .eco-98, .eco-99, .eco-100 {
+  background: green !important;
+}
+
+
+.movingFleetGroupTitle {
+  border-top: 5px solid #ada15a !important
 }

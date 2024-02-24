@@ -30,6 +30,7 @@
     {
       "matches": ["https://hyperiums.com/*"],
       "js": [
+        "classes/Hyp.js",
         "extlibs/localforage.min.js",
         "extlibs/axios.js",
         "extlibs/jquery/jquery.js",
@@ -39,14 +40,14 @@
         "extlibs/numeraljs/numeral.js",
         "extlibs/lodash/lodash.min.js",
         "extlibs/utils.js",
-        "classes/Hyp.js",
         "scripts/contentscripts/menu.js",
         "classes/database.js",
         "scripts/contentscripts/ticks.js",
         "scripts/contentscripts/textmarkup.js",
         "scripts/contentscripts/battlereports.js",
         "extlibs/bootstrap/js/bootstrap.min.js",
-        "classes/Hapi.js"
+        "classes/Hapi.js",
+        "classes/HapiMoves.js"
       ],
       "css": [
         "styles/ticks.css",
@@ -128,7 +129,8 @@
         "extlibs/jquery/jquery.js",
         "extlibs/jquery-ui/jquery-ui.js",
         "scripts/contentscripts/militaryPage.js",
-        "scripts/contentscripts/spread.js"
+        "scripts/contentscripts/spread.js",
+        "scripts/contentscripts/moves.js"
       ]
     },    
     {

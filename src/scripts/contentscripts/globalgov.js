@@ -36,8 +36,8 @@ const globalgov = async function () {
         .children('td')
         .eq(0)
         .append(
-          '<br><br/>Exploits: ',
-          numeral(planet.numExploits).format('0,0') + '<br/>'
+          ' - E:',
+          '<span style="color:yellow">'+numeral(planet.numExploits).format('0,0') + '</span><br/>'
         )
     })
   })

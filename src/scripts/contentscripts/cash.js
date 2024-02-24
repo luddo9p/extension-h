@@ -73,7 +73,11 @@ const setCash = async function () {
 
   acCalculated = (acTax / 100) * ti
 
-  console.log(`Coûts administratifs calculés: ${acCalculated}`);
+  const upkeep = Math.abs($(document).find('.cashArray').eq(0).find('tr').eq(2).find('.hr').text().replace(/\D/g, ''))
+
+    const upk = upkeep / ((income - ac)) * 100
+
+    console.log('upkeep', upk.toFixed(2))
 
   $('.cashTotals')
     .find('.line0')
@@ -107,10 +111,15 @@ const setCash = async function () {
 
       const planetName = $(table).parent().parent().find('.planet b').text()
 
+      const profit = $(table).find('.highlight').html().replace('profit <hr>', '').replace(/\D/g, '')
+      console.log('profit', profit)
+
       incomes.push({
         planet: planetName,
         total: parseInt(income, 10),
         totalFormat: numeral(parseInt(income, 10)).format('0,0'),
+        profitFormat: numeral(parseInt(profit, 10)).format('0,0'),
+        profit: parseInt(profit, 10),
       })
     }
   })
@@ -120,7 +129,7 @@ const setCash = async function () {
   ).format('0,0')
   let _wtrs = 0
   let $lis = ''
-  _.orderBy(incomes, ['total'], ['desc']).forEach((row, index) => {
+  _.orderBy(incomes, ['profit'], ['desc']).forEach((row, index) => {
     var find = currentPlanets.data.find(
       (item) => item.name === row.planet.trim()
     )
@@ -140,7 +149,8 @@ const setCash = async function () {
       govLeft = ` (${find.governmentDaysLeft})`
     }
     _wtrs += find.tax
-    $lis += `<tr class="${overExploited}"><td>${
+    $lis += `
+    <tr class="${overExploited}"><td>${
       index + 1
     }. <a href="/servlet/Planetprod?planetid=${find.id}" target="_blank">${
       row.planet
@@ -150,17 +160,16 @@ const setCash = async function () {
     <td>${gov}${govLeft}</td>
     <td>${numeral(find.pop).format('0,0')}</td><td>${numeral(
       find.activity
-    ).format('0,0')}</td><td>${row.totalFormat}</td><td>${(
+    ).format('0,0')}</td><td>${row.profitFormat}</td><td>${(
       ((find.numExploits * 10) / find.pop) *
       100
     ).toFixed(2)} / 100</td></tr>`
   })
   let avg = _wtrs / incomes.length
-  $('.cashTotals').append(`<h4>CT: ${numeral(dp / 3).format(
+  $('.cashTotals').append(`<br/><h4>CT: ${numeral(dp / 3).format(
     '0,0'
-  )} - NET TI : ${numeral(income - ac).format('0,0')} - UK 15% : ${numeral(
-    (income - ac) * 0.15
-  ).format('0,0')} - WTR AVG: ${avg.toFixed(2)}</h4>
+  )} - NET TI : ${numeral(income - ac).format('0,0')} - UK ${upk.toFixed(2)}% - WTR AVG: ${avg.toFixed(2)}</h4>
+  <br/>
    <table class="income-list switches" style="text-align:left"><thead>
     <tr>
       <td>Planet</td>
@@ -170,7 +179,7 @@ const setCash = async function () {
       <td>Gov</td>
       <td>Pop</td>
       <td>Activity</td>
-      <td>Income</td>
+      <td>Profit</td>
       <td>Ratio</td>
     </tr>
    </thead>${$lis}</<table>

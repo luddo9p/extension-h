@@ -15,7 +15,8 @@ const globalwtr = async () => {
     const planet = planets.data.find(p => p.id === parseInt(planetId));
     const wtr = planet.wtr;
     $el.append(`<td><strong>${planet.pop}M</strong></td>`);
-    console.log(planet.pop);
+    $el.append(`<td><strong class="eco eco-${planet.eco}">${planet.eco}</strong></td>`);
+    console.log(planet);
   });
 
   $('form').before(`
@@ -36,6 +37,10 @@ const globalwtr = async () => {
       </select>
     </div><br>`
   );
+
+  $('form').find('tr').eq(0).append(`
+  <td><center>Pop</center></td><td><center>Eco</center></td>`
+);
 
   $(document).on('change', '.select-all', (e) => {
     const $target = $(e.target);
