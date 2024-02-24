@@ -1,4 +1,4 @@
-const donneeCachee = localStorage.getItem('hapiDataCacheMoves')
+const donneeCachee = localStorage.getItem('hapiDataCache')
 
 if (donneeCachee) {
   const cache = JSON.parse(donneeCachee)
