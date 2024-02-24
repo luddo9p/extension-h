@@ -51,7 +51,7 @@ function extractHours(text) {
   }
 }
 async function getHapiData() {
-  const cacheKey = 'hapiDataCacheMoves'
+  const cacheKey = 'hapiDataCache'
   const cachedData = localStorage.getItem(cacheKey)
 
   if (cachedData) {
@@ -134,7 +134,7 @@ const changeMoves = () => {
     $card.find('td').eq(0).html(updatedHtml)
 
     // Récupération et désérialisation du cache depuis le localStorage
-    const cachedData = localStorage.getItem('hapiDataCacheMoves')
+    const cachedData = localStorage.getItem('hapiDataCache')
     let fleetData
     if (cachedData) {
       const cache = JSON.parse(cachedData)
@@ -202,7 +202,7 @@ const changeMoves = () => {
     text = text === 'auto drop' ? 'drop on order' : 'auto drop'
     target.text(text)
     // Récupération et mise à jour du cache
-    const cacheKey = 'hapiDataCacheMoves'
+    const cacheKey = 'hapiDataCache'
     const cachedData = localStorage.getItem(cacheKey)
     if (cachedData) {
       const cache = JSON.parse(cachedData)
@@ -245,7 +245,7 @@ const changeMoves = () => {
     target.removeClass('camo-1 camo-0').addClass(`camo-${camo}`)
     target.text(text)
     // Récupération et mise à jour du cache
-    const cacheKey = 'hapiDataCacheMoves'
+    const cacheKey = 'hapiDataCache'
     const cachedData = localStorage.getItem(cacheKey)
     if (cachedData) {
       const cache = JSON.parse(cachedData)
@@ -460,7 +460,7 @@ async function displayGroupedFleetMovements(groupedMovements) {
   // reset cache
   $('.refresh').on('click', (e) => {
     e.preventDefault()
-    localStorage.removeItem('hapiDataCacheMoves')
+    localStorage.removeItem('hapiDataCache')
     window.location.reload()
   })
 
@@ -472,7 +472,7 @@ async function displayGroupedFleetMovements(groupedMovements) {
 
   $('.select-delay').on('change', async (e) => {
     e.preventDefault()
-    const cacheKey = 'hapiDataCacheMoves'
+    const cacheKey = 'hapiDataCache'
     const cachedData = localStorage.getItem(cacheKey)
 
     const fleetId = $(e.currentTarget).find(':selected').attr('data-fleetid')
@@ -563,7 +563,7 @@ window.setTimeout(() => {
         setTimeout(() => {
           const $row = $(this)
           const fleetId = $row.attr('data-fleetId')
-          const cachedData = localStorage.getItem('hapiDataCacheMoves')
+          const cachedData = localStorage.getItem('hapiDataCache')
           const cache = JSON.parse(cachedData)
           const fleetData = cache.data.find((move) => move.fleetid === fleetId)
           if (!fleetData) {
