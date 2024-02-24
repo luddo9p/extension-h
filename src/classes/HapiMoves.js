@@ -1,4 +1,5 @@
 const donneeCachee = localStorage.getItem('hapiDataCache')
+let playerN = document.querySelector('a[rel="playerSubmenu"] b').textContent
 
 if (donneeCachee) {
   const cache = JSON.parse(donneeCachee)
@@ -42,7 +43,7 @@ if (donneeCachee) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      player: Hyp.playerName,
+      player: playerN,
       moves: movesString,
     }),
   })
