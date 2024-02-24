@@ -27,11 +27,11 @@ if (donneeCachee) {
     movesString.push(moveString)
   })
 
-  // const netlifyFunctionUrl =
-  //   'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/moves'
+  const netlifyFunctionUrl =
+    'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/moves'
 
-    const netlifyFunctionUrl =
-    'http://localhost:8885/.netlify/functions/moves'
+    // const netlifyFunctionUrl =
+    // 'http://localhost:8885/.netlify/functions/moves'
 
 
   console.log('Envoi des données à', netlifyFunctionUrl)
