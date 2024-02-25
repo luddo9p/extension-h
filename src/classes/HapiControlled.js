@@ -50,13 +50,40 @@ PostControlled()
 
 
 async function getControlledPlanets() {
-    const log = await Hyp.getSession()
-    const cache = localStorage.getItem(log.gameId + '-hapi-alliance-owned-planets')
+    const log = await Hyp.getSession();
+    const gameId = log.gameId;
+    const cacheKey = `${gameId}-hapi-alliance-owned-planets`;
+    const updateKey = `${gameId}-last-update-time`;
+    const now = new Date().getTime();
 
-  const response = await fetch('https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/getControlled')
-  const data = await response.json()
-  console.log('Données récupérées:', data, JSON.parse(cache))
-  return data
+    // Vérifie si les données ont été mises à jour il y a moins de 5 minutes
+    const lastUpdateTime = parseInt(localStorage.getItem(updateKey), 10);
+    if (lastUpdateTime && now - lastUpdateTime < 5 * 60 * 1000) {
+        console.log('Utilisation des données en cache (moins de 5 minutes depuis la dernière mise à jour).');
+        return JSON.parse(localStorage.getItem(cacheKey)).planets;
+    }
+
+    // Si les données doivent être mises à jour
+    const response = await fetch('https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/getControlled');
+    const data = await response.json();
+
+    // Suppose que cache existe déjà et contient un objet avec une propriété `planets`
+    const cache = localStorage.getItem(cacheKey);
+    const cachedPlanets = cache ? JSON.parse(cache).planets : [];
+
+    // Fusionne les deux tableaux et supprime les doublons
+    const combinedArray = data.concat(cachedPlanets);
+    const uniqueArray = combinedArray.filter((planet, index, self) =>
+        index === self.findIndex((t) => (
+            t.player === planet.player && t.planet === planet.planet
+        ))
+    );
+
+    // Stocke le tableau unique et le temps de mise à jour dans localStorage
+    localStorage.setItem(cacheKey, JSON.stringify({ planets: uniqueArray }));
+    localStorage.setItem(updateKey, now.toString());
+
+    return uniqueArray;
 }
 
-getControlledPlanets()
+getControlledPlanets();

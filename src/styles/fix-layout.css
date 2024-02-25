@@ -913,3 +913,8 @@ h4 {
 .movingFleetGroupTitle {
   border-top: 5px solid #ada15a !important
 }
+
+#resetCaches {
+  display:block;
+  margin: 10px auto;
+}
