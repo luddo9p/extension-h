@@ -77,7 +77,6 @@ const setCash = async function () {
 
     const upk = upkeep / ((income - ac)) * 100
 
-    console.log('upkeep', upk.toFixed(2))
 
   $('.cashTotals')
     .find('.line0')
@@ -112,7 +111,12 @@ const setCash = async function () {
       const planetName = $(table).parent().parent().find('.planet b').text()
 
       const profit = $(table).find('.highlight').html().replace('profit <hr>', '').replace(/\D/g, '')
-      console.log('profit', profit)
+
+      var find = currentPlanets.data.find(
+        (item) => item.name === planetName.trim()
+      )
+
+      let acCost = find.governmentId === 0 ? dictCost : find.governmentId === 1 ? authCost : demoCost
 
       incomes.push({
         planet: planetName,
@@ -120,6 +124,7 @@ const setCash = async function () {
         totalFormat: numeral(parseInt(income, 10)).format('0,0'),
         profitFormat: numeral(parseInt(profit, 10)).format('0,0'),
         profit: parseInt(profit, 10),
+        netProfit: parseInt(income, 10) - parseInt(acCost, 10)
       })
     }
   })
@@ -160,10 +165,12 @@ const setCash = async function () {
     <td>${gov}${govLeft}</td>
     <td>${numeral(find.pop).format('0,0')}</td><td>${numeral(
       find.activity
-    ).format('0,0')}</td><td>${row.profitFormat}</td><td>${(
+    ).format('0,0')}</td><td>${row.profitFormat}</td>
+    <td>${numeral(row.netProfit).format('0,0')}</td>
+    <td>${(
       ((find.numExploits * 10) / find.pop) *
       100
-    ).toFixed(2)} / 100</td></tr>`
+    ).toFixed(0)-100}%</td></tr>`
   })
   let avg = _wtrs / incomes.length
   $('.cashTotals').append(`<br/><h4>CT: ${numeral(dp / 3).format(
@@ -180,7 +187,8 @@ const setCash = async function () {
       <td>Pop</td>
       <td>Activity</td>
       <td>Profit</td>
-      <td>Ratio</td>
+      <td>Net Profit</td>
+      <td>P:R</td>
     </tr>
    </thead>${$lis}</<table>
 `)

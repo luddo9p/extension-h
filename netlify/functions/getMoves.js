@@ -12,27 +12,6 @@ const credentialsJson = Buffer.from(
 ).toString('utf-8')
 const credentials = JSON.parse(credentialsJson)
 
-function extraireNomPlanete(chaine) {
-  // Vérifie si la chaîne contient "[", sinon retourne la chaîne telle quelle
-  if (!chaine.includes('[')) {
-    return chaine.trim() // Utilise trim() pour enlever les espaces superflus
-  }
-
-  const regex = /^(.*?) \[/
-  const correspondance = chaine.match(regex)
-
-  if (correspondance && correspondance[1]) {
-    // Si une correspondance est trouvée, retourne le nom en enlevant les espaces superflus
-    return correspondance[1].trim()
-  } else {
-    // Affiche une erreur dans la console si le format attendu n'est pas trouvé
-    console.error(
-      "Le format de la chaîne n'est pas correct ou le nom de la planète est manquant."
-    )
-    return '' // Retourne une chaîne vide pour indiquer qu'aucun nom valide n'a été extrait
-  }
-}
-
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -42,35 +21,44 @@ exports.handler = async (event) => {
     }
   }
 
-  // Configurez l'authentification
   const auth = new google.auth.GoogleAuth({
     credentials,
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   })
 
   const sheets = google.sheets({ version: 'v4', auth })
+  const spreadsheetId = '1tg5EYvmh8igOLAuhO5ZUJ06mfNwfoHvmJTgiw88f0lk'
 
-  const spreadsheetId = '1tg5EYvmh8igOLAuhO5ZUJ06mfNwfoHvmJTgiw88f0lk' // L'ID de votre Google Sheet
   try {
-    const range = 'Moves!A:L'
+    // Prépare les plages de données à récupérer en parallèle
+    const ranges = 'ABCDEFGHIJKL'
+      .split('')
+      .map((column) => `moves!${column}:${column}`)
 
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId,
-      range: range,
+    // Exécute toutes les requêtes en parallèle
+    const responses = await Promise.all(
+      ranges.map((range) =>
+        sheets.spreadsheets.values.get({ spreadsheetId, range })
+      )
+    )
+
+    // Fusionne les données de toutes les réponses
+    const allPlayers = responses.flatMap((response) => {
+      const data = response.data.values
+      return data.slice(1).map((row) => ({
+        planet: row[0].split(' - ')[0],
+        avgp: row[0].split(' - ')[1],
+        gas: row[0].split(' - ')[2],
+        traveTime:  parseInt(row[0].split(' - ')[3]),
+        eta: row[0].split('@')[1],
+        player: data[0][0],
+      }))
     })
-
-    const data = response.data.values
-
-    if (!data) {
-      console.log('Aucune donnée trouvée.')
-    } else {
-      console.log('Données récupérées:', data)
-    }
 
     return {
       headers: customHeaders,
       statusCode: 200,
-      body: JSON.stringify(data),
+      body: JSON.stringify(allPlayers),
     }
   } catch (error) {
     console.error('Erreur lors de la mise à jour du spreadsheet :', error)

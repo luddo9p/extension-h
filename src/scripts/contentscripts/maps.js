@@ -118,9 +118,9 @@ const setMap = async function () {
 
               let foreignInfo = ''
               if (foreignFind) {
-                foreignInfo += foreignFind.player + ' - ' + foreignFind.status
+                foreignInfo += '<span style="color:darkturquoise">'+foreignFind.player + '</span> - ' + foreignFind.status
                 if (foreignFind.spaceAvgp) {
-                  foreignInfo += ' - ' + foreignFind.spaceAvgp
+                  foreignInfo += ' - <span style="color:darkorange">' + foreignFind.spaceAvgp + '</span>'
                 }
               }
 
@@ -167,7 +167,7 @@ const setMap = async function () {
                   ? 'darkslategray'
                   : colorForeign
 
-                tr = $('<tr class="' + isForeign + '">').attr(
+                tr = $('<tr style="filter: contrast(1.2);" class="' + isForeign + '">').attr(
                   'bgcolor',
                   colorForeign
                 )

@@ -1,7 +1,7 @@
 async function PostControlled() {
   const currentTime = new Date().getTime()
   const lastExecutionTime = localStorage.getItem('lastExecutionTime')
-  const fiveMinutes = 300000/5 // 5 minutes en millisecondes
+  const fiveMinutes = 300000 // 5 minutes en millisecondes
 
   if (lastExecutionTime && currentTime - lastExecutionTime < fiveMinutes) {
     console.log('Attente avant la prochaine exécution.')

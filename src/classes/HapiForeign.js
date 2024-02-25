@@ -3,7 +3,7 @@ async function PostForeign() {
   const lastExecutionTimeForeign = localStorage.getItem(
     'lastExecutionTimeForeign'
   )
-  const fiveMinutes = 300000/5 // 5 minutes en millisecondes
+  const fiveMinutes = 300000 / 5 // 5 minutes en millisecondes
 
   if (
     lastExecutionTimeForeign &&
@@ -30,23 +30,25 @@ async function PostForeign() {
   foreignPlanets.forEach((planet) => {
     let planetString = ''
     if (planet.neutral) {
-      planetString = `${planet.name} - ${planet.neutral ? 'Neutral' : ''} - ${planet.attacking ? 'Att' : 'Def'} - ${planet.spaceAvgp}`
+      planetString = `${planet.name} - ${planet.neutral ? 'Neutral' : ''} - ${
+        planet.attacking ? 'Att' : 'Def'
+      } - ${planet.spaceAvgp}`
     } else if (!planet.neutral && !planet.attacking) {
-      planetString = `${planet.name} - ${planet.stasis ? 'Stasis' : 'No stasis'} - Def - ${planet.spaceAvgp}`
+      planetString = `${planet.name} - ${
+        planet.stasis ? 'Stasis' : 'No stasis'
+      } - Def - ${planet.spaceAvgp}`
     } else {
       planetString = `${planet.name} - ${
-        planet.stasis ? 'Stasis' : 'No stasis'} - ${planet.attacking ? 'Att' : 'Def'} - ${planet.spaceAvgp}`
+        planet.stasis ? 'Stasis' : 'No stasis'
+      } - ${planet.attacking ? 'Att' : 'Def'} - ${planet.spaceAvgp}`
     }
     planetList.push(planetString)
   })
 
-
-  const netlifyFunctionUrl =
-    'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/foreign'
-
-
   // const netlifyFunctionUrl =
-  // 'http://localhost:8885/.netlify/functions/foreign'
+  //   'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/foreign'
+
+  const netlifyFunctionUrl = 'http://localhost:8885/.netlify/functions/foreign'
 
   fetch(netlifyFunctionUrl, {
     method: 'POST',
@@ -58,11 +60,9 @@ async function PostForeign() {
       foreign: planetList,
     }),
   }).then((response) => response.json())
-
 }
 
 PostForeign()
-
 
 async function getForeignPlanets() {
   const log = await Hyp.getSession()
@@ -78,14 +78,13 @@ async function getForeignPlanets() {
     return JSON.parse(localStorage.getItem(cacheKey))
   }
   let apiUrl = ''
-  apiUrl = 'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/getForeign'
+  apiUrl =
+    'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/getForeign'
   // apiUrl = 'http://localhost:8885/.netlify/functions/getForeign'
   const response = await fetch(apiUrl)
-  const data = await response.json();
+  const data = await response.json()
   localStorage.setItem(cacheKey, JSON.stringify(data))
   localStorage.setItem(updateKey, now.toString())
-
-  return planets
 }
 
 getForeignPlanets()
