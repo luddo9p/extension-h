@@ -1,5 +1,5 @@
 async function HapiMoves() {
-  const log = Hyp.getSession()
+  const log = await Hyp.getSession()
 
   const donneeCachee = localStorage.getItem(log.gameId + '-hapiDataCache')
   let playerN = document.querySelector('a[rel="playerSubmenu"] b').textContent
@@ -34,10 +34,6 @@ async function HapiMoves() {
     const netlifyFunctionUrl =
       'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/moves'
 
-    // const netlifyFunctionUrl =
-    // 'http://localhost:8885/.netlify/functions/moves'
-
-    console.log('Envoi des données à', netlifyFunctionUrl)
 
     fetch(netlifyFunctionUrl, {
       method: 'POST',
@@ -47,6 +43,7 @@ async function HapiMoves() {
       body: JSON.stringify({
         player: playerN,
         moves: movesString,
+        // controlled: cache.controlled,
       }),
     }).then((response) => response.json())
   }

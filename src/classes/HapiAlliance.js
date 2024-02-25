@@ -1,6 +1,6 @@
 // Fonction pour récupérer les planètes
 
-const netlifyFunctionUrl = 'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/list'
+const netlifyFunctionUrl = 'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/alliance'
 
 // const netlifyFunctionUrl = 'http://localhost:8885/.netlify/functions/alliance'
 
@@ -16,6 +16,7 @@ const savePlanets = async () => {
   const log = await Hyp.getSession()
   const planets = await getPlanets()
   const now = new Date().getTime()
+
   const cacheData = {
     lastUpdated: now,
     planets,

@@ -51,8 +51,8 @@ function extractHours(text) {
   }
 }
 async function getHapiData() {
-  const cacheKey = 'hapiDataCache'
-  const cachedData = localStorage.getItem(cacheKey)
+  const log = await Hyp.getSession()
+  const cachedData = localStorage.getItem(log.gameId + '-hapiDataCache')
 
   if (cachedData) {
     const cache = JSON.parse(cachedData)
@@ -98,7 +98,7 @@ async function getHapiData() {
     data: movesData,
     timestamp: Date.now(),
   }
-  localStorage.setItem(cacheKey, JSON.stringify(newCache))
+  localStorage.setItem(log.gameId + '-hapiDataCache', JSON.stringify(newCache))
   return movesData
 }
 
@@ -109,6 +109,7 @@ const changeMoves = () => {
     const $card = $(card)
     // Trouver le texte à l'intérieur de l'élément <font>
     const moveTxt = $card.find('font').text()
+    const log = await Hyp.getSession()
     if (!$card.find('.button').attr('href')) return
     const fleetId = $card
       .find('.button')
@@ -134,7 +135,7 @@ const changeMoves = () => {
     $card.find('td').eq(0).html(updatedHtml)
 
     // Récupération et désérialisation du cache depuis le localStorage
-    const cachedData = localStorage.getItem('hapiDataCache')
+    const cachedData = localStorage.getItem(log.gameId + '-hapiDataCache')
     let fleetData
     if (cachedData) {
       const cache = JSON.parse(cachedData)
@@ -197,12 +198,12 @@ const changeMoves = () => {
       floatid: fleetId,
       pagetype: 'moving_fleets',
     })
-
+    const log = await Hyp.getSession()
     let text = target.text()
     text = text === 'auto drop' ? 'drop on order' : 'auto drop'
     target.text(text)
     // Récupération et mise à jour du cache
-    const cacheKey = 'hapiDataCache'
+    const cacheKey = log.gameId + '-hapiDataCache'
     const cachedData = localStorage.getItem(cacheKey)
     if (cachedData) {
       const cache = JSON.parse(cachedData)
@@ -244,9 +245,10 @@ const changeMoves = () => {
     text = text === '👻 camo is off' ? '👻 camo is on' : '👻 camo is off'
     target.removeClass('camo-1 camo-0').addClass(`camo-${camo}`)
     target.text(text)
+
     // Récupération et mise à jour du cache
-    const cacheKey = 'hapiDataCache'
-    const cachedData = localStorage.getItem(cacheKey)
+    const log = await Hyp.getSession()
+    const cachedData = localStorage.getItem(log.gameId + '-hapiDataCache')
     if (cachedData) {
       const cache = JSON.parse(cachedData)
 
@@ -458,9 +460,10 @@ async function displayGroupedFleetMovements(groupedMovements) {
   }
 
   // reset cache
-  $('.refresh').on('click', (e) => {
+  $('.refresh').on('click', async (e) => {
     e.preventDefault()
-    localStorage.removeItem('hapiDataCache')
+    const log = await Hyp.getSession()
+    localStorage.removeItem(log.gameId + '-hapiDataCache')
     window.location.reload()
   })
 
@@ -472,8 +475,8 @@ async function displayGroupedFleetMovements(groupedMovements) {
 
   $('.select-delay').on('change', async (e) => {
     e.preventDefault()
-    const cacheKey = 'hapiDataCache'
-    const cachedData = localStorage.getItem(cacheKey)
+    const log = await Hyp.getSession()
+    const cachedData = localStorage.getItem(log.gameId + '-hapiDataCache')
 
     const fleetId = $(e.currentTarget).find(':selected').attr('data-fleetid')
 
@@ -554,8 +557,9 @@ window.setTimeout(() => {
 </div>
 `)
 
-    $('#updateDelays').click(function (e) {
+    $('#updateDelays').click(async (e) => {
       e.preventDefault()
+      const log = await Hyp.getSession()
       const desiredETAString = $('#desiredETA').val()
       const desiredETATime = convertETAToDate(desiredETAString)
 
@@ -563,7 +567,7 @@ window.setTimeout(() => {
         setTimeout(() => {
           const $row = $(this)
           const fleetId = $row.attr('data-fleetId')
-          const cachedData = localStorage.getItem('hapiDataCache')
+          const cachedData = localStorage.getItem(log.gameId + '-hapiDataCache')
           const cache = JSON.parse(cachedData)
           const fleetData = cache.data.find((move) => move.fleetid === fleetId)
           if (!fleetData) {
