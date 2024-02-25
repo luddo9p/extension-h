@@ -3,7 +3,7 @@ const setMap = async function () {
   let switches = await localforage.getItem(gameId + '-switches')
   let alliance = JSON.parse(
     localStorage.getItem(gameId + '-hapi-alliance-owned-planets')
-  )
+
 
   console.log(alliance.planets)
 

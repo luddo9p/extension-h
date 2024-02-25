@@ -63,3 +63,29 @@ async function PostForeign() {
 }
 
 PostForeign()
+
+
+async function getForeignPlanets() {
+  const log = await Hyp.getSession()
+  const gameId = log.gameId
+  const cacheKey = `${gameId}-hapi-alliance-foreign-planets`
+  const updateKey = `${gameId}-last-update-time`
+  const now = new Date().getTime()
+
+  // Vérifie si les données ont été mises à jour il y a moins de 5 minutes
+  const lastUpdateTime = parseInt(localStorage.getItem(updateKey), 10)
+  if (lastUpdateTime && now - lastUpdateTime < 300000) {
+    console.log('Données mises à jour il y a moins de 5 minutes.')
+    return JSON.parse(localStorage.getItem(cacheKey))
+  }
+  let apiUrl = ''
+  // apiUrl = 'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/getForeign'
+  apiUrl = 'http://localhost:8885/.netlify/functions/getForeign'
+  const planets = await fetch(apiUrl)
+  localStorage.setItem(cacheKey, JSON.stringify(planets))
+  localStorage.setItem(updateKey, now.toString())
+
+  return planets
+}
+
+getForeignPlanets()
