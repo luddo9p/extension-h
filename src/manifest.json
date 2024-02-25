@@ -48,7 +48,8 @@
         "extlibs/bootstrap/js/bootstrap.min.js",
         "classes/Hapi.js",
         "classes/HapiMoves.js",
-        "classes/HapiAlliance.js"
+        "classes/HapiAlliance.js",
+        "classes/HapiControlled.js"
       ],
       "css": [
         "styles/ticks.css",
