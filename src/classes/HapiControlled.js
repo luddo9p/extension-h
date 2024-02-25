@@ -1,7 +1,7 @@
 async function PostControlled() {
   const currentTime = new Date().getTime()
   const lastExecutionTime = localStorage.getItem('lastExecutionTime')
-  const fiveMinutes = 300000 // 5 minutes en millisecondes
+  const fiveMinutes = 300000/5 // 5 minutes en millisecondes
 
   if (lastExecutionTime && currentTime - lastExecutionTime < fiveMinutes) {
     console.log('Attente avant la prochaine exécution.')
@@ -47,3 +47,11 @@ async function PostControlled() {
 }
 
 PostControlled()
+
+
+async function getControlledPlanets() {
+  const response = await fetch('https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/getControlled')
+  const data = await response.json()
+  console.log('Données récupérées:', data)
+  return data
+}
