@@ -1,0 +1,65 @@
+async function PostForeign() {
+  const currentTime = new Date().getTime()
+  const lastExecutionTimeForeign = localStorage.getItem(
+    'lastExecutionTimeForeign'
+  )
+  const fiveMinutes = 0 // 5 minutes en millisecondes
+
+  if (
+    lastExecutionTimeForeign &&
+    currentTime - lastExecutionTimeForeign < fiveMinutes
+  ) {
+    console.log('Attente avant la prochaine exécution.')
+    return // Arrête l'exécution si moins de 5 minutes se sont écoulées
+  }
+
+  // Enregistre le moment de l'exécution actuelle pour les vérifications futures
+  localStorage.setItem('lastExecutionTimeForeign', currentTime.toString())
+
+  const log = await Hyp.getSession()
+  const donneeCachee = localStorage.getItem(
+    log.gameId + '-hapiDataCacheForeign'
+  )
+
+  let playerN = document.querySelector('a[rel="playerSubmenu"] b').textContent
+
+  const foreignPlanets = await Hyp.getForeignPlanets()
+
+  const planetList = []
+
+  foreignPlanets.forEach((planet) => {
+    let planetString = ''
+    if (planet.neutral) {
+      planetString = `${planet.name} - ${planet.neutral ? 'Neutral' : ''} - ${planet.attacking ? 'Att' : 'Def'} - ${planet.spaceAvgp}`
+    } else if (!planet.neutral && !planet.attacking) {
+      planetString = `${planet.name} - ${planet.stasis ? 'Stasis' : 'No stasis'} - Def - ${planet.spaceAvgp}`
+    } else {
+      planetString = `${planet.name} - ${
+        planet.stasis ? 'Stasis' : 'No stasis'} - ${planet.attacking ? 'Att' : 'Def'} - ${planet.spaceAvgp}`
+    }
+    planetList.push(planetString)
+  })
+
+  console.log(planetList)
+
+  const netlifyFunctionUrl =
+    'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/foreign'
+
+
+  // const netlifyFunctionUrl =
+  // 'http://localhost:8885/.netlify/functions/foreign'
+
+  fetch(netlifyFunctionUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      player: playerN,
+      foreign: planetList,
+    }),
+  }).then((response) => response.json())
+
+}
+
+PostForeign()

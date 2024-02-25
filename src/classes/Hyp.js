@@ -1033,6 +1033,33 @@ var Hyp = {
     return promise
   },
 
+  convertUnitToNumber(unit) {
+    switch (unit) {
+      case 'K':
+        return 1e3
+      case 'M':
+        return 1e6
+      case 'B':
+        return 1e9
+      default:
+        return 1
+    }
+  },
+
+  convertAndSum(value1) {
+
+    if(!value1) return 0
+    // Extrait le nombre et l'unité de la première valeur
+    const matches = value1.match(/([\d.]+)([KMB])?/)
+    if (!matches) return value1
+
+    const baseNumber = parseFloat(matches[1])
+    const unit = matches[2] || ''
+    const unitMultiplier = Hyp.convertUnitToNumber(unit)
+
+    return Math.round(baseNumber * unitMultiplier)
+  },
+
   getForeignPlanets: function () {
     var promise = $.Deferred(),
       H = this
@@ -1041,9 +1068,26 @@ var Hyp = {
       function (data) {
         var planets = []
         $('.planetCard3', data).each(function (_, element) {
+          // Sélectionne tous les éléments td
+          const tdElements = element.querySelectorAll('td')
+
+          let spaceAvgp = 0
+          tdElements.forEach((td, index) => {
+            if (td.textContent.trim() === 'Space AvgP:') {
+              $parent = $(td).parent()
+              const spaceAvgPValue = $parent.find('.vb').text()
+
+              spaceAvgp = Hyp.convertAndSum(spaceAvgPValue.split(' + ')[0]) + Hyp.convertAndSum(spaceAvgPValue.split(' + ')[1])
+              spaceAvgp = numeral(spaceAvgp).format('0[.]0a')
+            }
+          })
+
           var row = {
             name: $(element).find('.planet').text(),
             stasis: $(element).find('.flagStasis').length > 0,
+            neutral: element.innerHTML.includes('[Neutral]'),
+            attacking: element.innerHTML.includes('Attacking'),
+            spaceAvgp: spaceAvgp,
           }
 
           planets.push(row)
@@ -1435,7 +1479,7 @@ var Hyp = {
       const response = await axios.get(url)
       const data = response.data
       const $html = $(data)
-  
+
       return $html
     } catch (error) {
       console.error('Erreur lors du scraping :', error)

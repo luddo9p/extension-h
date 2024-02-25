@@ -49,7 +49,8 @@
         "classes/Hapi.js",
         "classes/HapiMoves.js",
         "classes/HapiAlliance.js",
-        "classes/HapiControlled.js"
+        "classes/HapiControlled.js",
+        "classes/HapiForeign.js"
       ],
       "css": [
         "styles/ticks.css",
