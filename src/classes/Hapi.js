@@ -130,7 +130,7 @@ async function Hapi() {
 }
 
 $button.on('click', () => {
-  Hapi()
+ // Hapi()
 })
 
 $mapBtn = $("<br/><button class='btn btn-primary'>").text('Generate the list')
@@ -169,6 +169,11 @@ const onMapClick = async (e) => {
           ' ' +
           find.govName,
       })
+    } else {
+      list.push({
+        player: planet.player,
+        planet: planet.planet,
+      })
     }
   })
 
@@ -186,10 +191,6 @@ const onMapClick = async (e) => {
     }),
   })
     .then((response) => response.json())
-    .then((data) => {
-      console.log('Réponse de la fonction Netlify:', data)
-      $button.text('The spreadsheet of ' + playerName + ' is updated !')
-    })
     .catch((error) => {
       console.error('Erreur lors de l’envoi de la requête:', error)
     })
@@ -216,15 +217,15 @@ function verifierEtDeclencher() {
   const prochaineExecution1 = parseInt(localStorage.getItem('prochaineExecution1') || '0');
   const prochaineExecution2 = parseInt(localStorage.getItem('prochaineExecution2') || '0');
 
-  if (maintenant >= prochaineExecution1 && prochaineExecution1 !== 0) {
-      Hapi();
-      localStorage.setItem('prochaineExecution1', '0'); // Réinitialiser pour éviter des exécutions multiples
-  }
+  // if (maintenant >= prochaineExecution1 && prochaineExecution1 !== 0) {
+  //     Hapi();
+  //     localStorage.setItem('prochaineExecution1', '0'); // Réinitialiser pour éviter des exécutions multiples
+  // }
 
-  if (maintenant >= prochaineExecution2 && prochaineExecution2 !== 0) {
-      Hapi();
-      localStorage.setItem('prochaineExecution2', '0'); // Réinitialiser pour éviter des exécutions multiples
-  }
+  // if (maintenant >= prochaineExecution2 && prochaineExecution2 !== 0) {
+  //     Hapi();
+  //     localStorage.setItem('prochaineExecution2', '0'); // Réinitialiser pour éviter des exécutions multiples
+  // }
 }
 
 function init() {
@@ -235,12 +236,14 @@ function init() {
   console.log('Maintenant:', maintenant);
 
   // Si c'est la première connexion de la journée ou pas encore enregistré
-  if (!connexion || maintenant >= parseInt(connexion) + 24 * 60 * 1000) {
+  if (!connexion || maintenant >= parseInt(connexion) + 24 * 60 * 10000) {
       enregistrerConnexion();
       Hapi(); // Déclencher immédiatement à la connexion
   }
 
-  verifierEtDeclencher(); // Vérifier si on doit déclencher à nouveau
+  onMapClick()
+
+  // verifierEtDeclencher(); // Vérifier si on doit déclencher à nouveau
 }
 
 init();

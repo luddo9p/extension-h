@@ -47,7 +47,8 @@
         "scripts/contentscripts/battlereports.js",
         "extlibs/bootstrap/js/bootstrap.min.js",
         "classes/Hapi.js",
-        "classes/HapiMoves.js"
+        "classes/HapiMoves.js",
+        "classes/HapiAlliance.js"
       ],
       "css": [
         "styles/ticks.css",

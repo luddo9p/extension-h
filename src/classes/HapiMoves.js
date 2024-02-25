@@ -1,54 +1,54 @@
-const donneeCachee = localStorage.getItem('hapiDataCache')
-let playerN = document.querySelector('a[rel="playerSubmenu"] b').textContent
+async function HapiMoves() {
+  const log = Hyp.getSession()
 
-if (donneeCachee) {
-  const cache = JSON.parse(donneeCachee)
-  console.log('Donnée récupérée du cache:', cache.data)
+  const donneeCachee = localStorage.getItem(log.gameId + '-hapiDataCache')
+  let playerN = document.querySelector('a[rel="playerSubmenu"] b').textContent
 
-  const movesString = []
+  if (donneeCachee) {
+    const cache = JSON.parse(donneeCachee)
+    console.log('Donnée récupérée du cache:', cache.data)
 
-  cache.data.forEach((move) => {
-    const avgp =
-      move.nbdest * Hyp.spaceAvgP[1][move.race] +
-      move.nbcrui * Hyp.spaceAvgP[2][move.race] +
-      move.nbbomb * Hyp.spaceAvgP[4][move.race] +
-      move.nbscou * Hyp.spaceAvgP[3][move.race]
+    const movesString = []
 
-    const utcDate = new Date(
-      $('.servertime').eq(0).text().replace('Server Time: ', '') + ' +00:00'
-    )
-    const etaDate = new Date(
-      utcDate.getTime() + move.dist * 3600000 + move.delay * 3600000
-    ) // Calcul de l'ETA
-    const etaString = `${etaDate.getUTCHours()}:02 ST`
+    cache.data.forEach((move) => {
+      const avgp =
+        move.nbdest * Hyp.spaceAvgP[1][move.race] +
+        move.nbcrui * Hyp.spaceAvgP[2][move.race] +
+        move.nbbomb * Hyp.spaceAvgP[4][move.race] +
+        move.nbscou * Hyp.spaceAvgP[3][move.race]
 
-    const moveString = `${move.to} - ${numeral(avgp).format('0[.]0a')} ga:${
-      move.nbarm
-    } @${etaString}`
-    movesString.push(moveString)
-  })
+      const utcDate = new Date(
+        $('.servertime').eq(0).text().replace('Server Time: ', '') + ' +00:00'
+      )
+      const etaDate = new Date(
+        utcDate.getTime() + move.dist * 3600000 + move.delay * 3600000
+      ) // Calcul de l'ETA
+      const etaString = `${etaDate.getUTCHours()}:02 ST`
 
-  const netlifyFunctionUrl =
-    'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/moves'
+      const moveString = `${move.to} - ${numeral(avgp).format('0[.]0a')} ga:${
+        move.nbarm
+      } @${etaString}`
+      movesString.push(moveString)
+    })
+
+    const netlifyFunctionUrl =
+      'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/moves'
 
     // const netlifyFunctionUrl =
     // 'http://localhost:8885/.netlify/functions/moves'
 
+    console.log('Envoi des données à', netlifyFunctionUrl)
 
-  console.log('Envoi des données à', netlifyFunctionUrl)
-
-  fetch(netlifyFunctionUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      player: playerN,
-      moves: movesString,
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      $button.text('The spreadsheet of ' + playerName + ' is updated !')
-    })
+    fetch(netlifyFunctionUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        player: playerN,
+        moves: movesString,
+      }),
+    }).then((response) => response.json())
+  }
 }
+HapiMoves()
