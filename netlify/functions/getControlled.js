@@ -58,9 +58,8 @@ exports.handler = async (event) => {
 
       const data = response.data.values;
       const players = data.slice(1).map((row) => ({
-        name: row[0].split(' - ')[0],
-        info: row[0].split(' - ')[1],
-        owner: data[0][0],
+        planet: row[0].split(' - ')[0],
+        player: data[0][0],
       }));
 
       allPlayers.push(...players);

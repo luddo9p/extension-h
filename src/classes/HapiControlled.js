@@ -50,8 +50,13 @@ PostControlled()
 
 
 async function getControlledPlanets() {
+    const log = await Hyp.getSession()
+    const cache = localStorage.getItem(log.gameId + '-hapi-alliance-owned-planets')
+
   const response = await fetch('https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/getControlled')
   const data = await response.json()
-  console.log('Données récupérées:', data)
+  console.log('Données récupérées:', data, JSON.parse(cache))
   return data
 }
+
+getControlledPlanets()
