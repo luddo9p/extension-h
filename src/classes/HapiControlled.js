@@ -43,7 +43,7 @@ async function PostControlled() {
     }),
   }).then((response) => response.json())
 
-  console.log(planetList)
+  // console.log(planetList)
 }
 
 PostControlled()

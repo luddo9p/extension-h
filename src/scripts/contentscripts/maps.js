@@ -3,10 +3,12 @@ const setMap = async function () {
   let switches = await localforage.getItem(gameId + '-switches')
   let alliance = JSON.parse(
     localStorage.getItem(gameId + '-hapi-alliance-owned-planets')
+  )
+  let foreign = JSON.parse(
+    localStorage.getItem(gameId + '-hapi-alliance-foreign-planets')
+  )
 
-
-  console.log(alliance.planets)
-
+  console.log(foreign)
   const list = []
 
   if ($('.ecomap').length > 0) {
@@ -100,6 +102,11 @@ const setMap = async function () {
               ]
 
               //var find = _.indexOf(store.alliance, planet.name)
+              var foreignFind = foreign.find(
+                (item) => item.planet === planet.name
+              )
+
+              console.log(foreignFind)
 
               var find = alliance.planets.find(
                 (item) => item.planet === planet.name
@@ -109,7 +116,16 @@ const setMap = async function () {
                 (item) => item.id === planet.id
               )
 
+              let foreignInfo = ''
+              if (foreignFind) {
+                foreignInfo += foreignFind.player + ' - ' + foreignFind.status
+                if (foreignFind.spaceAvgp) {
+                  foreignInfo += ' - ' + foreignFind.spaceAvgp
+                }
+              }
+
               var ally = find ? 'ally-planet' : ''
+              var isForeign = foreignFind ? 'foreign-planet' : ''
 
               if (ally != '') {
                 nameElements[0].html($('<span>').html(planet.name + '&nbsp;'))
@@ -144,23 +160,33 @@ const setMap = async function () {
                   'bgcolor',
                   'lightgreen'
                 )
+              } else if (isForeign != '') {
+                let colorForeign =
+                  foreignFind.status === 'Def' ? '#00007f' : 'brown'
+                colorForeign = foreignFind.neutral
+                  ? 'darkslategray'
+                  : colorForeign
+
+                tr = $('<tr class="' + isForeign + '">').attr(
+                  'bgcolor',
+                  colorForeign
+                )
               } else {
                 if (planet.govName == 'Hyp.') {
-                  tr = $('<tr class="hyp">').attr('bgcolor', 'orange')
+                  tr = $('<tr class="hyp">')
                 } else if (planet.govName == 'Dict.') {
-                  tr = $('<tr class="dict">').attr('bgcolor', '#8a3333')
+                  tr = $('<tr class="dict">')
                 } else {
                   tr = $('<tr class="' + ally + '">')
                 }
               }
-              // var find = store.data.find(
-              //   (item) => item.planet === planet.name
-              // )
 
               const owner =
                 find && find.player ? '&nbsp;' + '' + find.player : ''
-              const infos = owner
-      
+              let infos = owner
+
+              const infosString = (infos != '') ? infos : foreignInfo
+
               var td = $('<td>').append([
                 $(
                   '<span class="hl" color="olive" style="white-space:nowrap; min-width:80px; display:inline-block">'
@@ -202,8 +228,7 @@ const setMap = async function () {
                 $('<span class="hr info span-info">').html(
                   '&nbsp;' +
                     numeral(planet.activity).format('k') +
-                    '&nbsp;' +
-                    infos
+                    '&nbsp;' + infosString
                 ),
               ])
               if (planet.isBlackholed) {
