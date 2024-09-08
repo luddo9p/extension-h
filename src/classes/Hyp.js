@@ -112,43 +112,18 @@ var Hyp = {
       .join('')
   },
   
-  attackList: [
-    {
-      Synopsia:
-        '',
-    },
-    {
-      Varkenslacht:
-        '',
-    },
-    {
-      Gescom:
-        'Senteurraclette,Rimkdu108,scrotumvelu,Chiengaleux,Lisa1,Lisa2,Freretang,LBDdantoncul,Veineluisante,susmafreztagada,Boulecoco,Nonbinaire,Glucideviril,lll-llllllll-ll,HomeWorld,Agazde,Texigain,Tehuan,Aghuvu,Tehumer,Minazgar,Texiwy,Agxijou,Minhuxi,Texigu,Agaztrion,Aghuion,Texifarm,Minhugar,Minaz,Minhutian,Texion,Minhupa,Minaztr,Minxi,Agxito',
-    },
-    {
-      Sidious:
-        '',
-    },
-    {
-      Ninurta:
-        '',
-    },
-    {
-      FiFi: '',
-    },
-    {
-      Scratchy:
-        '',
-    },
-    {
-      Seymour:
-        '',
-    },
-    {
-      Tleilax:
-        '',
-    },
-  ],
+  async getPlayerAttackList(currentPlayer, gameId) {
+
+    const attackList = JSON.parse(localStorage.getItem(gameId + '-hapi-attack-list')).attacks;
+  
+    const currentPlayerAttacks = attackList
+      .filter((attack) => attack.player === currentPlayer)
+      .map((attack) => attack.planet);
+  
+    const ccPlanets = currentPlayerAttacks.length > 0 ? currentPlayerAttacks : [];
+    
+    return ccPlanets;
+  },
 
   login: function (login, password) {
     var H = this,

@@ -10,17 +10,9 @@ const setMap = async function () {
 
   const currentPlayer = await localforage.getItem(gameId + '-currentPlayer')
 
-  const attackList = await localforage.getItem(gameId + '-attackList');
+  const ccPlanets = await Hyp.getPlayerAttackList(currentPlayer, gameId)
 
-  console.log('store', attackList);
-  const currentPlayerAttObject = Hyp.attackList.find(
-    (item) => item[currentPlayer]
-  )
-  const currentPlayerAttList = currentPlayerAttObject
-    ? currentPlayerAttObject[currentPlayer]
-    : null
-  const ccPlanets = currentPlayerAttList ? currentPlayerAttList.split(',') : []
-
+  console.log('store', ccPlanets)
 
   const list = []
 
@@ -119,7 +111,7 @@ const setMap = async function () {
                 (item) => item.planet === planet.name
               )
 
-              var findAtt = ccPlanets.find((item) => item ===  planet.name)
+              var findAtt = ccPlanets.find((item) => item === planet.name)
 
               var find = alliance.planets.find(
                 (item) => item.planet === planet.name

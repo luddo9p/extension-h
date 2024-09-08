@@ -48,15 +48,6 @@ exports.handler = async (event) => {
       resource: { values: formattedData.planets },
     })
 
-    if(formattedData.player === 'Gescom') {
-      const response_2 = await sheets.spreadsheets.values.update({
-        spreadsheetId,
-        range : 'Gescom-2!A1',
-        valueInputOption: 'USER_ENTERED',
-        resource: { values: formattedData.planets },
-      })
-    }
-
     // Mise à jour de B106
     await sheets.spreadsheets.values.update({
       spreadsheetId,

@@ -3,7 +3,7 @@ function copyMoves() {
     const movesDivs = document.querySelectorAll('.moves');
 
     if (movesDivs.length === 0) {
-        console.error('No elements with class .moves found');
+        // console.error('No elements with class .moves found');
         return;
     }
 

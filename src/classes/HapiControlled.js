@@ -94,29 +94,61 @@ async function getAttackList() {
   const now = new Date().getTime();
   const EXPIRE = 3600000;
 
+  // Vérifie le cache et sa date de mise à jour
   const lastUpdateTime = parseInt(localStorage.getItem(updateKey), 10);
   if (lastUpdateTime && now - lastUpdateTime < EXPIRE) {
     console.log('Utilisation des données en cache (moins d\'une heure depuis la dernière mise à jour).');
-    return JSON.parse(localStorage.getItem(cacheKey)).attacks;
+    const cachedData = localStorage.getItem(cacheKey);
+    if (cachedData) {
+      const parsedCache = JSON.parse(cachedData);
+      return parsedCache.attacks || [];
+    }
+    return [];
   }
 
-  const response = await fetch('https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/getAttackList');
-  const data = await response.json();
+  try {
+    const response = await fetch('https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/getAttackList');
+    const data = await response.json();
+    console.log('Réponse API :', data); // Log la réponse API
 
-  const cache = localStorage.getItem(cacheKey);
-  const cachedAttacks = cache ? JSON.parse(cache).attacks : [];
+    // Vérifie si 'data' est bien un objet avec des listes de planètes
+    const attackList = [];
+    if (data && typeof data === 'object') {
+      for (const player in data) {
+        if (Array.isArray(data[player])) {
+          data[player].forEach(planet => {
+            attackList.push({ player, planet });
+          });
+        }
+      }
+    }
 
-  const combinedArray = data.concat(cachedAttacks);
-  const uniqueArray = combinedArray.filter((attack, index, self) =>
-    index === self.findIndex((t) => t.player === attack.player && t.attack === attack.attack)
-  );
+    console.log('Liste des attaques :', attackList); // Log les données des attaques
 
-  localStorage.setItem(cacheKey, JSON.stringify({ attacks: uniqueArray }));
-  localStorage.setItem(updateKey, now.toString());
+    // Vérifie l'existence du cache
+    const cache = localStorage.getItem(cacheKey);
+    const cachedAttacks = cache ? JSON.parse(cache).attacks || [] : [];
 
-  return uniqueArray;
+    // Fusionne les deux tableaux et supprime les doublons
+    const combinedArray = attackList.concat(cachedAttacks);
+    const uniqueArray = combinedArray.filter((attack, index, self) =>
+      index === self.findIndex((t) => t.player === attack.player && t.planet === attack.planet)
+    );
+
+    // Stocke le tableau unique et le temps de mise à jour dans localStorage
+    localStorage.setItem(cacheKey, JSON.stringify({ attacks: uniqueArray }));
+    localStorage.setItem(updateKey, now.toString());
+
+    return uniqueArray;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des données de l\'API :', error);
+    return [];
+  }
 }
 
 getAttackList();
+
+
+
 
 getControlledPlanets();

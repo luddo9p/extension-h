@@ -9,17 +9,7 @@ $(document).ready(function () {
       const store = await localforage.getItem(gameId + '-alliance');
       const currentPlayer = await localforage.getItem(gameId + '-currentPlayer');
 
-      const attackList = await localforage.getItem(gameId + '-attackList');
-
-      console.log('store', attackList);
-
-      const currentPlayerAttObject = Hyp.attackList.find(
-        (item) => item[currentPlayer]
-      );
-      const currentPlayerAttList = currentPlayerAttObject
-        ? currentPlayerAttObject[currentPlayer]
-        : null;
-      const ccPlanets = currentPlayerAttList ? currentPlayerAttList.split(',') : [];
+      const ccPlanets = await Hyp.getPlayerAttackList(currentPlayer, gameId)
 
       $('form').before(`
         <div class="buttons">
