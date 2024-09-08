@@ -86,4 +86,37 @@ async function getControlledPlanets() {
     return uniqueArray;
 }
 
+async function getAttackList() {
+  const log = await Hyp.getSession();
+  const gameId = log.gameId;
+  const cacheKey = `${gameId}-hapi-attack-list`;
+  const updateKey = `${gameId}-last-attack-update-time`;
+  const now = new Date().getTime();
+  const EXPIRE = 3600000;
+
+  const lastUpdateTime = parseInt(localStorage.getItem(updateKey), 10);
+  if (lastUpdateTime && now - lastUpdateTime < EXPIRE) {
+    console.log('Utilisation des données en cache (moins d\'une heure depuis la dernière mise à jour).');
+    return JSON.parse(localStorage.getItem(cacheKey)).attacks;
+  }
+
+  const response = await fetch('https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/getAttackList');
+  const data = await response.json();
+
+  const cache = localStorage.getItem(cacheKey);
+  const cachedAttacks = cache ? JSON.parse(cache).attacks : [];
+
+  const combinedArray = data.concat(cachedAttacks);
+  const uniqueArray = combinedArray.filter((attack, index, self) =>
+    index === self.findIndex((t) => t.player === attack.player && t.attack === attack.attack)
+  );
+
+  localStorage.setItem(cacheKey, JSON.stringify({ attacks: uniqueArray }));
+  localStorage.setItem(updateKey, now.toString());
+
+  return uniqueArray;
+}
+
+getAttackList();
+
 getControlledPlanets();

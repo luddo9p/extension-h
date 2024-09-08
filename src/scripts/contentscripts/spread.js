@@ -9,6 +9,10 @@ $(document).ready(function () {
       const store = await localforage.getItem(gameId + '-alliance');
       const currentPlayer = await localforage.getItem(gameId + '-currentPlayer');
 
+      const attackList = await localforage.getItem(gameId + '-attackList');
+
+      console.log('store', attackList);
+
       const currentPlayerAttObject = Hyp.attackList.find(
         (item) => item[currentPlayer]
       );

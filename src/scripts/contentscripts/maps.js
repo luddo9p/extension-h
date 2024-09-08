@@ -9,6 +9,10 @@ const setMap = async function () {
   )
 
   const currentPlayer = await localforage.getItem(gameId + '-currentPlayer')
+
+  const attackList = await localforage.getItem(gameId + '-attackList');
+
+  console.log('store', attackList);
   const currentPlayerAttObject = Hyp.attackList.find(
     (item) => item[currentPlayer]
   )
