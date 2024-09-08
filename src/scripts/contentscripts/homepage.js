@@ -1,5 +1,6 @@
 $(document).ready(function () {
   var $d = $(document)
+  
 
   var $megaWrapper = $(`<div class='dashboard-hyp'></div>`)
   $megaWrapper.insertAfter('#htopmenu')
@@ -7,9 +8,17 @@ $(document).ready(function () {
   const displayPlanetInfos = async function () {
     const gameId = await localforage.getItem('currentGameId')
     let planets = await localforage.getItem(gameId + '-currentPlanets')
+
+    const cachedData = localStorage.getItem(gameId + '-hapiDataCache')
+    if (!cachedData) {
+      // window.location.href = 'https://hyperiums.com/servlet/Fleets?pagetype=moving_fleets&goback=true';
+      throw new Error('Aucune donnée en cache.');
+    }
+    const moves = JSON.parse(cachedData).data
+
     planets.data.forEach((el) => {
       if (el.tag.length > 0 && el.tag != undefined && el.tag != '') {
-        window.TAG = el.tag
+        window.TAG = 'SPICE'
         return
       }
     })
@@ -224,7 +233,20 @@ $(document).ready(function () {
         .append(
           `<button data-action='abandon' data-id="${planetId}"  class="ab yellow">🌌&nbsp;&nbsp;Abandon</button>`
         )
+
+
+        const movesHTML = Hyp.generateFleetMovesHTML(moves, _planet.name);
+
+
+        if (movesHTML) {
+          const $movesTable = $('<div class="moves"></div>');
+          $movesTable.html(movesHTML);
+          element.find('.buttons').append($movesTable);
+        }
+
     })
+
+
     core = [...new Set(core)]
     let today = new Date().toISOString().split('T')[0]
     if (historical === null) {
@@ -342,17 +364,18 @@ $(document).ready(function () {
 
     let _post = {
       planetid: id,
-      joinalliance: action,
-      tag: window.TAG,
+      joinalliance: 'Join',
+      tag: 'spice',
     }
-    if (action === 'Leave') {
-      _post = null
-      _post = {
-        planetid: id,
-        quitalliance: action,
-        tagid0: tagId,
-      }
-    }
+    console.log(_post)
+    // if (action === 'Leave') {
+    //   _post = null
+    //   _post = {
+    //     planetid: id,
+    //     quitalliance: action,
+    //     tagid0: tagId,
+    //   }
+    // }
     $.post('/servlet/Planet', _post).done((response) => {
       if (action === 'Leave') {
         $this.attr('data-action', 'Join').html('🐼&nbsp;&nbsp;Tag')
@@ -447,442 +470,11 @@ $(document).ready(function () {
         // Hyp.storeData(_newStore)
       })
     })
+
   })
 
-  const displayCoreThreats = async function () {
-    const gameId = await localforage.getItem('currentGameId')
-    let dataSwitches = await localforage.getItem(gameId + '-core')
-    if (!dataSwitches) return
-    _.orderBy(dataSwitches.data, ['warning'], ['desc'])
-    var $wrapperSwitch = $('<div class="incore-threat moves banner"></div>')
-    var $li = ''
-
-    dataSwitches.data.forEach((row) => {
-      let time = ' - '
-      let ago = ' - '
-      if (row.time) {
-        time = moment(row.time).utc().format('YYYY-MM-DD HH:mm:ss')
-        ago = moment(row.time).utc().fromNow(true)
-      }
-      let spliting = row.coords.split(',')
-      let coords = {
-        x: parseFloat(spliting[0].replace(/[^\d.-]/g, '')),
-        y: parseFloat(spliting[1].replace(/[^\d.-]/g, '')),
-      }
-
-      let tag = row.tag == '-' ? '[]' : row.tag
-      let warning = row.warning ? 'warning' : ''
-      let tactmap = row.tactmap ? row.tactmap.nrg : ' - '
-      let check = tactmap === ' - ' ? 'warning' : ''
-      //console.log(row)
-      $li += `<tr class="switch ${warning} ${check}"><td><a target="_blank" href="/servlet/Maps?tm=&reqx=${
-        coords.x
-      }&reqy=${coords.y}&d=0&clusterid=1">${
-        row.planet
-      }</a></td><td>${row.prod.charAt(0)}</td><td>${row.race.charAt(
-        0
-      )}</td><td>${row.gov}</td><td>${row.civ}</td><td>${
-        row.coords
-      }</td><td>${tactmap}</td><td>${
-        row.warning || check === 'warning' ? '1' : '0'
-      }</td><td>${time}</td><td>${ago}</td></tr>`
-    })
-
-    $wrapperSwitch.html(`
-              <h3>Incore monitoring ${dataSwitches.index} / ${
-      dataSwitches.threatsLenght
-    } (${dataSwitches.data[dataSwitches.index].planet})</h3>
-              <table class="switches" id="core-switch">
-                <thead>
-                  <tr>
-                    <td>Planet</td>
-                    <td>Prod</td>
-                    <td>Race</td>
-                    <td>Gov</td>
-                    <td>Civ</td>
-                    <td>Coords</td>
-                    <td>Nrg</td>
-                    <td>Warn</td>
-                    <td>Time</td>
-                    <td>Relative Time</td>
-                  </tr>
-                </thead>
-                ${$li}
-              </table>
-            `)
-    if (dataSwitches.data.length > 0) {
-      if ($('.incore-threat').length === 0) {
-        $megaWrapper.prepend($wrapperSwitch)
-        var table = $('#core-switch').DataTable()
-        table.order([7, 'desc']).draw()
-      }
-    }
-  }
-
-  const displayTagSwitches = async function () {
-    const gameId = await localforage.getItem('currentGameId')
-    let dataSwitches = await localforage.getItem(gameId + '-tags')
-    if (!dataSwitches) return
-    dataSwitches = dataSwitches.data.reverse()
-    var $wrapperSwitch = $('<div class="moves banner"></div>')
-    var $li = ''
-
-    // clean old records
-    var dateObj = new Date(Date.now() - 86400000 * 3)
-    dataSwitches.forEach((item, i) => {
-      if (item.time < dateObj.getTime()) {
-        dataSwitches.splice(i, 1)
-      }
-    })
-    localforage.setItem(gameId + '-tags', {
-      lastUpdate: new Date().getTime(),
-      lastUpdateReadable: new Date(),
-      data: dataSwitches,
-    })
-
-    _.slice(dataSwitches, 0, 5000).forEach((row, index) => {
-      let time = ' - '
-      let ago = ' - '
-      if (row.time) {
-        time = moment(row.time).utc().format('YYYY-MM-DD HH:mm:ss')
-        ago = moment(row.time).utc().fromNow(true)
-      }
-      let spliting = row.old.coords.split(',')
-
-      let coords = {
-        x: parseFloat(spliting[0].replace(/[^\d.-]/g, '')),
-        y: parseFloat(spliting[1].replace(/[^\d.-]/g, '')),
-      }
-
-      let switchInCore = ''
-      if (coords.x > -5 && coords.x < 5 && coords.y < 0) {
-        switchInCore = 'switch-in-core'
-      }
-
-      let tag = row.new.tag == '-' ? '[]' : row.new.tag
-      let oldTag = row.old.tag == '-' ? '[]' : row.old.tag
-      $li += `<tr class="switch"><td><a href="https://hyperiums.com/servlet/Maps?pt=&reqx=${
-        coords.x
-      }&reqy=${coords.y}&c=1&d=2" target="_blank">${
-        row.new.planet
-      }</a></td><td>${row.old.prod.charAt(0)}</td><td>${row.old.race.charAt(
-        0
-      )}</td><td>${row.new.gov}</td><td>${row.old.civ}</td><td>${
-        row.new.coords
-      }</td><td>${oldTag} > ${tag}</td><td>${time}</td><td>${ago}</td></tr>`
-    })
-
-    $wrapperSwitch.html(`
-              <h3>Tag switch</h3>
-              <table class="switches" id="tag-switch">
-                <thead>
-                  <tr>
-                    <td>Planet</td>
-                    <td>Prod</td>
-                    <td>Race</td>
-                    <td>Gov</td>
-                    <td>Civ</td>
-                    <td>Coords</td>
-                    <td>Switch Tag</td>
-                    <td>Time</td>
-                    <td>Relative Time</td>
-                  </tr>
-                </thead>
-                ${$li}
-              </table>
-            `)
-    if (dataSwitches.length > 0) {
-      $megaWrapper.prepend($wrapperSwitch)
-      var table = $('#tag-switch').DataTable()
-      table.order([7, 'desc']).draw()
-    }
-  }
-
-  const displaySwitchGovs = async function () {
-    const gameId = await localforage.getItem('currentGameId')
-    let dataSwitches = await localforage.getItem(gameId + '-switches')
-    if (!dataSwitches) return
-    dataSwitches = dataSwitches.data.reverse()
-    // clean old records
-    var dateObj = new Date(Date.now() - 86400000 * 3)
-    dataSwitches.forEach((item, i) => {
-      if (item.time < dateObj.getTime()) {
-        dataSwitches.splice(i, 1)
-      }
-    })
-    localforage.setItem(gameId + '-switches', {
-      lastUpdate: new Date().getTime(),
-      lastUpdateReadable: new Date(),
-      data: dataSwitches,
-    })
-
-    var $wrapperSwitch = $('<div class="moves banner"></div>')
-    var $li = ''
-    // dataSwitches = _.filter(dataSwitches, function(o) {
-    //   return o.new.tag != 'PANDA'
-    // })
-    _.slice(dataSwitches, 0, 5000).forEach((row, index) => {
-      let time = ' - '
-      let ago = ' - '
-      if (row.time) {
-        time = moment(row.time).utc().format('YYYY-MM-DD HH:mm:ss')
-        ago = moment(row.time).utc().fromNow(true)
-      }
-      let spliting = row.old.coords.split(',')
-
-      let coords = {
-        x: parseFloat(spliting[0].replace(/[^\d.-]/g, '')),
-        y: parseFloat(spliting[1].replace(/[^\d.-]/g, '')),
-      }
-
-      let switchInCore = ''
-      if (gameId == 2) {
-        if (coords.x > -5 && coords.x < 5 && coords.y < 0) {
-          switchInCore = 'switch-in-core'
-        }
-      }
-
-      //console.log(row)
-      if (row.old.gov == 'Hyp.' && row.new.gov == 'Demo.') {
-        let tag = row.new.tag === 'undefined' ? '' : row.new.tag
-        $li += `<tr class="switch-hyp ${switchInCore}"><td>${
-          row.new.id
-        }</td><td><a href="https://hyperiums.com/servlet/Maps?pt=&reqx=${
-          coords.x
-        }&reqy=${coords.y}&c=1&d=2" target="_blank">${
-          row.new.planet
-        }</a></td><td>[<b>${tag}</b>]</td><td>${row.old.prod.charAt(
-          0
-        )}</td><td>${row.old.race.charAt(0)}</td><td>${row.old.civ}</td><td>${
-          row.old.activity
-        }</td><td>${row.old.coords}</td><td>${row.old.gov} > ${
-          row.new.gov
-        }</td><td>${time}</td><td>${ago}</td></tr>`
-      } else if (row.new.gov == 'Dict.' && row.new.prod == 'Techno') {
-        let tag = row.new.tag === 'undefined' ? '' : row.new.tag
-        $li += `<tr class="switch-dict ${switchInCore}"><td>${
-          row.new.id
-        }</td><td><a href="https://hyperiums.com/servlet/Maps?pt=&reqx=${
-          coords.x
-        }&reqy=${coords.y}&c=1&d=2" target="_blank">${
-          row.new.planet
-        }</a></td><td>[<b>${tag}</b>]</td><td>${row.old.prod.charAt(
-          0
-        )}</td><td>${row.old.race.charAt(0)}</td><td>${row.old.civ}</td><td>${
-          row.old.activity
-        }</td><td>${row.old.coords}</td><td>${row.old.gov} > ${
-          row.new.gov
-        }</td><td>${time}</td><td>${ago}</td></tr>`
-      } else if (row.new.gov == 'Dict.' && row.new.prod !== 'Techno') {
-        let tag = row.new.tag === 'undefined' ? '' : row.new.tag
-        $li += `<tr class="switch-dict-core ${switchInCore}"><td>${
-          row.new.id
-        }</td><td><a href="https://hyperiums.com/servlet/Maps?pt=&reqx=${
-          coords.x
-        }&reqy=${coords.y}&c=1&d=2" target="_blank">${
-          row.new.planet
-        }</a></td><td>[<b>${tag}</b>]</td><td>${row.old.prod.charAt(
-          0
-        )}</td><td>${row.old.race.charAt(0)}</td><td>${row.old.civ}</td><td>${
-          row.old.activity
-        }</td><td>${row.old.coords}</td><td>${row.old.gov} > ${
-          row.new.gov
-        }</td><td>${time}</td><td>${ago}</td></tr>`
-      } else if (switchInCore != '') {
-        let tag = row.new.tag === 'undefined' ? '' : row.new.tag
-        $li += `<tr class="switch ${switchInCore}"><td>${
-          row.new.id
-        }</td><td><a href="https://hyperiums.com/servlet/Maps?pt=&reqx=${
-          coords.x
-        }&reqy=${coords.y}&c=1&d=2" target="_blank">${
-          row.new.planet
-        }</a></td><td>[<b>${tag}</b>]</td><td>${row.old.prod.charAt(
-          0
-        )}</td><td>${row.old.race.charAt(0)}</td><td>${row.old.civ}</td><td>${
-          row.old.activity
-        }</td><td>${row.old.coords}</td><td>${row.old.gov} > ${
-          row.new.gov
-        }</td><td>${time}</td><td>${ago}</td></tr>`
-      } else {
-        let tag = row.new.tag === 'undefined' ? '' : row.new.tag
-        $li += `<tr class="switch"><td>${
-          row.new.id
-        }</td><td><a href="https://hyperiums.com/servlet/Maps?pt=&reqx=${
-          coords.x
-        }&reqy=${coords.y}&c=1&d=2" target="_blank">${
-          row.new.planet
-        }</a></td><td>[<b>${tag}</b>]</td><td>${row.old.prod.charAt(
-          0
-        )}</td><td>${row.old.race.charAt(0)}</td><td>${row.old.civ}</td><td>${
-          row.old.activity
-        }</td><td>${row.old.coords}</td><td>${row.old.gov} > ${
-          row.new.gov
-        }</td><td>${time}</td><td>${ago}</td></tr>`
-      }
-    })
-
-    $wrapperSwitch.html(`
-              <h3>Gov switch</h3>
-              <table class="switches" id="gov-switch">
-                <thead>
-                  <tr>
-                  <td>ID</td>  
-                  <td>Planet</td>
-                    <td>Tag</td>
-                    <td>Prod</td>
-                    <td>Race</td>
-                    <td>Civ</td>
-                    <td>Activity</td>
-                    <td>Coords</td>
-                    <td>Switch</td>
-                    <td>Timestamp</td>
-                    <td>Relative Time</td>
-                  </tr>
-                </thead>
-                ${$li}
-              </table>
-            `)
-    if (dataSwitches.length > 0) {
-      $megaWrapper.prepend($wrapperSwitch)
-      var table = $('#gov-switch').DataTable()
-      table.order([9, 'desc']).draw()
-    }
-  }
-
-  const displayMoves = async function () {
-    const gameId = await localforage.getItem('currentGameId')
-    // let moves = await localforage.getItem(gameId + '-moves')
-    // moves = moves.data
-
-    var $wrapper = $('<div class="moves banner"></div>')
-    var resumes = []
-    _.forEach(moves, function (el, i) {
-      var move = []
-
-      _.forEach(el, function (_fleet, i) {
-        var scouts = Hyp.spaceAvgP[3][_fleet.race] * _fleet.nbscou
-        var bombers = Hyp.spaceAvgP[4][_fleet.race] * _fleet.nbbomb
-        var destroyers = Hyp.spaceAvgP[1][_fleet.race] * _fleet.nbdest
-        var cruisers = Hyp.spaceAvgP[1][_fleet.race] * _fleet.nbcrui
-
-        var avgp = scouts + bombers + destroyers + cruisers
-
-        move.push({
-          camo: parseInt(_fleet.camouf) == 0 ? 'off' : 'on',
-          from: _fleet.from,
-          to: _fleet.to,
-          eta: parseInt(_fleet.dist) + parseInt(_fleet.delay),
-          avgp: avgp,
-          type: parseInt(_fleet.defend) == 1 ? 'DEF' : 'ATT',
-        })
-        // avgp = numeral(avgp).format('0[.]0a')
-      })
-      var resume = {
-        camo: move[0].camo,
-        avgp: numeral(_.sumBy(move, 'avgp')).format('0[.]0a').toLowerCase(),
-        from: move[0].from,
-        to: move[0].to,
-        type: move[0].type,
-        eta: move[0].eta,
-      }
-      resumes.push(resume)
-    })
-    $table = ''
-    if (resumes.length > 0) {
-      resumes = _.orderBy(resumes, 'eta')
-      _.forEach(resumes, function (resume, i) {
-        $table += `<tr>
-        <td>${resume.from} >>> ${resume.to}</td>
-        <td><b>${resume.eta}h</b></td>
-        <td>${resume.avgp}</td>
-        <td><span class="camo-${resume.camo}">${resume.camo}</span></td>
-        <td>${resume.type}</td>
-      </tr>`
-      })
-
-      $wrapper.html(`
-    <h3>Moves</h3>
-      <table id="moves-switch" class="switches">
-        <thead>
-          <tr>
-            <td>Move</td>
-            <td>ETA</td>
-            <td>AVGP</td>
-            <td>Camo</td>
-            <td>ATT/DEF</td>
-          </tr>
-        </thead>
-        <tbody>
-        ${$table}
-        </tbody>
-      </table>`)
-
-      $megaWrapper.prepend($wrapper)
-    }
-  }
-
-  const showPop = async function () {
-    var $wrapper = $('<div class="moves banner"></div>')
-    const gameId = await localforage.getItem('currentGameId')
-    let historical = await localforage.getItem(gameId + '-historical')
-    let $table = ''
-    let totalPlanet = historical[0].data.length
-    let totalPop = 0
-    historical[0].data.forEach((row) => {
-      var prod = row.productId === 0 ? 'Agro' : 'Minero'
-      prod = row.productId === 2 ? 'Techno' : prod
-      var race = row.raceId === 0 ? 'Human' : 'Azterk'
-      race = row.raceId === 2 ? 'Xillor' : race
-      let natural = parseFloat(row.popGrowth)
-      let leech = row.leechGrowth ? parseFloat(row.leechGrowth) : 0
-      let solde = natural + leech
-      var overExploited =
-        row.numExploits * 10 > row.pop ? 'switch-dict-core' : ''
-      totalPop += row.pop
-      $table += `<tr class="${overExploited}">
-        <td><a target="_blank" href="/servlet/Planet?planetid=${row.id}">${
-        row.name
-      }</a></td>
-        <td><b>${numeral(row.pop).format('0,0')}</b></td>
-        <td>${natural}</td>
-        <td>${leech}</td>
-        <td>${solde}</td>
-        <td>${prod}</td>
-        <td>${race}</td>
-        <td>${row.tax}</td>
-        <td>${row.numExploits}</td>
-      </tr>`
-    })
-
-    const popAvg = numeral(totalPop / totalPlanet).format('0,0')
-    $wrapper.html(`
-  <h3>Pop (avg : ${popAvg})</h3>
-    <table id="pop-switch" class="switches">
-      <thead>
-        <tr>
-        <td>Planet</td>
-        <td>Population</td>
-        <td>Natural</td>
-        <td>Leech</td>
-        <td>Pop Growth</td>
-        <td>Prod</td>
-        <td>Race</td>
-        <td>WTR</td>
-        <td>Exploits</td>
-        </tr>
-      </thead>
-      <tbody>
-      ${$table}
-      </tbody>
-    </table>`)
-
-    $megaWrapper.prepend($wrapper)
-    var table = $('#pop-switch').DataTable()
-    table.order([1, 'desc']).draw()
-  }
 
   Hyp.getSession().then((log) => {
-
     localforage.setItem('currentGameId', log.gameId).then((go) => {
       console.log(
         '%c *** Boot Game Id ' + log.gameId + ' ***',
@@ -894,11 +486,11 @@ $(document).ready(function () {
         localforage.setItem(gameId + '-currentPlayer', playerName)
         const currentPlanets = await setDBData_currentPlanets()
         console.log('currentPlanets', currentPlanets)
-        await new Promise((r) => setTimeout(r, 500))
+        await new Promise((r) => setTimeout(r, 100))
         await setDBData_foreignPlanets()
-        await new Promise((r) => setTimeout(r, 500))
+        await new Promise((r) => setTimeout(r, 100))
         await setAlliance()
-        await new Promise((r) => setTimeout(r, 500))
+        await new Promise((r) => setTimeout(r, 100))
         displayPlanetInfos()
         // displayMoves();
       }

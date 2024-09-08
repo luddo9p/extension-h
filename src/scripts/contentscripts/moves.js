@@ -177,91 +177,98 @@ const changeMoves = () => {
     }
   })
 
-  $('.link-drop').on('click', async (e) => {
-    e.preventDefault() // Empêche l'action par défaut
+  window.setTimeout(() => {
+    $('.link-drop').on('click', async (e) => {
+      e.preventDefault() // Empêche l'action par défaut
 
-    const target = $(e.currentTarget) // Utiliser e.currentTarget pour référencer l'élément cliqué
-    const fleetId = target.attr('data-fleet')
-    const dropMode = target.attr('data-drop') == '1' ? '0' : '1'
-    const mission = target.attr('data-mission')
-    const to = target.attr('data-destname')
-    const delay = target.attr('data-delay')
-    const camo = target.attr('data-camo')
+      const target = $(e.currentTarget) // Utiliser e.currentTarget pour référencer l'élément cliqué
+      const fleetId = target.attr('data-fleet')
+      const dropMode = target.attr('data-drop') == '1' ? '0' : '1'
+      const mission = target.attr('data-mission')
+      const to = target.attr('data-destname')
+      const delay = target.attr('data-delay')
+      const camo = target.attr('data-camo')
 
-    const change = await $.post('/servlet/Fleets', {
-      destname: to,
-      mission: mission,
-      dropmode: dropMode,
-      camouflage: camo,
-      delay: delay,
-      updatefleet: 'Update',
-      floatid: fleetId,
-      pagetype: 'moving_fleets',
-    })
-    const log = await Hyp.getSession()
-    let text = target.text()
-    text = text === 'auto drop' ? 'drop on order' : 'auto drop'
-    target.text(text)
-    // Récupération et mise à jour du cache
-    const cacheKey = log.gameId + '-hapiDataCache'
-    const cachedData = localStorage.getItem(cacheKey)
-    if (cachedData) {
-      const cache = JSON.parse(cachedData)
+      const change = await $.post('/servlet/Fleets', {
+        destname: to,
+        mission: mission,
+        dropmode: dropMode,
+        camouflage: camo,
+        delay: delay,
+        updatefleet: 'Update',
+        floatid: fleetId,
+        pagetype: 'moving_fleets',
+      })
+      const log = await Hyp.getSession()
+      let text = target.text()
+      text = text === 'auto drop' ? 'drop on order' : 'auto drop'
+      target.text(text)
+      // Récupération et mise à jour du cache
+      const cacheKey = log.gameId + '-hapiDataCache'
+      const cachedData = localStorage.getItem(cacheKey)
+      if (cachedData) {
+        const cache = JSON.parse(cachedData)
 
-      // Trouver et mettre à jour l'objet spécifique dans le tableau en cache
-      const index = cache.data.findIndex((move) => move.fleetid === fleetId)
-      if (index !== -1) {
-        cache.data[index].autodrop = dropMode // Modifier la valeur de camo
+        // Trouver et mettre à jour l'objet spécifique dans le tableau en cache
+        const index = cache.data.findIndex((move) => move.fleetid === fleetId)
+        if (index !== -1) {
+          cache.data[index].autodrop = dropMode // Modifier la valeur de camo
+        }
+
+        // Remettre le tableau modifié dans localStorage
+        localStorage.setItem(cacheKey, JSON.stringify(cache))
       }
-
-      // Remettre le tableau modifié dans localStorage
-      localStorage.setItem(cacheKey, JSON.stringify(cache))
-    }
-  })
-
-  $('.link-camo').on('click', async (e) => {
-    e.preventDefault() // Empêche l'action par défaut
-
-    const target = $(e.currentTarget) // Utiliser e.currentTarget pour référencer l'élément cliqué
-    const fleetId = target.attr('data-fleet')
-    const dropMode = target.attr('data-drop')
-    const mission = target.attr('data-mission')
-    const to = target.attr('data-destname')
-    const delay = target.attr('data-delay')
-    const camo = target.attr('data-camo') == '1' ? '0' : '1'
-
-    const change = await $.post('/servlet/Fleets', {
-      destname: to,
-      mission: mission,
-      dropmode: dropMode,
-      camouflage: camo,
-      delay: delay,
-      updatefleet: 'Update',
-      floatid: fleetId,
-      pagetype: 'moving_fleets',
     })
 
-    let text = target.text()
-    text = text === '👻 camo is off' ? '👻 camo is on' : '👻 camo is off'
-    target.removeClass('camo-1 camo-0').addClass(`camo-${camo}`)
-    target.text(text)
+    $('.link-camo').on('click', async (e) => {
+      e.preventDefault() // Empêche l'action par défaut
 
-    // Récupération et mise à jour du cache
-    const log = await Hyp.getSession()
-    const cachedData = localStorage.getItem(log.gameId + '-hapiDataCache')
-    if (cachedData) {
-      const cache = JSON.parse(cachedData)
+      const target = $(e.currentTarget) // Utiliser e.currentTarget pour référencer l'élément cliqué
+      const fleetId = target.attr('data-fleet')
+      const dropMode = target.attr('data-drop')
+      const mission = target.attr('data-mission')
+      const to = target.attr('data-destname')
+      const delay = target.attr('data-delay')
+      const camo = target.attr('data-camo') == '1' ? '0' : '1'
 
-      // Trouver et mettre à jour l'objet spécifique dans le tableau en cache
-      const index = cache.data.findIndex((move) => move.fleetid === fleetId)
-      if (index !== -1) {
-        cache.data[index].camouf = camo // Modifier la valeur de camo
+      const change = await $.post('/servlet/Fleets', {
+        destname: to,
+        mission: mission,
+        dropmode: dropMode,
+        camouflage: camo,
+        delay: delay,
+        updatefleet: 'Update',
+        floatid: fleetId,
+        pagetype: 'moving_fleets',
+      })
+
+      let text = target.text()
+      text = text === '👻 camo is off' ? '👻 camo is on' : '👻 camo is off'
+      target.removeClass('camo-1 camo-0').addClass(`camo-${camo}`)
+      target.text(text)
+
+      // Récupération et mise à jour du cache
+      const log = await Hyp.getSession()
+      // Récupération et mise à jour du cache
+      const cacheKey = log.gameId + '-hapiDataCache'
+
+      const cachedData = localStorage.getItem(log.gameId + '-hapiDataCache')
+      if (cachedData) {
+        const cache = JSON.parse(cachedData)
+
+        // Trouver et mettre à jour l'objet spécifique dans le tableau en cache
+        const index = cache.data.findIndex((move) => move.fleetid === fleetId)
+        if (index !== -1) {
+          cache.data[index].camouf = camo // Modifier la valeur de camo
+        }
+
+        // Remettre le tableau modifié dans localStorage
+        localStorage.setItem(cacheKey, JSON.stringify(cache))
       }
+    })
 
-      // Remettre le tableau modifié dans localStorage
-      localStorage.setItem(cacheKey, JSON.stringify(cache))
-    }
-  })
+    console.log('changeMoves', $('.link-camo'))
+  }, 1000)
 }
 
 function groupFleetMovementsByDestination(fleetMovements) {
@@ -462,9 +469,13 @@ async function displayGroupedFleetMovements(groupedMovements) {
   // reset cache
   $('.refresh').on('click', async (e) => {
     e.preventDefault()
+    $('.refresh').text('Refreshing cache...')
     const log = await Hyp.getSession()
     localStorage.removeItem(log.gameId + '-hapiDataCache')
-    window.location.reload()
+    localStorage.removeItem(log.gameId + '-lastUpdateTime')
+    window.setTimeout(() => {
+      window.location.reload()
+    }, 500)
   })
 
   $('.fleet-movement').on('click', (e) => {
@@ -600,4 +611,18 @@ window.setTimeout(() => {
       })
     })
   })
+
+  $('.movingFleetCard').on('click', function (e) {
+    if (!$(this).find('.checkbox').prop('checked')) {
+      $(this).find('.checkbox').prop('checked', true)
+    } else {
+      $(this).find('.checkbox').prop('checked', false)
+    }
+  })
+
+  window.setTimeout(() => {
+    // if (window.location.href.includes('goback=true')) {
+    //   window.history.back()
+    // }
+  }, 400)
 }, 100)

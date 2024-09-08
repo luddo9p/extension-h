@@ -7,6 +7,7 @@
 
   "background": {
     "scripts": [
+      "extlibs/localforage.min.js",
       "extlibs/momentjs/moment.js",
       "extlibs/lodash/lodash.min.js",
       "scripts/background/messages.js",
@@ -28,7 +29,7 @@
 
   "content_scripts": [
     {
-      "matches": ["https://hyperiums.com/*"],
+      "matches": ["https://*.hyperiums.com/*"],
       "js": [
         "classes/Hyp.js",
         "extlibs/localforage.min.js",
@@ -51,7 +52,9 @@
         "classes/HapiAlliance.js",
         "classes/HapiControlled.js",
         "classes/HapiForeign.js",
-        "classes/reset.js"
+        "classes/reset.js",
+        "core/utils.js",
+        "scripts/contentscripts/movesCopy.js"
       ],
       "css": [
         "styles/ticks.css",
@@ -106,6 +109,14 @@
       ]
     },
     {
+      "matches": ["https://hyperiums.com/servlet/Planet?globalciv="],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/civ.js"
+      ]
+    },
+    {
       "matches": [
         "https://hyperiums.com/servlet/Player",
         "https://hyperiums.com/servlet/Player*",
@@ -132,11 +143,11 @@
       "js": [
         "extlibs/jquery/jquery.js",
         "extlibs/jquery-ui/jquery-ui.js",
-        "scripts/contentscripts/militaryPage.js",
         "scripts/contentscripts/spread.js",
-        "scripts/contentscripts/moves.js"
+        "scripts/contentscripts/moves.js",
+        "scripts/contentscripts/militaryPage.js"
       ]
-    },    
+    },
     {
       "matches": [
         "https://hyperiums.com/servlet/Fleets",
@@ -148,7 +159,7 @@
         "extlibs/jquery-ui/jquery-ui.js",
         "scripts/contentscripts/armygen.js"
       ]
-    },    
+    },
     {
       "matches": [
         "https://hyperiums.com/servlet/Planetinf",
@@ -234,14 +245,12 @@
   "permissions": [
     "https://hyperiums.com/",
     "https://hyp2.hyperiums.com/",
-    "alarms",
     "cookies",
+    "alarms",
     "storage",
     "tts",
     "unlimitedStorage"
   ],
 
-  "web_accessible_resources": [
-    "pages/fleets/calc.html"
-  ]
+  "web_accessible_resources": ["pages/fleets/calc.html"]
 }

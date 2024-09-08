@@ -31,6 +31,124 @@ var Hyp = {
   getLogoutUrl: function () {
     return this.url('Logout?logout_mode=&logout=Logout')
   },
+  generateFleetMovesHTML(moves, planetName) {
+    // Fonction pour calculer l'ETA
+    function calculateETA(move, utcDate) {
+      const dist = parseInt(move.dist, 10)
+      const delay = parseInt(move.delay, 10)
+  
+      if (isNaN(dist) || isNaN(delay)) {
+        console.error('Invalid move.dist or move.delay value')
+        return null
+      }
+  
+      const etaDate = new Date(utcDate.getTime() + dist * 3600000 + delay * 3600000) // Calcul de l'ETA
+  
+      if (isNaN(etaDate.getTime())) {
+        console.error('Invalid ETA date calculated')
+        return null
+      }
+  
+      return etaDate
+    }
+  
+    // Filtrer les mouvements et ajouter l'ETA
+    const movesWithETA = moves
+      .filter((move) => move.to === planetName)
+      .map((move) => {
+  
+        const avgp =
+          move.nbdest * Hyp.spaceAvgP[1][move.race] +
+          move.nbcrui * Hyp.spaceAvgP[2][move.race] +
+          move.nbbomb * Hyp.spaceAvgP[4][move.race] +
+          move.nbscou * Hyp.spaceAvgP[3][move.race]
+  
+        // Obtenez la chaîne de date depuis le DOM
+        const serverTimeText = $('.servertime').eq(0).text()
+        console.log('Server time text:', serverTimeText)
+  
+        // Extraire la partie pertinente (ici, "ST: 2024-09-04 10:43:58")
+        const dateMatch = serverTimeText.match(
+          /ST:\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})/
+        )
+        if (!dateMatch) {
+          console.error('Date format not found in serverTimeText')
+          return null // Gérer l'erreur comme nécessaire
+        }
+  
+        // Créez la chaîne de date au format ISO 8601
+        const dateString = `${dateMatch[1]}Z`
+  
+        // Créez un objet Date à partir de la chaîne
+        const utcDate = new Date(dateString)
+  
+        // Définir etaDate
+        const etaDate = calculateETA(move, utcDate)
+  
+        return {
+          avgp,
+          nbarm: move.nbarm,
+          etaDate,
+          etaTime: (parseInt(move.dist, 10) + parseInt(move.delay, 10)) || 'N/A'
+        }
+      })
+      .filter(move => move) // Filtrer les mouvements invalides
+      .sort((a, b) => a.etaDate - b.etaDate) // Trier du plus proche au plus éloigné
+      var pLayerName = $('#htopmenu > li:nth-child(5) > a > div > b')
+      .text()
+      .trim()
+    // Générer le HTML basé sur les mouvements triés
+    return movesWithETA
+      .map((move) => {
+        const etaString = move.etaDate ? `${move.etaDate.getUTCHours()}:02 ST` : 'N/A' // Utilisez 'N/A' si etaDate est invalide
+  
+        return `<div class="row">
+                  ${planetName} - 
+                  Fleet: ${numeral(move.avgp).format('0[.]0a')} - 
+                  Ga : ${numeral(move.nbarm).format('0[.]0a')} - 
+                  ETA: ${move.etaTime} - ${etaString} (${pLayerName})
+                </div>`
+      })
+      .join('')
+  },
+  
+  attackList: [
+    {
+      Synopsia:
+        'lllll-l-lllllll,ll-llllllll-ll,Grandebistouque,Sonia,Talondvioc,Freretang,LBDdantoncul,Veineluisante,susmafreztagada,Boulecoco,Nonbinaire,Glucideviril,Sestka,desetka,TROJKA,enajstka,Petka,Belafoumouk,Mark,ll-llll-lllllll,llll-llllllllll,ll-ll-lllllll,llll-llll-lllll,Marrs,Mezzanine,Mozz,Marzipan,ILbastardo,lllllllllll-l-l,llllllllll-llll,ll-llllll-llll,l-l-ll-llllllll,lllllll-lllllll,Manta,Rebels',
+    },
+    {
+      Varkenslacht:
+        'Brahma,Takenoko,Vishnu,Freyr,Izanami,Gloin,Heimdal,Gilgamesh,Fast,Epic,Bluenote,Freyja,Raijin,Fujin,Rohe,tzimisce,Ventrue,Curb,Free,Welt,Wise,Expo,Zenith,Tonenili,Hastsezini,Requiem,Dokho,Camus,Toreador,Gangrel,Crown,Doom,Yuck,Fiannas,Wendigo,Maharet,Mekare,Maui,Balder',
+    },
+    {
+      Gescom:
+        'Senteurraclette,Rimkdu108,scrotumvelu,Chiengaleux,Lisa1,Lisa2,Freretang,LBDdantoncul,Veineluisante,susmafreztagada,Boulecoco,Nonbinaire,Glucideviril,lll-llllllll-ll,HomeWorld,Agazde,Texigain,Tehuan,Aghuvu,Tehumer,Minazgar,Texiwy,Agxijou,Minhuxi,Texigu,Agaztrion,Aghuion,Texifarm,Minhugar,Minaz,Minhutian,Texion,Minhupa,Minaztr,Minxi,Agxito',
+    },
+    {
+      Sidious:
+        'Echo,Flea,Crowd,Fish,Fido,Crows,Majestic,Monster,Godot,Crockette,Cortez,Wood,Yard,Goof,Geek,Weep,Wank,Waft,zee-,Zee-Ro,Meter,Millenium,Mitosis,Cuts2,Cuts,Exam,Gang,Duty,Drug,Gash,ILtiempo,Z-O2,z-01,Marrs,Mezzanine',
+    },
+    {
+      Ninurta:
+        'Neutral-1CL-D,Neutral-1G1-R,Neutral-5H-19,Rodrik,Toto,Navalny,Banban,Aulnes,Neutral-37N-1J,Neutral-3M2-1V,Aube,Crepuscule,Eternelle,Behemot,Aronda,Bourdeloux,Groguette,Neutral-LL-14,Neutral-1C-M,Neutral-2Y5-1J,Edelweiss,Sarkorax,Vraktar,Zibreline,Ellestar,Epeou,Alcion,Thalek,Neutral-285-1G',
+    },
+    {
+      FiFi: 'Raclette,Illith,Astir,CatNyx,Stella-Maris,Balanga,Neutral-2JK-1W,Neutral-J-14,Neutral-LT-15,Neutral-UM-H1,Neutral-G-B2,Neutral-UD-Z7,Neutral-13V-10,Neutral-6X-1X,Neutral-P1-B0,Neutral-O-1Z,Erevila,Berereb,Neutral-U6-K,Neutral-378-J,Neutral-EE-1D,Neutral-4S-C1,Neutral-7Y-1H,Neutral-EX-10,Neutral-NT-QT,Neutral-1BR-1H,Jean,Louis,Neutral-8N-Y2,M-45-2H,A-45-1X,TL-01,-Trantor-, -Sol-, -Terra-,Terminus,Holy_Terra',
+    },
+    {
+      Scratchy:
+        'Eastern6,Eastern1,Eastern7,Eastern2,Eastern3,Eastern4,Eastern8,Eastern5,Northern.1,Northern.3,Northern.2,Northern.5,Northenr.6,Northern.4,Northern.7,Northern.8,Reem,Locke,Sligo,Forth,Hypss,Lucky,Montu,Hoth,Margrave,Simas,-Dominion-, -Seldon-, -Nocturne-,Macragge,Istvaan,Luna,Matters,Mind,Gaia',
+    },
+    {
+      Seymour:
+        'Proxima-Dracos,night-white,MikeT,OTP-13,Blue-Planet,Neutral-08-QS1,Seth-1,MX-NLT-R57,Tagle,Clopi-clopan,Niktou,Dyn-landi,Dagonz,Volns-5I4X7l,Groot,Boson-1Il-132,Fox-1,oli-32s-4,Frontier,Mektoub,Notilus,Fire,Naqmeo,phobie,Monoxysz,zil25-f5d8,sila-1o,Cloe-12,mosea1-87,stra-0f4g',
+    },
+    {
+      Tleilax:
+        'Mesa,Marshall,galiop,prodaz-21,Blackstar,Laney,Frankenstrat,Brownie,Thunderbird,Sheraton,zfrox-69Q,Calamir,Vox.,Crate,Plexi,ES-335,Telecaster,Mockingird,Soloist,Clyde',
+    },
+  ],
 
   login: function (login, password) {
     var H = this,
@@ -1047,8 +1165,7 @@ var Hyp = {
   },
 
   convertAndSum(value1) {
-
-    if(!value1) return 0
+    if (!value1) return 0
     // Extrait le nombre et l'unité de la première valeur
     const matches = value1.match(/([\d.]+)([KMB])?/)
     if (!matches) return value1
@@ -1077,7 +1194,9 @@ var Hyp = {
               $parent = $(td).parent()
               const spaceAvgPValue = $parent.find('.vb').text()
 
-              spaceAvgp = Hyp.convertAndSum(spaceAvgPValue.split(' + ')[0]) + Hyp.convertAndSum(spaceAvgPValue.split(' + ')[1])
+              spaceAvgp =
+                Hyp.convertAndSum(spaceAvgPValue.split(' + ')[0]) +
+                Hyp.convertAndSum(spaceAvgPValue.split(' + ')[1])
               spaceAvgp = numeral(spaceAvgp).format('0[.]0a')
             }
           })

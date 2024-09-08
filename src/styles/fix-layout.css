@@ -918,3 +918,51 @@ h4 {
   display:block;
   margin: 10px auto;
 }
+
+table .moves {
+  width: 100%;
+}
+
+.moves {
+  margin: 10px 0;
+  padding: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.moves .row {
+  color: cadetblue;
+  font-weight: bold;
+  display: flex;
+  justify-content: start;
+  gap: 10px;
+  background: #303028;
+  width: 90%;
+  padding: 5px;
+}
+
+.moves .row:nth-child(odd) {
+  background: #2b2b2b;
+}
+
+.movingFleetCard:hover {
+  filter: invert(0.05);
+  cursor: pointer;
+}
+
+
+/* #armiesPanel, #fleetsPanel, #stasisPanel, #hgPanel {
+  display: block !important;
+}
+
+.manageButtons {
+  display:none;
+} */
+
+.line1,.line0 {
+  cursor: pointer;
+}
+
+.line1:hover,.line0:hover {
+  filter: invert(0.05);
+}

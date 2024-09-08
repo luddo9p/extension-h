@@ -5,8 +5,6 @@ const infiltrations = async function () {
   const gameId = await localforage.getItem('currentGameId')
   let planets = await localforage.getItem(gameId + '-currentPlanets')
 
-  const planetFind = planets.data.find((p) => p.id === id)
-
   let farms = []
   const elements = $('.nonclickable').eq(2).find('table tr')
   return new Promise((resolve, reject) => {
@@ -16,10 +14,13 @@ const infiltrations = async function () {
           const link = $(el).find('a').eq(2).attr('href')
           if (link) {
             $.get(link, (content) => {
-              console.log(link)
+              
+              // Planetspy?planetid=2042&backurl=Planetinf?planetid=219
               var urlParams = new URLSearchParams(link)
+              const id = link.split('?')[1].split('&')[0].replace('planetid=', '')
               const pop = $(content).find('.hlight').eq(3).text()
               const name = $(content).find('.hugetext.bold').text()
+
 
               farms.push({
                 name,
@@ -34,7 +35,7 @@ const infiltrations = async function () {
           if (i === elements.length - 1) {
             resolve(farms)
           }
-        }, i * 100)
+        }, i * 400)
       }
     })
   })
@@ -60,6 +61,8 @@ $('.nonclickable').eq(2).before(
 const farms = infiltrations().then(async (farms) => {
   const gameId = await localforage.getItem('currentGameId')
   const localFarms = await localforage.getItem(gameId + '-farms-' + id)
+
+
   let timestamp = localFarms ? localFarms.lastUpdate : undefined
   if (timestamp == undefined || new Date().getTime() - timestamp >= 86400) {
     localforage

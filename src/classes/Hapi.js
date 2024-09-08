@@ -1,5 +1,3 @@
-
-
 let playerName = document.querySelector('a[rel="playerSubmenu"] b').textContent
 
 $button = $("<br/><button class='btn btn-primary'>").text(
@@ -38,8 +36,26 @@ async function Hapi() {
       }
     })
 
-    const upkeep = Math.abs($(cashHtml).find('.cashArray').eq(0).find('tr').eq(2).find('.hr').text().replace(/\D/g, ''))
-    const deployment = Math.abs($(cashHtml).find('.cashArray').eq(0).find('tr').eq(3).find('.hr').text().replace(/\D/g, ''))
+  const upkeep = Math.abs(
+    $(cashHtml)
+      .find('.cashArray')
+      .eq(0)
+      .find('tr')
+      .eq(2)
+      .find('.hr')
+      .text()
+      .replace(/\D/g, '')
+  )
+  const deployment = Math.abs(
+    $(cashHtml)
+      .find('.cashArray')
+      .eq(0)
+      .find('tr')
+      .eq(3)
+      .find('.hr')
+      .text()
+      .replace(/\D/g, '')
+  )
 
   const rawPlanets = []
   planets.data.forEach((planet) => {
@@ -116,7 +132,7 @@ async function Hapi() {
       player: playerName,
       planets: formattedData,
       upkeep: upkeep,
-      deployment: deployment
+      deployment: deployment,
     }),
   })
     .then((response) => response.json())
@@ -130,7 +146,7 @@ async function Hapi() {
 }
 
 $button.on('click', () => {
- // Hapi()
+  Hapi()
 })
 
 $mapBtn = $("<br/><button class='btn btn-primary'>").text('Generate the list')
@@ -152,7 +168,11 @@ const onMapClick = async (e) => {
 
   const planets = Hyp.getPlanetsFromTradingMap(doc)
 
+  // Récupérer la liste des planètes d'alliance et vérification
   const alliancePlanetList = await localforage.getItem(log.gameId + '-alliance')
+  if (!alliancePlanetList || !alliancePlanetList.data) {
+    throw new Error("Les données de l'alliance sont introuvables.")
+  }
 
   alliancePlanetList.data.forEach((planet) => {
     const find = planets.find((item) => item.name === planet.planet)
@@ -178,7 +198,7 @@ const onMapClick = async (e) => {
   })
 
   const netlifyFunctionUrl =
-  'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/list'
+    'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/list'
 
   fetch(netlifyFunctionUrl, {
     method: 'POST',
@@ -201,49 +221,52 @@ $mapBtn.on('click', () => {
 })
 
 function enregistrerConnexion() {
-  const maintenant = new Date();
-  localStorage.setItem('connexion', maintenant.getTime());
+  const maintenant = new Date()
+  localStorage.setItem('connexion', maintenant.getTime())
 
   // Planifier les prochaines exécutions
-  const prochaineExecution1 = maintenant.getTime() + 8 * 60 * 60 * 1000; // 8 heures plus tard
-  const prochaineExecution2 = prochaineExecution1 + 8 * 60 * 60 * 1000; // Encore 8 heures plus tard
+  const prochaineExecution1 = maintenant.getTime() + 8 * 60 * 60 * 1000 // 8 heures plus tard
+  const prochaineExecution2 = prochaineExecution1 + 8 * 60 * 60 * 1000 // Encore 8 heures plus tard
 
-  localStorage.setItem('prochaineExecution1', prochaineExecution1);
-  localStorage.setItem('prochaineExecution2', prochaineExecution2);
+  localStorage.setItem('prochaineExecution1', prochaineExecution1)
+  localStorage.setItem('prochaineExecution2', prochaineExecution2)
 }
 
 function verifierEtDeclencher() {
-  const maintenant = new Date().getTime();
-  const prochaineExecution1 = parseInt(localStorage.getItem('prochaineExecution1') || '0');
-  const prochaineExecution2 = parseInt(localStorage.getItem('prochaineExecution2') || '0');
+  const maintenant = new Date().getTime()
+  const prochaineExecution1 = parseInt(
+    localStorage.getItem('prochaineExecution1') || '0'
+  )
+  const prochaineExecution2 = parseInt(
+    localStorage.getItem('prochaineExecution2') || '0'
+  )
 
-  // if (maintenant >= prochaineExecution1 && prochaineExecution1 !== 0) {
-  //     Hapi();
-  //     localStorage.setItem('prochaineExecution1', '0'); // Réinitialiser pour éviter des exécutions multiples
-  // }
+  if (maintenant >= prochaineExecution1 && prochaineExecution1 !== 0) {
+    Hapi()
+    localStorage.setItem('prochaineExecution1', '0') // Réinitialiser pour éviter des exécutions multiples
+  }
 
-  // if (maintenant >= prochaineExecution2 && prochaineExecution2 !== 0) {
-  //     Hapi();
-  //     localStorage.setItem('prochaineExecution2', '0'); // Réinitialiser pour éviter des exécutions multiples
-  // }
+  if (maintenant >= prochaineExecution2 && prochaineExecution2 !== 0) {
+    Hapi()
+    localStorage.setItem('prochaineExecution2', '0') // Réinitialiser pour éviter des exécutions multiples
+  }
 }
 
 function init() {
-  const connexion = localStorage.getItem('connexion');
-  const maintenant = new Date().getTime();
+  const connexion = localStorage.getItem('connexion')
+  const maintenant = new Date().getTime()
 
-  console.log('Dernière connexion:', connexion);
-  console.log('Maintenant:', maintenant);
+  console.log('Dernière connexion:', connexion)
+  console.log('Maintenant:', maintenant)
 
   // Si c'est la première connexion de la journée ou pas encore enregistré
   if (!connexion || maintenant >= parseInt(connexion) + 24 * 60 * 10000) {
-      enregistrerConnexion();
-      Hapi(); // Déclencher immédiatement à la connexion
+    enregistrerConnexion()
+    Hapi() // Déclencher immédiatement à la connexion
+    onMapClick()
   }
-
-  onMapClick()
 
   // verifierEtDeclencher(); // Vérifier si on doit déclencher à nouveau
 }
 
-init();
+init()

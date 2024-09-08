@@ -4,10 +4,11 @@ async function HapiMoves() {
   const cacheKey = `${gameId}-hapiDataCache`
   const updateKey = `${gameId}-lastUpdateTime`
   const now = new Date().getTime()
+  const EXPIRE = 3600000
 
   // Vérifie si la dernière requête a été faite il y a moins d'une heure
   const lastUpdateTime = parseInt(localStorage.getItem(updateKey), 10)
-  if (lastUpdateTime && now - lastUpdateTime < 3600000) {
+  if (lastUpdateTime && now - lastUpdateTime < EXPIRE) {
     // 3600000 ms = 1 heure
     console.log(
       "Fetch exécuté il y a moins d'une heure. Utilisation des données en cache."
@@ -81,7 +82,7 @@ async function HapiMoves() {
   }
 }
 
-HapiMoves()
+window.setTimeout(HapiMoves, 1000)
 
 async function getMoves() {
   const log = await Hyp.getSession()
@@ -98,7 +99,7 @@ async function getMoves() {
     return JSON.parse(localStorage.getItem(cacheKey)) // Utilise les données en cache
   }
 
-  let apiUrl = 'http://localhost:8885/.netlify/functions/getMoves' // URL de l'API
+  let apiUrl = 'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/getMoves' // URL de l'API
 
   const response = await fetch(apiUrl)
   const data = await response.json()
@@ -114,4 +115,5 @@ async function displayMoves() {
   const movesData = await getMoves()
   console.log(movesData) // Affiche les données des mouvements
 }
-displayMoves()
+
+// displayMoves()

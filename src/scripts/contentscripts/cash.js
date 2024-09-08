@@ -1,6 +1,54 @@
+function calculerValeurAjustee(E2, B105) {
+  return E2 * (1 - B105)
+}
+
+function calculateAcTax(totalDemo, totalDict, totalAuth, totalHyp, avgPop) {
+  const acTax =
+    (1 -
+      Math.pow(0.988 - (avgPop / 1000) * 0.00002, totalDemo) *
+        Math.pow(0.98 - (avgPop / 1000) * 0.00002, totalDict) *
+        Math.pow(0.984 - (avgPop / 1000) * 0.00026, totalAuth) *
+        Math.pow(1 - (avgPop / 1000) * 0.002, totalHyp)) *
+    100
+  return acTax
+}
+
+function isPlanetEconomicallyViable(income, acCost, totalPlanets) {
+  const netIncome = income + acCost // Le coût AC est négatif, donc on l'ajoute pour le soustraire
+  const averageIncomePerPlanet = netIncome / totalPlanets
+
+  return averageIncomePerPlanet > 0 // Renvoie vrai si le revenu moyen par planète est positif
+}
+
+function calculateMinimumIncomePerPlanet(acCost, totalIncome, totalPlanets) {
+  const netIncomeNeeded = Math.abs(acCost) // Revenu net nécessaire pour couvrir l'AC
+  const averageIncomeNeeded = netIncomeNeeded / totalPlanets
+
+  return averageIncomeNeeded
+}
+
+function getCoefficient(typeGov) {
+  switch (typeGov) {
+    case 2:
+      return 1
+    case 1:
+      return 1.5
+    case 0:
+      return 2
+    case 3:
+      return 2.5
+    default:
+      return 1
+  }
+}
+
+let incomes = []
+const coreData = []
+
 const setCash = async function () {
   const gameId = await localforage.getItem('currentGameId')
   const currentPlanets = await localforage.getItem(gameId + '-currentPlanets')
+  const totalPlanets = currentPlanets.data.length
   var income = $('.cashTotals')
     .find('.hr')
     .eq(0)
@@ -8,6 +56,9 @@ const setCash = async function () {
     .replace(',', '')
     .replace(',', '')
     .replace(',', '')
+
+  var totalIncome = income
+
   var dp = Math.abs(
     $('.cashTotals')
       .find('.hr')
@@ -36,6 +87,8 @@ const setCash = async function () {
     .replace(',', '')
     .replace(',', '')
     .replace(',', '')
+
+  ti = parseFloat(ti)
 
   const totalAuth = currentPlanets.data.filter(
     (planet) => planet.governmentId === 1
@@ -73,10 +126,30 @@ const setCash = async function () {
 
   acCalculated = (acTax / 100) * ti
 
-  const upkeep = Math.abs($(document).find('.cashArray').eq(0).find('tr').eq(2).find('.hr').text().replace(/\D/g, ''))
+  const calculateAc = calculateAcTax(
+    totalDemo,
+    totalDict,
+    totalAuth,
+    totalHyp,
+    avgPop
+  )
 
-    const upk = upkeep / ((income - ac)) * 100
+  const testAc = acCalculated / (totalDemo + totalAuth + totalDict + totalHyp)
 
+  const avgAc = testAc * (totalDemo + totalAuth + totalDict + totalHyp)
+
+  const upkeep = Math.abs(
+    $(document)
+      .find('.cashArray')
+      .eq(0)
+      .find('tr')
+      .eq(2)
+      .find('.hr')
+      .text()
+      .replace(/\D/g, '')
+  )
+
+  const upk = (upkeep / (income - ac)) * 100
 
   $('.cashTotals')
     .find('.line0')
@@ -98,7 +171,7 @@ const setCash = async function () {
   	<td>
   </tr>`
     )
-  let incomes = []
+  let allIncomes = 0
   $('.cashArray').each((index, table) => {
     if (index > 0 && index < $('.cashArray').length - 1) {
       const indexTr =
@@ -106,38 +179,74 @@ const setCash = async function () {
           ? 1
           : 0
 
-      const income = $(table).find('.hr').eq(indexTr).text().replace(/\D/g, '')
+      const income = parseFloat(
+        $(table).find('.hr').eq(indexTr).text().replace(/\D/g, '')
+      )
+
+      allIncomes += income
 
       const planetName = $(table).parent().parent().find('.planet b').text()
 
-      const profit = $(table).find('.highlight').html().replace('profit <hr>', '').replace(/\D/g, '')
-
+      const profit = parseFloat(
+        $(table)
+          .find('.highlight')
+          .html()
+          .replace('profit <hr>', '')
+          .replace(/\D/g, '')
+      )
       var find = currentPlanets.data.find(
         (item) => item.name === planetName.trim()
       )
 
-      let acCost = find.governmentId === 0 ? dictCost : find.governmentId === 1 ? authCost : demoCost
+      let planetFind = coreData.find((item) => item.nom === planetName.trim())
+
+
+      let acCost =
+        find.governmentId === 0
+          ? dictCost
+          : find.governmentId === 1
+          ? authCost
+          : demoCost
+
+      const minimumIncomePerPlanet = calculateMinimumIncomePerPlanet(
+        -ac,
+        income,
+        totalPlanets
+      )
+
+      let coefficient = getCoefficient(find.governmentId)
+      let partAC = (income / totalIncome) * ac // Part du coût AC ajustée par le coefficient
+      const netProfit = income - partAC // Profit net après déduction de l'AC
 
       incomes.push({
         planet: planetName,
+        partAC: partAC,
         total: parseInt(income, 10),
         totalFormat: numeral(parseInt(income, 10)).format('0,0'),
         profitFormat: numeral(parseInt(profit, 10)).format('0,0'),
         profit: parseInt(profit, 10),
-        netProfit: parseInt(income, 10) - parseInt(acCost, 10)
+        netProfit: parseInt(planetFind.revenu || 0, 10),
       })
     }
   })
+
+  let totalIncomes = _.sumBy(incomes, 'total')
+  let totalIncomesFormat = numeral(totalIncomes).format('0,0')
+  let totalProfit = _.sumBy(incomes, 'profit')
+  let totalProfitFormat = numeral(totalProfit).format('0,0')
+  let totalNetProfit = _.sumBy(incomes, 'netProfit')
+  let totalNetProfitFormat = numeral(totalNetProfit).format('0,0')
 
   const totalInflu = numeral(
     _.sumBy(_.slice(_.orderBy(incomes, ['total'], ['desc']), 0, 11), 'total')
   ).format('0,0')
   let _wtrs = 0
   let $lis = ''
-  _.orderBy(incomes, ['profit'], ['desc']).forEach((row, index) => {
+  _.orderBy(incomes, ['total'], ['desc']).forEach((row, index) => {
     var find = currentPlanets.data.find(
       (item) => item.name === row.planet.trim()
     )
+    var planetFind = coreData.find((item) => item.nom === row.planet.trim())
     if (!find) return
     // console.log(find)
     var race = find.raceId === 0 ? 'H' : 'A'
@@ -160,27 +269,33 @@ const setCash = async function () {
     }. <a href="/servlet/Planetprod?planetid=${find.id}" target="_blank">${
       row.planet
     }</a> (${race}${prod})</td><td>${find.numExploits}</td>
-    <td>${find.tax}</td>
-    <td>${find.civ}</td>
+    <td>(${find.x}, ${find.y})</td>
+    <td>${Hyp.products[find.productId]}</td>
+    <td>${planetFind.tax}</td>
+    <td>${planetFind.civ}</td>
     <td>${gov}${govLeft}</td>
-    <td>${numeral(find.pop).format('0,0')}</td><td>${numeral(
+    <td>${numeral(planetFind.pop).format('0,0')}</td><td>${numeral(
       find.activity
-    ).format('0,0')}</td><td>${row.profitFormat}</td>
+    ).format('0,0')}</td>
+    <td>${numeral(row.profitFormat).format('0,0')}</td>
     <td>${numeral(row.netProfit).format('0,0')}</td>
-    <td>${(
-      ((find.numExploits * 10) / find.pop) *
-      100
-    ).toFixed(0)-100}%</td></tr>`
+    <td>${
+      (((find.numExploits * 10) / find.pop) * 100).toFixed(0) - 100
+    }%</td></tr>`
   })
   let avg = _wtrs / incomes.length
   $('.cashTotals').append(`<br/><h4>CT: ${numeral(dp / 3).format(
     '0,0'
-  )} - NET TI : ${numeral(income - ac).format('0,0')} - UK ${upk.toFixed(2)}% - WTR AVG: ${avg.toFixed(2)}</h4>
+  )} - NET TI : ${numeral(income - ac).format('0,0')} - UK ${upk.toFixed(
+    2
+  )}% - WTR AVG: ${avg.toFixed(2)}</h4>
   <br/>
    <table class="income-list switches" style="text-align:left"><thead>
     <tr>
       <td>Planet</td>
       <td>Exploits</td>
+      <td>Coords</td>
+      <td>Prod</td>
       <td>Wtr</td>
       <td>Civ</td>
       <td>Gov</td>
@@ -191,6 +306,90 @@ const setCash = async function () {
       <td>P:R</td>
     </tr>
    </thead>${$lis}</<table>
+   <tfoot><tr><td>Total</td><td></td><td></td><td></td><td></td><td></td><td></td><td>${totalProfitFormat}</td><td>${totalNetProfitFormat}</td><td></td></tr></tfoot>
 `)
 }
-setCash()
+
+
+
+function recalculerParametresGlobaux(planetsData) {
+
+  let totalPop = planetsData.reduce((acc, planet) => {
+    return acc + Number(planet.pop); // Assurez-vous que pop est traité comme un nombre
+  }, 0);
+  
+  let avgPop = totalPop / planetsData.length;
+  let totalPlanets = planetsData.length;
+
+  let totalDict = planetsData.filter(planet => planet.gov === 'Dictatorial').length;
+  let totalDem = planetsData.filter(planet => planet.gov === 'Democratic').length;
+  let totalAuth = planetsData.filter(planet => planet.gov === 'Authoritarian').length;
+  let totalHyp = planetsData.filter(planet => planet.gov === 'Hyp.protect.').length;
+
+  return { avgPop, totalPlanets, totalDict, totalDem, totalAuth, totalHyp };
+}
+
+// Fonction pour calculer le revenu total en incluant l'AC
+function calculerRevenuTotalAvecAC(planetsData) {
+  const params = recalculerParametresGlobaux(planetsData);
+  console.log(params);
+  const acPercentage = calculAC(params.avgPop, params.totalPlanets, params.totalDict, params.totalAuth, params.totalHyp);
+
+  
+  // Ici, ajustez le calcul du revenu si nécessaire pour tenir compte de l'AC
+  return planetsData.reduce((acc, planet) => {
+      const revenu = calculRevenuParPlanete(planet.exploits, planet.activity, planet.pop, planet.tax) * 0.95;
+      // Supposons que l'AC réduit le revenu de chaque planète selon son pourcentage
+      const revenuApresAC = revenu - (revenu * acPercentage / 100);
+      return acc + revenuApresAC;
+  }, 0);
+}
+
+// Fonction pour simuler la suppression de chaque planète et calculer le nouveau revenu total avec AC
+function simulerSuppressionEtCalculerNouveauRevenuAvecAC(revenuTotalInitial, data) {
+  data.forEach((planetToRemove, index) => {
+      let newData = [...data.slice(0, index), ...data.slice(index + 1)];
+      let nouveauRevenuTotal = calculerRevenuTotalAvecAC(newData);
+      const planetIncome = calculRevenuParPlanete(planetToRemove.exploits, planetToRemove.activity, planetToRemove.pop, planetToRemove.tax) * 0.95;
+      coreData.find(planet => planet.nom === planetToRemove.nom).revenu = (revenuTotalInitial - nouveauRevenuTotal);      
+
+      console.log(`Revenu total après suppression de ${planetToRemove.nom}: ${numeral(nouveauRevenuTotal).format('0,0')}, différence: ${numeral(revenuTotalInitial - nouveauRevenuTotal).format('0,0')}, revenu initial: ${numeral(revenuTotalInitial).format('0,0')}`);
+  });
+}
+
+
+
+async function initSimulation() {
+  const gameId = await localforage.getItem('currentGameId')
+  const currentPlanets = await localforage.getItem(gameId + '-currentPlanets')
+
+  currentPlanets.data.forEach((planet) => {
+
+    coreData.push({
+      nom: planet.name,
+      pop: planet.pop,
+      exploits : planet.numExploits,
+      activity: planet.activity,
+      gov: Hyp.governments[planet.governmentId],
+      tax: planet.tax,
+      civ: planet.civ,
+      revenu: 0
+    });
+  });
+
+// Calcul du revenu total initial avec AC pour comparaison
+let revenuTotalInitial = calculerRevenuTotalAvecAC(coreData);
+// console.log(`Revenu total initial avec toutes les planètes (incluant l'AC): ${numeral(revenuTotalInitial).format('0,0')}`);
+
+// Lancer la simulation avec AC
+simulerSuppressionEtCalculerNouveauRevenuAvecAC(revenuTotalInitial, coreData);
+
+console.log(coreData);
+
+}
+
+//
+window.setTimeout(() => {
+  initSimulation()
+  setCash()
+}, 100)

@@ -1,4 +1,9 @@
-$(document).ready(function () {
+async function militaryPage() {
+  console.log('militaryPage.js loaded')
+  const gameId = await localforage.getItem('currentGameId')
+  const cachedData = localStorage.getItem(gameId + '-hapiDataCache')
+  const moves = JSON.parse(cachedData).data
+
   if ($('td > input[name="merge"]:not(:disabled)')) {
     $('td > input[name="merge"]:not(:disabled)').after([
       ' ',
@@ -23,43 +28,6 @@ $(document).ready(function () {
     ])
   }
 
-  // const fleetDetails = $('.fleetsDetails')
-  // if (fleetDetails.length > 0) {
-  //   fleetDetails.find('tr').each((i, el) => {
-  //     if (i > 0) {
-  //       let avgp = 0
-  //       let race = ''
-  //       let tl = 0
-  //       let starbase = 0
-  //       let cruisers = 0
-  //       let destros = 0
-  //       let bombers = 0
-  //       let scouts = 0
-  //       $(el)
-  //         .find('td')
-  //         .each((i, el) => {
-  //           const elHtml = parseInt($(el).html())
-  //           if (i === 1) tl = elHtml
-  //           if (i === 2) race = $(el).html()
-  //           if (i === 3) starbase = _.isNaN(elHtml) ? 0 : elHtml
-  //           if (i === 4) cruisers = _.isNaN(elHtml) ? 0 : elHtml
-  //           if (i === 5) destros = _.isNaN(elHtml) ? 0 : elHtml
-  //           if (i === 6) bombers = _.isNaN(elHtml) ? 0 : elHtml
-  //           if (i === 7) scouts = _.isNaN(elHtml) ? 0 : elHtml
-  //         })
-  //       ai = race == 'Azterk' ? 1 : 0
-  //       ai = race == 'Xillor' ? 2 : ai
-  //       avgp =
-  //         starbase * Hyp.spaceAvgP[5][ai] +
-  //         cruisers * Hyp.spaceAvgP[2][ai] +
-  //         destros * Hyp.spaceAvgP[1][ai] +
-  //         bombers * Hyp.spaceAvgP[4][ai] +
-  //         scouts * Hyp.spaceAvgP[3][ai]
-  //       $(el).append(`<td> ${numeral(avgp).format('0[.]0a')}</td>`)
-  //     }
-  //   })
-  //   fleetDetails.find('tr').eq(0).append(`<td>Avgp</td>`)
-  // }
   /* autocomplete */
   $(
     '[name="destplanetname"], [name="toplanet"], [name="destname"]'
@@ -96,11 +64,13 @@ $(document).ready(function () {
       )
       var coords = title.substring(
         title.match('SC').index + 3,
-        title.match('SC').index + 10
+        title.match('SC').index + 13
       )
       coords = coords.split(',')
       var x = coords[0].replace('(', '')
       var y = coords[1].replace(')', '')
+
+      console.log(coords)
 
       var $formAttack =
         '<form action="/servlet/Floatorders" method="post">' +
@@ -138,6 +108,12 @@ $(document).ready(function () {
           `<br/><td><div class="flex-line"><button data-action="${_action}" data-id="${planetID}" style="color: ${_style}; text-transform:uppercase;font-size:9px;display:block; width:auto;" class="custom-button btn-switch">🔄 ${_switch}</buttm> <button data-action="merge" data-id="${planetID}" style="display:block; width:auto; text-transform:uppercase; font-size:9px" class="custom-button btn-gas">🧰 merge gas</button> <button style="display:block; width:auto; text-transform:uppercase; font-size:9px" data-action="drop" data-id="${planetID}" class="custom-button btn-drop">🚢 drop</button></div></td>`
         )
 
+      $this
+        .find('.planet')
+        .parent()
+        .parent()
+        .find('.militFlags tr')
+        .append(`<td></td>`)
 
       $this
         .find('.planet')
@@ -145,16 +121,7 @@ $(document).ready(function () {
         .parent()
         .find('.militFlags tr')
         .append(
-          `<td></td>`
-        )
-
-      $this
-        .find('.planet')
-        .parent()
-        .parent()
-        .find('.militFlags tr')
-        .append(
-          `<td><a class="custom-button" style="font-size:10px" href="https://hyperiums.com/servlet/Maps?pt=&reqx=${x}&reqy=${y}&c=${sc}&d=2" target="_blank">📍 D2</a></td>`
+          `<td><a class="custom-button" style="font-size:10px" href="https://hyperiums.com/servlet/Maps?pt=&reqx=${x}&reqy=${y.replace('S', '').trim()}&c=${sc}&d=2" target="_blank">📍 D2</a></td>`
         )
       $this
         .find('.planet')
@@ -176,6 +143,16 @@ $(document).ready(function () {
             $(this).hide()
           }),
         ])
+
+      const movesHTML = Hyp.generateFleetMovesHTML(moves, planetName)
+
+      console.log('movesHTML', movesHTML)
+
+      if (movesHTML) {
+        const $movesTable = $('<div class="moves"></div>')
+        $movesTable.html(movesHTML)
+        $this.find('.bars').parent().find('.flex-line').after($movesTable);
+      }
     })
 
     $(document).on('click', '.btn-switch', function (e) {
@@ -260,4 +237,16 @@ $(document).ready(function () {
       })
     })
   }
-})
+
+  // $('.line1,.line0').on('click', function (e) {
+  //   e.preventDefault()
+  //   e.stopPropagation()
+  //   if (!$(this).find('.checkbox').prop('checked')) {
+  //     $(this).find('.checkbox').prop('checked', true)
+  //   } else {
+  //     $(this).find('.checkbox').prop('checked', false)
+  //   }
+  // })
+}
+
+window.setTimeout(militaryPage, 1000)

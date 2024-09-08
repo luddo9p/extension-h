@@ -1,9 +1,9 @@
 async function PostControlled() {
   const currentTime = new Date().getTime()
   const lastExecutionTime = localStorage.getItem('lastExecutionTime')
-  const fiveMinutes = 300000 // 5 minutes en millisecondes
+  const EXPIRE = 3600000
 
-  if (lastExecutionTime && currentTime - lastExecutionTime < fiveMinutes) {
+  if (lastExecutionTime && currentTime - lastExecutionTime < EXPIRE) {
     console.log('Attente avant la prochaine exécution.')
     return // Arrête l'exécution si moins de 5 minutes se sont écoulées
   }
@@ -55,10 +55,10 @@ async function getControlledPlanets() {
     const cacheKey = `${gameId}-hapi-alliance-owned-planets`;
     const updateKey = `${gameId}-last-update-time`;
     const now = new Date().getTime();
-
+    const EXPIRE = 3600000
     // Vérifie si les données ont été mises à jour il y a moins de 5 minutes
     const lastUpdateTime = parseInt(localStorage.getItem(updateKey), 10);
-    if (lastUpdateTime && now - lastUpdateTime < 5 * 60 * 1000) {
+    if (lastUpdateTime && now - lastUpdateTime < EXPIRE) {
         console.log('Utilisation des données en cache (moins de 5 minutes depuis la dernière mise à jour).');
         return JSON.parse(localStorage.getItem(cacheKey)).planets;
     }

@@ -1,89 +1,58 @@
 $('.br_own')
   .closest('table')
-  .each(function(_, table) {
-    table = $(table)
+  .each(function (_, table) {
+    table = $(table);
     var spaceAvgP = {},
       groundAvgP = {},
-      avgRaceId = Hyp.races.length + 1
+      avgRaceId = Hyp.races.length + 1;
     var lastTr = table
       .find('tr.line0, tr.line1')
-      .each(function(_, tr) {
-        tr = $(tr)
-        var tds = tr.find('td'),
-          unitName = $.trim(tds.eq(0).text()),
+      .each(function (_, tr) {
+        tr = $(tr);
+        var tds = tr.find('td');
+        
+        // Assurer qu'il y a au moins 7 colonnes (indices 0 à 6)
+        if (tds.length < 7) {
+          console.warn('Pas assez de colonnes dans ce tableau:', tds);
+          return; // On ignore cette ligne si les colonnes ne sont pas suffisantes
+        }
+
+        var unitName = $.trim(tds.eq(0).text()),
           unitId = Hyp.units.indexOf(unitName),
           numbers = {
             own: {
-              initial:
-                numeral().unformat(
-                  tds
-                    .eq(1)
-                    .text()
-                    .toLowerCase()
-                ) || 0,
-              lost:
-                numeral().unformat(
-                  tds
-                    .eq(2)
-                    .text()
-                    .toLowerCase()
-                ) || 0
+              initial: numeral().unformat(tds.eq(1).text().toLowerCase()) || 0,
+              lost: numeral().unformat(tds.eq(2).text().toLowerCase()) || 0
             },
             defending: {
-              initial:
-                numeral().unformat(
-                  tds
-                    .eq(3)
-                    .text()
-                    .toLowerCase()
-                ) || 0,
-              lost:
-                numeral().unformat(
-                  tds
-                    .eq(4)
-                    .text()
-                    .toLowerCase()
-                ) || 0
+              initial: numeral().unformat(tds.eq(3).text().toLowerCase()) || 0,
+              lost: numeral().unformat(tds.eq(4).text().toLowerCase()) || 0
             },
             attacking: {
-              initial:
-                numeral().unformat(
-                  tds
-                    .eq(5)
-                    .text()
-                    .toLowerCase()
-                ) || 0,
-              lost:
-                numeral().unformat(
-                  tds
-                    .eq(6)
-                    .text()
-                    .toLowerCase()
-                ) || 0
+              initial: numeral().unformat(tds.eq(5).text().toLowerCase()) || 0,
+              lost: numeral().unformat(tds.eq(6).text().toLowerCase()) || 0
             }
-          }
-        $.each(numbers, function(side, numbers) {
+          };
+
+        $.each(numbers, function (side, numbers) {
           if (!spaceAvgP[side]) {
-            spaceAvgP[side] = { initial: 0, lost: 0 }
+            spaceAvgP[side] = { initial: 0, lost: 0 };
           }
           if (!groundAvgP[side]) {
-            groundAvgP[side] = { initial: 0, lost: 0 }
+            groundAvgP[side] = { initial: 0, lost: 0 };
           }
           if (Hyp.spaceAvgP[unitId][avgRaceId] == 0) {
-            groundAvgP[side].initial +=
-              numbers.initial * Hyp.groundAvgP[avgRaceId]
-            groundAvgP[side].lost += numbers.lost * Hyp.groundAvgP[avgRaceId]
+            groundAvgP[side].initial += numbers.initial * Hyp.groundAvgP[avgRaceId];
+            groundAvgP[side].lost += numbers.lost * Hyp.groundAvgP[avgRaceId];
           } else {
-            spaceAvgP[side].initial +=
-              numbers.initial * Hyp.spaceAvgP[unitId][avgRaceId]
-            spaceAvgP[side].lost +=
-              numbers.lost * Hyp.spaceAvgP[unitId][avgRaceId]
+            spaceAvgP[side].initial += numbers.initial * Hyp.spaceAvgP[unitId][avgRaceId];
+            spaceAvgP[side].lost += numbers.lost * Hyp.spaceAvgP[unitId][avgRaceId];
           }
-        })
+        });
       })
-      .last()
+      .last();
 
-    var i = lastTr.hasClass('line1') ? 1 : 0
+    var i = lastTr.hasClass('line1') ? 1 : 0;
     lastTr.after([
       $('<tr>')
         .addClass('stdArray line' + (++i % 2))
@@ -131,33 +100,5 @@ $('.br_own')
             numeral(groundAvgP.attacking.lost).format('0[.]0a')
           )
         ])
-    ])
-  })
-
-// $('.battleReport').parent().find('table:first').each( (i,table) => {
-//   let rawTxt = $(table).find('script:first').text();
-//   let space = rawTxt.split('spaceAvgp.push')
-//   const spaceData = {
-//     own : space[1].replace(/\D/g,''),
-//     def : space[2].replace(/\D/g,''),
-//     att : space[1].replace(/\D/g,''),
-//   }
-//   let ground = rawTxt.split('groundAvgp.push')
-//   const groundData = {
-//     own : ground[1].replace(/\D/g,''),
-//     def : ground[2].replace(/\D/g,''),
-//     att : ground[1].replace(/\D/g,''),
-//   }
-//   //space = space[0].replace(')', '');
-//   console.log($(table))
-//   $(table).parent().find('table:last').append(`<tr>
-//     <td class="tinytext">Space AvgP ~</td>
-//     <td class="hr tinytext br_colStart">${spaceData.own}</td>
-//     <td class="hr tinytext br_colStart">${spaceData.def}</td>
-//     <td class="hr tinytext br_colStart">${spaceData.att}</td>
-//   </tr>`).append(`<tr>
-//   <td class="tinytext">Ground AvgP ~</td>
-//   <td class="hr tinytext br_colStart">${groundData.own}</td>
-//   <td class="hr tinytext br_colStart">${groundData.def}</td>
-//   <td class="hr tinytext br_colStart">${groundData.att}</td>
-// </tr>`)
+    ]);
+  });

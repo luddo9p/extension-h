@@ -8,7 +8,16 @@ const setMap = async function () {
     localStorage.getItem(gameId + '-hapi-alliance-foreign-planets')
   )
 
-  console.log(foreign)
+  const currentPlayer = await localforage.getItem(gameId + '-currentPlayer')
+  const currentPlayerAttObject = Hyp.attackList.find(
+    (item) => item[currentPlayer]
+  )
+  const currentPlayerAttList = currentPlayerAttObject
+    ? currentPlayerAttObject[currentPlayer]
+    : null
+  const ccPlanets = currentPlayerAttList ? currentPlayerAttList.split(',') : []
+
+
   const list = []
 
   if ($('.ecomap').length > 0) {
@@ -106,7 +115,7 @@ const setMap = async function () {
                 (item) => item.planet === planet.name
               )
 
-              console.log(foreignFind)
+              var findAtt = ccPlanets.find((item) => item ===  planet.name)
 
               var find = alliance.planets.find(
                 (item) => item.planet === planet.name
@@ -118,9 +127,16 @@ const setMap = async function () {
 
               let foreignInfo = ''
               if (foreignFind) {
-                foreignInfo += '<span style="color:darkturquoise">'+foreignFind.player + '</span> - ' + foreignFind.status
+                foreignInfo +=
+                  '<span style="color:darkturquoise">' +
+                  foreignFind.player +
+                  '</span> - ' +
+                  foreignFind.status
                 if (foreignFind.spaceAvgp) {
-                  foreignInfo += ' - <span style="color:darkorange">' + foreignFind.spaceAvgp + '</span>'
+                  foreignInfo +=
+                    ' - <span style="color:darkorange">' +
+                    foreignFind.spaceAvgp +
+                    '</span>'
                 }
               }
 
@@ -167,10 +183,11 @@ const setMap = async function () {
                   ? 'darkslategray'
                   : colorForeign
 
-                tr = $('<tr style="filter: contrast(1.2);" class="' + isForeign + '">').attr(
-                  'bgcolor',
-                  colorForeign
-                )
+                tr = $(
+                  '<tr style="filter: contrast(1.2);" class="' +
+                    isForeign +
+                    '">'
+                ).attr('bgcolor', colorForeign)
               } else {
                 if (planet.govName == 'Hyp.') {
                   tr = $('<tr class="hyp">')
@@ -180,12 +197,15 @@ const setMap = async function () {
                   tr = $('<tr class="' + ally + '">')
                 }
               }
+              if (findAtt) {
+                tr = $('<tr style="background-color:#253740">')
+              }
 
               const owner =
                 find && find.player ? '&nbsp;' + '' + find.player : ''
               let infos = owner
 
-              const infosString = (infos != '') ? infos : foreignInfo
+              const infosString = infos != '' ? infos : foreignInfo
 
               var td = $('<td>').append([
                 $(
@@ -228,7 +248,8 @@ const setMap = async function () {
                 $('<span class="hr info span-info">').html(
                   '&nbsp;' +
                     numeral(planet.activity).format('k') +
-                    '&nbsp;' + infosString
+                    '&nbsp;' +
+                    infosString
                 ),
               ])
               if (planet.isBlackholed) {

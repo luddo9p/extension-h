@@ -38,7 +38,7 @@ const updatePlanetsIfNeeded = async () => {
       console.log('Mise à jour des données car elles sont obsolètes')
       await savePlanets()
     } else {
-      console.log('Utilisation des données en cache:', planets)
+      //console.log('Utilisation des données en cache:', planets)
     }
   } else {
     console.log('Pas de données en cache, récupération des nouvelles données')

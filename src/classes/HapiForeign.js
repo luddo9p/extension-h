@@ -3,11 +3,11 @@ async function PostForeign() {
   const lastExecutionTimeForeign = localStorage.getItem(
     'lastExecutionTimeForeign'
   )
-  const fiveMinutes = 300000 / 5 // 5 minutes en millisecondes
+  const EXPIRE = 3600000// 5 minutes en millisecondes
 
   if (
     lastExecutionTimeForeign &&
-    currentTime - lastExecutionTimeForeign < fiveMinutes
+    currentTime - lastExecutionTimeForeign < EXPIRE
   ) {
     console.log('Attente avant la prochaine exécution.')
     return // Arrête l'exécution si moins de 5 minutes se sont écoulées
@@ -45,10 +45,9 @@ async function PostForeign() {
     planetList.push(planetString)
   })
 
-  // const netlifyFunctionUrl =
-  //   'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/foreign'
+  const netlifyFunctionUrl =
+    'https://marvelous-shortbread-e2d12d.netlify.app/.netlify/functions/foreign'
 
-  const netlifyFunctionUrl = 'http://localhost:8885/.netlify/functions/foreign'
 
   fetch(netlifyFunctionUrl, {
     method: 'POST',
@@ -70,10 +69,11 @@ async function getForeignPlanets() {
   const cacheKey = `${gameId}-hapi-alliance-foreign-planets`
   const updateKey = `${gameId}-last-update-time`
   const now = new Date().getTime()
+  const EXPIRE = 3600000// 5 minutes en millisecondes
 
   // Vérifie si les données ont été mises à jour il y a moins de 5 minutes
   const lastUpdateTime = parseInt(localStorage.getItem(updateKey), 10)
-  if (lastUpdateTime && now - lastUpdateTime < 300000) {
+  if (lastUpdateTime && now - lastUpdateTime < EXPIRE) {
     console.log('Données mises à jour il y a moins de 5 minutes.')
     return JSON.parse(localStorage.getItem(cacheKey))
   }
