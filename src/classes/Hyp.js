@@ -115,11 +115,11 @@ var Hyp = {
   attackList: [
     {
       Synopsia:
-        'lllll-l-lllllll,ll-llllllll-ll,Grandebistouque,Sonia,Talondvioc,Freretang,LBDdantoncul,Veineluisante,susmafreztagada,Boulecoco,Nonbinaire,Glucideviril,Sestka,desetka,TROJKA,enajstka,Petka,Belafoumouk,Mark,ll-llll-lllllll,llll-llllllllll,ll-ll-lllllll,llll-llll-lllll,Marrs,Mezzanine,Mozz,Marzipan,ILbastardo,lllllllllll-l-l,llllllllll-llll,ll-llllll-llll,l-l-ll-llllllll,lllllll-lllllll,Manta,Rebels',
+        '',
     },
     {
       Varkenslacht:
-        'Brahma,Takenoko,Vishnu,Freyr,Izanami,Gloin,Heimdal,Gilgamesh,Fast,Epic,Bluenote,Freyja,Raijin,Fujin,Rohe,tzimisce,Ventrue,Curb,Free,Welt,Wise,Expo,Zenith,Tonenili,Hastsezini,Requiem,Dokho,Camus,Toreador,Gangrel,Crown,Doom,Yuck,Fiannas,Wendigo,Maharet,Mekare,Maui,Balder',
+        '',
     },
     {
       Gescom:
@@ -127,26 +127,26 @@ var Hyp = {
     },
     {
       Sidious:
-        'Echo,Flea,Crowd,Fish,Fido,Crows,Majestic,Monster,Godot,Crockette,Cortez,Wood,Yard,Goof,Geek,Weep,Wank,Waft,zee-,Zee-Ro,Meter,Millenium,Mitosis,Cuts2,Cuts,Exam,Gang,Duty,Drug,Gash,ILtiempo,Z-O2,z-01,Marrs,Mezzanine',
+        '',
     },
     {
       Ninurta:
-        'Neutral-1CL-D,Neutral-1G1-R,Neutral-5H-19,Rodrik,Toto,Navalny,Banban,Aulnes,Neutral-37N-1J,Neutral-3M2-1V,Aube,Crepuscule,Eternelle,Behemot,Aronda,Bourdeloux,Groguette,Neutral-LL-14,Neutral-1C-M,Neutral-2Y5-1J,Edelweiss,Sarkorax,Vraktar,Zibreline,Ellestar,Epeou,Alcion,Thalek,Neutral-285-1G',
+        '',
     },
     {
-      FiFi: 'Raclette,Illith,Astir,CatNyx,Stella-Maris,Balanga,Neutral-2JK-1W,Neutral-J-14,Neutral-LT-15,Neutral-UM-H1,Neutral-G-B2,Neutral-UD-Z7,Neutral-13V-10,Neutral-6X-1X,Neutral-P1-B0,Neutral-O-1Z,Erevila,Berereb,Neutral-U6-K,Neutral-378-J,Neutral-EE-1D,Neutral-4S-C1,Neutral-7Y-1H,Neutral-EX-10,Neutral-NT-QT,Neutral-1BR-1H,Jean,Louis,Neutral-8N-Y2,M-45-2H,A-45-1X,TL-01,-Trantor-, -Sol-, -Terra-,Terminus,Holy_Terra',
+      FiFi: '',
     },
     {
       Scratchy:
-        'Eastern6,Eastern1,Eastern7,Eastern2,Eastern3,Eastern4,Eastern8,Eastern5,Northern.1,Northern.3,Northern.2,Northern.5,Northenr.6,Northern.4,Northern.7,Northern.8,Reem,Locke,Sligo,Forth,Hypss,Lucky,Montu,Hoth,Margrave,Simas,-Dominion-, -Seldon-, -Nocturne-,Macragge,Istvaan,Luna,Matters,Mind,Gaia',
+        '',
     },
     {
       Seymour:
-        'Proxima-Dracos,night-white,MikeT,OTP-13,Blue-Planet,Neutral-08-QS1,Seth-1,MX-NLT-R57,Tagle,Clopi-clopan,Niktou,Dyn-landi,Dagonz,Volns-5I4X7l,Groot,Boson-1Il-132,Fox-1,oli-32s-4,Frontier,Mektoub,Notilus,Fire,Naqmeo,phobie,Monoxysz,zil25-f5d8,sila-1o,Cloe-12,mosea1-87,stra-0f4g',
+        '',
     },
     {
       Tleilax:
-        'Mesa,Marshall,galiop,prodaz-21,Blackstar,Laney,Frankenstrat,Brownie,Thunderbird,Sheraton,zfrox-69Q,Calamir,Vox.,Crate,Plexi,ES-335,Telecaster,Mockingird,Soloist,Clyde',
+        '',
     },
   ],
 

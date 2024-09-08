@@ -1,29 +1,13 @@
 const { google } = require('googleapis');
 
 const customHeaders = {
-  'Access-Control-Allow-Origin': '*', // Autorise toutes les origines
+  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
 };
 
 const credentialsJson = Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64, 'base64').toString('utf-8');
 const credentials = JSON.parse(credentialsJson);
-
-function extraireNomPlanete(chaine) {
-  if (!chaine.includes(' -')) {
-    return chaine.trim(); // Utilise trim() pour enlever les espaces superflus
-  }
-
-  const regex = /^(.*?) \[/;
-  const correspondance = chaine.match(regex);
-
-  if (correspondance && correspondance[1]) {
-    return correspondance[1].trim();
-  } else {
-    console.error("Le format de la chaîne n'est pas correct ou le nom de la planète est manquant.");
-    return ''; // Retourne une chaîne vide pour indiquer qu'aucun nom valide n'a été extrait
-  }
-}
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -43,39 +27,44 @@ exports.handler = async (event) => {
 
   const spreadsheetId = '1tg5EYvmh8igOLAuhO5ZUJ06mfNwfoHvmJTgiw88f0lk';
 
-  const allPlayers = [];
-
   try {
-    // Colonnes de A à L
-    const columns = 'ABCDEFGHIJKL'.split('');
-    for (const column of columns) {
-      const range = `AttackList!${column}:${column}`;
+    const range = 'AttackList!A1:Z'; // Récupérer les colonnes nécessaires
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: range,
+    });
 
-      const response = await sheets.spreadsheets.values.get({
-        spreadsheetId,
-        range: range,
-      });
+    const rows = response.data.values;
 
-      const data = response.data.values;
-      const players = data.slice(1).map((row) => ({
-        list: row[0].split(' - ')[0],
-        player: data[0][0],
-      }));
-
-      allPlayers.push(...players);
+    if (!rows || rows.length === 0) {
+      return {
+        headers: customHeaders,
+        statusCode: 200,
+        body: JSON.stringify({ message: 'Aucune donnée trouvée.' }),
+      };
     }
+
+    // Récupérer les joueurs depuis la première ligne (noms des colonnes)
+    const players = rows[0];
+    const playerData = {};
+
+    // Boucle pour chaque colonne (joueur)
+    players.forEach((player, index) => {
+      const planets = rows.slice(1).map(row => row[index]).filter(Boolean); // Exclure les valeurs nulles/vides
+      playerData[player] = planets;
+    });
 
     return {
       headers: customHeaders,
       statusCode: 200,
-      body: JSON.stringify(allPlayers),
+      body: JSON.stringify(playerData),
     };
   } catch (error) {
-    console.error('Erreur lors de la mise à jour du spreadsheet :', error);
+    console.error('Erreur lors de la récupération des données du spreadsheet :', error);
     return {
       headers: customHeaders,
       statusCode: 500,
-      body: JSON.stringify(error),
+      body: JSON.stringify({ error: 'Erreur lors de la récupération des données.' }),
     };
   }
 };

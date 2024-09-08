@@ -966,3 +966,15 @@ table .moves {
 .line1:hover,.line0:hover {
   filter: invert(0.05);
 }
+
+div.militPic {
+  display: none !important;
+}
+
+div.militPic img {
+  display: none !important;
+}
+
+div[id^="Space"], div[id^="Ground"] {
+  height: 180px !important;
+}

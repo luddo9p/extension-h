@@ -249,4 +249,4 @@ async function militaryPage() {
   // })
 }
 
-window.setTimeout(militaryPage, 1000)
+window.setTimeout(militaryPage, 100)
