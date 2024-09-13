@@ -1,252 +1,291 @@
+function parseNumber(value) {
+  value = value.trim()
+
+  if (value.endsWith('K')) {
+    return parseFloat(value.replace('K', '')) * 1000
+  }
+
+  if (value.endsWith('M')) {
+    return parseFloat(value.replace('M', '')) * 1000000
+  }
+
+  return parseFloat(value)
+}
+
+function sumValues(value) {
+  const cleanedValue = value.split('/')[0].trim()
+  const parts = cleanedValue.split('+').map((part) => parseNumber(part))
+  const total = parts.reduce((acc, num) => acc + num, 0)
+
+  if (total >= 1000000) {
+    return (total / 1000000).toFixed(1) + 'M'
+  } else if (total >= 1000) {
+    return (total / 1000).toFixed(1) + 'K'
+  } else {
+    return total.toString()
+  }
+}
+
+function extractArmyInfo(htmlString) {
+  try {
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(htmlString, 'text/html')
+
+    const armyElement = doc.querySelector('.vb')
+    const energyElement = doc.querySelector('[class^="energy"]')
+    const planetElement = doc.querySelector('.planet')
+    let enemyInfo = null
+
+    // Cherche l'élément "Enemy space AvgP:" et récupère la valeur correspondante
+    const rows = doc.querySelectorAll('table.bars tr')
+    rows.forEach((row) => {
+      const firstCell = row.querySelector('td')
+      if (firstCell && firstCell.textContent.includes('Enemy space AvgP:')) {
+        const enemyCell = row.querySelector('td:nth-child(3)')
+        if (enemyCell) {
+          enemyInfo = enemyCell.textContent.trim()
+        }
+      }
+    })
+
+    let planetName = ''
+    if (planetElement) {
+      planetName = planetElement.textContent.trim()
+    } else {
+      console.error('No planet name found')
+      return null
+    }
+
+    if (armyElement) {
+      const armyInfo = armyElement.textContent.trim()
+      let result = planetName + ': F: '
+
+      if (armyInfo.includes('+')) {
+        result += sumValues(armyInfo)
+      } else {
+        result += sumValues(armyInfo)
+      }
+
+      // Ajouter les informations de flotte ennemie
+      if (enemyInfo) {
+        result += ` / E: ${sumValues(enemyInfo)}`
+      } else {
+        result += ' / E: no enemy info'
+      }
+
+      // Ajouter les informations sur l'énergie
+      if (energyElement) {
+        const energyLevel = energyElement.textContent.trim()
+        result += ` (${energyLevel.replace('Energy: ', '')} nrg)`
+      } else {
+        result += ' (no nrg info)'
+      }
+
+      // Vérifier la présence de la classe flagStasis
+      if (doc.querySelector('.flagStasis')) {
+        result += ' (stasis)'
+      }
+
+      return result
+    } else {
+      console.error('No army info found')
+      return null
+    }
+  } catch (error) {
+    console.error('Error parsing HTML: ', error)
+    return null
+  }
+}
+
 async function militaryPage() {
-  console.log('militaryPage.js loaded')
   const gameId = await localforage.getItem('currentGameId')
   const cachedData = localStorage.getItem(gameId + '-hapiDataCache')
   const moves = JSON.parse(cachedData).data
 
-  if ($('td > input[name="merge"]:not(:disabled)')) {
-    $('td > input[name="merge"]:not(:disabled)').after([
-      ' ',
-      $(
-        '<input type="submit" class="button" name="merge" value="Merge All">'
-      ).click(function (event) {
-        $(this)
-          .closest('form')
-          .append([
-            $('<input type="hidden" name="confirm">'),
-            $('<input type="hidden" name="mgt_order_done">'),
-          ])
-      }),
-      ' ',
-    ])
+  const mergeInputs = document.querySelectorAll(
+    'td > input[name="merge"]:not(:disabled)'
+  )
+  const loadArmiesInputs = document.querySelectorAll(
+    'td > input[name="loadarmies"]:not(:disabled)'
+  )
 
-    $('td > input[name="loadarmies"]:not(:disabled)').after([
-      ' ',
-      $(
-        '<input type="submit" class="button" name="randomLoadAll" value="Load All">'
-      ),
-    ])
+  if (mergeInputs.length) {
+    mergeInputs.forEach((input) => {
+      const mergeButton = document.createElement('input')
+      mergeButton.type = 'submit'
+      mergeButton.className = 'button'
+      mergeButton.name = 'merge'
+      mergeButton.value = 'Merge All'
+
+      mergeButton.addEventListener('click', function (event) {
+        const form = this.closest('form')
+        const hiddenConfirm = document.createElement('input')
+        hiddenConfirm.type = 'hidden'
+        hiddenConfirm.name = 'confirm'
+
+        const hiddenMgtOrder = document.createElement('input')
+        hiddenMgtOrder.type = 'hidden'
+        hiddenMgtOrder.name = 'mgt_order_done'
+
+        form.append(hiddenConfirm, hiddenMgtOrder)
+      })
+
+      input.insertAdjacentElement('afterend', mergeButton)
+    })
+
+    loadArmiesInputs.forEach((input) => {
+      const loadAllButton = document.createElement('input')
+      loadAllButton.type = 'submit'
+      loadAllButton.className = 'button'
+      loadAllButton.name = 'randomLoadAll'
+      loadAllButton.value = 'Load All'
+
+      input.insertAdjacentElement('afterend', loadAllButton)
+    })
   }
 
-  /* autocomplete */
-  $(
-    '[name="destplanetname"], [name="toplanet"], [name="destname"]'
-  ).autocomplete({
-    autoFocus: true,
-    source: function (request, sendResponse) {
-      Hyp.searchPlanets(request.term)
-        .done(function (planets) {
-          var names = []
-          $.each(planets, function (_, planet) {
-            names.push(planet.name)
-          })
-          sendResponse(names)
-        })
-        .fail(function () {
-          sendResponse([])
-        })
-    },
-  })
+  // UI D2 Button Logic
+  if (document.querySelectorAll('#OwnPlGroups, #Groups').length === 1) {
+    const planetCards = document.querySelectorAll('.planetCard3')
 
-  /* UI D2 Btn */
-  if ($('#OwnPlGroups, #Groups').length == 1) {
-    $('.planetCard3').each(async function () {
-      var $this = $(this)
-      var planetName = $this.find('.planet').text()
-      var planetID = $this.attr('id').replace('pc', '')
-      var parent = $this.find('.planet').parent()
-      var title = parent.text()
-      var sc = parseInt(
-        title.substring(
-          title.match('SC').index + 2,
-          title.match('SC').index + 4
-        )
+    planetCards.forEach(async (card) => {
+      const planetName = card.querySelector('.planet').textContent
+      const planetID = card.getAttribute('id').replace('pc', '')
+      const parent = card.querySelector('.planet').parentElement
+      const title = parent.textContent
+      const scIndex = title.indexOf('SC')
+      const sc = parseInt(title.substring(scIndex + 2, scIndex + 4), 10)
+      const coords = title.substring(scIndex + 3, scIndex + 13).split(',')
+      const x = coords[0].replace('(', '').trim()
+      const y = coords[1].replace(')', '').trim()
+
+      const info = extractArmyInfo(card.innerHTML)
+
+      if (!info) {
+        console.log('No info found for', planetName)
+      }
+
+      const formAttack = `
+        <form action="/servlet/Floatorders" method="post">
+          <input name="planetid" value="${planetID}" type="hidden" />
+          <input name="switchattack" value="attack" type="text" />
+          <input name="go" value="ok" type="hidden" />
+          <input name="submit" class="button" value="Switch DEF" type="submit" />
+        </form>`
+      const formDef = `
+        <form action="/servlet/Floatorders" method="post">
+          <input name="planetid" value="${planetID}" type="hidden" />
+          <input name="switchattack" value="defend" type="text" />
+          <input name="go" value="ok" type="hidden" />
+          <input name="submit" class="button" value="Switch ATT" type="submit" />
+        </form>`
+
+      const isDefend = card.querySelector('.flagBattle') !== null
+      const action = isDefend ? 'defend' : 'attack'
+      const style = isDefend ? 'green' : 'red'
+      const switchText = isDefend ? 'DEF' : 'ATT'
+
+      card.querySelector('.bars').parentElement.insertAdjacentHTML(
+        'beforeend',
+        `<br/><td><div class="flex-line">
+          <button data-action="${action}" data-id="${planetID}" style="color: ${style}; text-transform:uppercase;font-size:9px;display:block; width:auto;" class="custom-button btn-switch">🔄 ${switchText}</button>
+          <button data-action="merge" data-id="${planetID}" style="display:block; width:auto; text-transform:uppercase; font-size:9px" class="custom-button btn-gas">🧰 merge gas</button>
+          <button style="display:block; width:auto; text-transform:uppercase; font-size:9px" data-action="drop" data-id="${planetID}" class="custom-button btn-drop">🚢 drop</button>
+        </div></td>`
       )
-      var coords = title.substring(
-        title.match('SC').index + 3,
-        title.match('SC').index + 13
+
+      const militFlags = card.querySelector('.militFlags tr')
+      militFlags.insertAdjacentHTML(
+        'beforeend',
+        `<td></td><td>
+        <a class="custom-button" style="font-size:10px" href="https://hyperiums.com/servlet/Maps?pt=&reqx=${x}&reqy=${y
+          .replace('S', '')
+          .trim()}&c=${sc}&d=2" target="_blank">📍 D2</a></td>`
       )
-      coords = coords.split(',')
-      var x = coords[0].replace('(', '')
-      var y = coords[1].replace(')', '')
 
-      console.log(coords)
+      const addToGroupButton = document.createElement('button')
+      addToGroupButton.className = 'addToGroup custom-button'
+      addToGroupButton.textContent = '➕ Add'
+      addToGroupButton.style.fontSize = '10px'
+      addToGroupButton.title = 'Use Define/Extend to confirm & save'
+      addToGroupButton.addEventListener('click', () => {
+        document
+          .querySelectorAll('#OwnPlGroups, #Groups')
+          .forEach((group) => (group.style.display = 'block'))
+        const listInput = document.querySelector('input[name="listplanets"]')
+        const currentList = listInput.value.trim()
+        listInput.value = currentList.length
+          ? `${currentList},${planetName}`
+          : planetName
+        addToGroupButton.style.display = 'none'
+      })
 
-      var $formAttack =
-        '<form action="/servlet/Floatorders" method="post">' +
-        '<input name="planetid" value="' +
-        planetID +
-        '" type="hidden" />' +
-        '<input name="switchattack" value="attack" type="text" />' +
-        '<input name="go" value="ok" type="hidden" />' +
-        '<input name="submit" class="button" value="Switch DEF" type="submit" />' +
-        '</form>'
-      var $formDef =
-        '<form action="/servlet/Floatorders" method="post">' +
-        '<input name="planetid" value="' +
-        planetID +
-        '" type="hidden" />' +
-        '<input name="switchattack" value="defend" type="text" />' +
-        '<input name="go" value="ok" type="hidden" />' +
-        '<input name="submit" class="button" value="Switch ATT" type="submit" />' +
-        '</form>'
-
-      var _action = $this.find('.flagBattle').length > 0 ? 'defend' : 'attack'
-      var _style = $this.find('.flagBattle').length > 0 ? 'green' : 'red'
-      var _switch = $this.find('.flagBattle').length > 0 ? 'DEF' : 'ATT'
-
-      let args = {}
-      args.planet = args.planet || '*'
-      args.data = 'foreign_planets'
-      args.request = 'getfleetsinfo'
-      args.planet = planetName
-
-      $this
-        .find('.bars')
-        .parent()
-        .append(
-          `<br/><td><div class="flex-line"><button data-action="${_action}" data-id="${planetID}" style="color: ${_style}; text-transform:uppercase;font-size:9px;display:block; width:auto;" class="custom-button btn-switch">🔄 ${_switch}</buttm> <button data-action="merge" data-id="${planetID}" style="display:block; width:auto; text-transform:uppercase; font-size:9px" class="custom-button btn-gas">🧰 merge gas</button> <button style="display:block; width:auto; text-transform:uppercase; font-size:9px" data-action="drop" data-id="${planetID}" class="custom-button btn-drop">🚢 drop</button></div></td>`
-        )
-
-      $this
-        .find('.planet')
-        .parent()
-        .parent()
-        .find('.militFlags tr')
-        .append(`<td></td>`)
-
-      $this
-        .find('.planet')
-        .parent()
-        .parent()
-        .find('.militFlags tr')
-        .append(
-          `<td><a class="custom-button" style="font-size:10px" href="https://hyperiums.com/servlet/Maps?pt=&reqx=${x}&reqy=${y.replace('S', '').trim()}&c=${sc}&d=2" target="_blank">📍 D2</a></td>`
-        )
-      $this
-        .find('.planet')
-        .parent()
-        .parent()
-        .find('.militFlags tr')
-        .append([
-          $(
-            '<td><button class="addToGroup custom-button" style="font-size:10px" title="Use Define/Extend to confirm &amp; save">➕ Add</button></td>'
-          ).click(function () {
-            $('#OwnPlGroups, #Groups').show()
-            var $listInput = $('input[name="listplanets"]')
-            var list = $.trim($listInput.val())
-            if (list.length) {
-              list += ','
-            }
-
-            $listInput.val(list + planetName)
-            $(this).hide()
-          }),
-        ])
+      militFlags.append(addToGroupButton)
 
       const movesHTML = Hyp.generateFleetMovesHTML(moves, planetName)
-
-      console.log('movesHTML', movesHTML)
-
       if (movesHTML) {
-        const $movesTable = $('<div class="moves"></div>')
-        $movesTable.html(movesHTML)
-        $this.find('.bars').parent().find('.flex-line').after($movesTable);
+        const movesTable = document.createElement('div')
+        movesTable.className = 'moves'
+        movesTable.innerHTML = movesHTML
+
+        card
+          .querySelector('.bars')
+          .parentElement.querySelector('.flex-line')
+          .after(movesTable)
+      }
+      if (info) {
+        const infoTable = document.createElement('div')
+        infoTable.className = 'infoCC'
+        infoTable.innerHTML =
+          '<span>' +
+          info +
+          '</span><span style="font-size:10px"> (📋 click to copy)</span>'
+
+        card
+          .querySelector('.bars')
+          .parentElement.querySelector('.flex-line')
+          .after(infoTable)
       }
     })
 
-    $(document).on('click', '.btn-switch', function (e) {
-      const $this = $(this)
-      const action = $this.attr('data-action')
-      const id = $this.attr('data-id')
-      const _switch = action == 'attack' ? 'DEF' : 'ATT'
-      let _post = {}
-      if (action === 'attack') {
-        _post = {
+    // Event listeners for buttons
+    document.addEventListener('click', async (e) => {
+      const target = e.target
+
+      if (target.classList.contains('btn-switch')) {
+        const action = target.getAttribute('data-action')
+        const id = target.getAttribute('data-id')
+        const switchText = action === 'attack' ? 'DEF' : 'ATT'
+        const postData = {
           planetid: id,
-          switchattack: 'attack',
+          [action === 'attack' ? 'switchattack' : 'switchdefend']: action,
         }
-      } else {
-        _post = {
-          planetid: id,
-          switchdefend: 'defend',
+
+        try {
+          await fetch('/servlet/Floatorders', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(postData),
+          })
+
+          target.setAttribute(
+            'data-action',
+            action === 'attack' ? 'defend' : 'attack'
+          )
+          target.style.color = action === 'attack' ? 'green' : 'red'
+          target.textContent = `🔄 ${switchText}`
+        } catch (error) {
+          console.error('Switch action failed:', error)
         }
+      } else if (target.classList.contains('btn-gas')) {
+        const id = target.getAttribute('data-id')
+        await Hyp.mergeAll(id)
+        target.textContent = 'merged'
       }
-
-      $.post('/servlet/Floatorders', _post).done((response) => {
-        if (action === 'attack') {
-          $(this)
-            .attr('data-action', 'defend')
-            .attr('style', 'color:green')
-            .text(`🔄 ${_switch}`)
-        } else {
-          $(this)
-            .attr('data-action', 'attack')
-            .attr('style', 'color:red')
-            .text(`🔄 ${_switch}`)
-        }
-      })
-    })
-
-    $(document).on('click', '.btn-gas', async function (e) {
-      const $this = $(this)
-      const id = $this.attr('data-id')
-      const result = await Hyp.mergeAll(id)
-      $this.text(`merged`)
-    })
-
-    $(document).on('click', '.btn-sell', async function (e) {
-      //first scrap page
-      const $this = $(this)
-      const id = $this.attr('data-id')
-      const planetHtml = await Hyp.scrapeData(
-        'https://hyperiums.com/servlet/Planetfloats?planetid=' + id
-      )
-      $pageHtml = $(planetHtml)
-      const links = $pageHtml.find('#manageArmiesForm').find('.array').find('a')
-      console.log(links)
-    })
-
-    // Camo
-    $(document).on('click', '.btn-camo', function (e) {
-      const $this = $(this)
-      const action = $this.attr('data-action')
-      const id = $this.attr('data-id')
-      const _camo = action == 'ON' ? 1 : 0
-      const _camoTxt = action == 'ON' ? 'OFF' : 'ON'
-      var _styleCamo = action == 'ON' ? 'red' : 'green'
-
-      $.get(
-        `/servlet/Floatorders?setCamouflage=${_camo}&planetid=${id}&units=armies`
-      ).done((response) => {
-        console.log(response)
-        $this.removeClass('green').removeClass('red')
-        if (_camo == 'ON') {
-          $this
-            .attr('data-action', _camoTxt)
-            .attr('style', 'font-size:10px')
-            .addClass(_styleCamo)
-            .text(`👻 ${_camoTxt}`)
-        } else {
-          $this
-            .attr('data-action', _camoTxt)
-            .attr('style', 'font-size:10px')
-            .addClass(_styleCamo)
-            .text(`👻 ${_camoTxt}`)
-        }
-      })
     })
   }
-
-  // $('.line1,.line0').on('click', function (e) {
-  //   e.preventDefault()
-  //   e.stopPropagation()
-  //   if (!$(this).find('.checkbox').prop('checked')) {
-  //     $(this).find('.checkbox').prop('checked', true)
-  //   } else {
-  //     $(this).find('.checkbox').prop('checked', false)
-  //   }
-  // })
 }
 
 window.setTimeout(militaryPage, 100)

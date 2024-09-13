@@ -50,6 +50,107 @@ function extractHours(text) {
     return null
   }
 }
+
+const groupFleetsByDestinationAndEta = (fleets) => {
+  const groupedFleets = fleets.reduce((acc, fleet) => {
+    console.log('fleet', fleet)
+    const key = `${fleet.destination}-${fleet.etaTime}`;
+
+    if (!acc[key]) {
+      acc[key] = {
+        destination: fleet.destination,
+        etaTime: fleet.etaTime,
+        totalFleet: 0,
+        totalGa: 0,
+        totalAvgp: 0,
+        dist: fleet.dist,
+        delay: fleet.delay,
+        etaDate: fleet.etaDate,
+      };
+    }
+
+    // Calcul du total de la flotte (addition des nbbomb, nbdest, nbcrui, nbscou, nbarm, nbsb)
+    const fleetTotal =
+      Number(fleet.nbbomb) +
+      Number(fleet.nbdest) +
+      Number(fleet.nbcrui) +
+      Number(fleet.nbscou) +
+      Number(fleet.nbarm) +
+      Number(fleet.nbsb);
+
+    // Calcul du avgp basé sur la formule fournie
+    const avgp =
+      fleet.nbdest * Hyp.spaceAvgP[1][fleet.race] +
+      fleet.nbcrui * Hyp.spaceAvgP[2][fleet.race] +
+      fleet.nbbomb * Hyp.spaceAvgP[4][fleet.race] +
+      fleet.nbscou * Hyp.spaceAvgP[3][fleet.race];
+
+    acc[key].totalAvgp += avgp;
+    acc[key].totalFleet += fleetTotal; // Ajout du total de la flotte
+    acc[key].totalGa += Number(fleet.autodrop); // Ajout du total de Ga
+
+    return acc;
+  }, {});
+
+  // Formatage des résultats
+  return Object.values(groupedFleets).map((group) => {
+    console.log('group', group)
+
+    const etaTimeFormatted =`${group.etaDate.getUTCHours()}:02 ST`
+    const currentPlayer = $('#htopmenu > li:nth-child(5) > a > div > b').text()
+    return `${group.destination} - Fleet: ${numeral(group.totalAvgp).format(
+      '0[.]0a'
+    )} - Ga: ${group.totalGa} - ETA: ${group.etaTime} - ${etaTimeFormatted} ST (${currentPlayer})`;
+  });
+};
+
+// Fonction pour convertir l'ETA en date basée sur le serveur
+function convertETAToDate(dateTimeStr) {
+  // Directement en UTC sans ajustement pour le décalage horaire local
+  return new Date(dateTimeStr + 'Z'); // Ajoutez 'Z' pour indiquer explicitement UTC
+}
+
+// Fonction pour calculer l'ETA actuel
+function calculateCurrentETA($row) {
+  return new Date($row);
+}
+
+// Fonction pour calculer un nouveau délai basé sur l'ETA souhaité
+function calculateNewDelay(desiredETATime, currentETA) {
+  // Calcule la différence en heures entre l'ETA souhaité et l'ETA actuel
+  const diff = desiredETATime - currentETA;
+  return Math.round(diff / 3600000); // Convertit la différence en heures
+}
+
+// Fonction pour nettoyer la sortie du texte HTML
+function cleanOutput(str) {
+  return String(str)
+    .replace(/(<([^>]+)>)/gi, '')
+    .trim();
+}
+
+// Fonction pour mettre en surbrillance les heures dans un contenu HTML
+function highlightHoursInHtml(htmlContent) {
+  // Expression régulière pour trouver le motif "HH:MM ST" dans le HTML
+  const regex = /(\d{2}:\d{2}) ST/;
+  // Remplacement par une balise span avec classe "highlight"
+  return htmlContent.replace(regex, '<span class="highlighting">$1</span> ST');
+}
+
+// Fonction pour extraire les heures à partir d'un texte
+function extractHours(text) {
+  // Utiliser une expression régulière pour trouver un ou plusieurs chiffres
+  const regex = /\d+/;
+  const matches = text.match(regex);
+
+  // Si un nombre est trouvé, le convertir en entier et le retourner
+  if (matches) {
+    return parseInt(matches[0], 10);
+  } else {
+    return null; // Retourner null si aucun nombre n'est trouvé
+  }
+}
+
 async function getHapiData() {
   const log = await Hyp.getSession()
   const cachedData = localStorage.getItem(log.gameId + '-hapiDataCache')
@@ -310,18 +411,19 @@ async function displayGroupedFleetMovements(groupedMovements) {
 
   const now = utcDate
   const colors = [
-    'darkorange',
-    'cadetblue',
-    'coral',
-    'burlywood',
-    'khaki',
-    'cornflowerblue',
-    'gold',
-    'palegreen',
-    'darkturquoise',
-    'peru',
-    'yellowgreen',
+    '#FFB347', // Pastel orange
+    '#AFCBFF', // Pastel blue
+    '#FF9AA2', // Pastel coral
+    '#D2B48C', // Pastel burlywood
+    '#FDFD96', // Pastel yellow (khaki)
+    '#A1C6EA', // Pastel cornflower blue
+    '#FFE066', // Pastel gold
+    '#B2F2BB', // Pastel green
+    '#A7ECEE', // Pastel turquoise
+    '#E6AF91', // Pastel peru
+    '#C4FCEA', // Pastel yellow-green
   ]
+
   let colorIndex = 0
   let previousDestination = null // Suivre la destination précédente pour la comparaison
 
@@ -341,6 +443,12 @@ async function displayGroupedFleetMovements(groupedMovements) {
       })
     })
   })
+
+
+  let results = groupFleetsByDestinationAndEta(allMovements)
+  results = results.join('\n')
+
+  console.log('results', results)
 
   let destinationTotals = {}
 
@@ -369,22 +477,9 @@ async function displayGroupedFleetMovements(groupedMovements) {
 
   let totalHtml = `<table class="recap" border="1">
   <tr>
-    <th>Destination</th>
-    <th>Avgp</th>
-  </tr>`
-  // Ajout des lignes de totaux pour chaque destination
-  Object.keys(destinationTotals).forEach((destination, index) => {
-    const totalAvgp = destinationTotals[destination]
-    totalHtml += `
-    <tr class="row-total" style="background-color: ${
-      index % 2 === 0 ? '#eeeeee' : '#dddddd'
-    }; color: black">
-      <td>${destination}</td>
-      <td>~ ${numeral(totalAvgp).format('0[.]0a')}</td>
-    </tr>`
-  })
-
-  totalHtml += `</table>`
+    <th>Movements</th>
+  </tr>
+  <tr><td style="background:#F9F9F9"><pre class="recap-text">${results}</pre></td></tr></table>`
 
   // Tri des mouvements par ETA
   // allMovements.sort((a, b) => a.etaDate - b.etaDate);
@@ -619,10 +714,4 @@ window.setTimeout(() => {
       $(this).find('.checkbox').prop('checked', false)
     }
   })
-
-  window.setTimeout(() => {
-    // if (window.location.href.includes('goback=true')) {
-    //   window.history.back()
-    // }
-  }, 400)
 }, 100)

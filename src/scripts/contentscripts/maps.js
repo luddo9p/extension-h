@@ -12,8 +12,6 @@ const setMap = async function () {
 
   const ccPlanets = await Hyp.getPlayerAttackList(currentPlayer, gameId)
 
-  console.log('store', ccPlanets)
-
   const list = []
 
   if ($('.ecomap').length > 0) {
@@ -194,7 +192,7 @@ const setMap = async function () {
                 }
               }
               if (findAtt) {
-                tr = $('<tr style="background-color:#253740">')
+                tr = $('<tr style="background-color:#610021;filter:">')
               }
 
               const owner =
@@ -324,4 +322,4 @@ const setMap = async function () {
   ])
   tabberAutomatic()
 }
-setMap()
+window.setTimeout(setMap, 500)

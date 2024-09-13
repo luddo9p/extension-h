@@ -1,117 +1,104 @@
-const displayTicks = async function() {
-  const gameId = await localforage.getItem('currentGameId')
-  Hyp.getSession().then(function(log) {
-    var offsetInMS =
-      new Date().getTime() -
-      new Date(
-        $('.servertime')
-          .eq(0)
-          .text()
-          .replace('Server Time: ', '') + ' +00:00'
-      )
+const displayTicks = async function () {
+  try {
+    const gameId = await localforage.getItem('currentGameId');
+    const log = await Hyp.getSession();
 
-    $('.servertime').remove()
+    const serverTimeElement = document.querySelector('.servertime');
+    const serverTimeText = serverTimeElement.textContent.replace('Server Time: ', '') + ' +00:00';
+    const offsetInMS = new Date().getTime() - new Date(serverTimeText).getTime();
 
-    var $div = $('<div id="Hyp-ticks" class="servertime"></div>')
-    $('body').append($div)
+    const div = document.createElement('div');
+    div.id = 'Hyp-ticks';
+    div.classList.add('servertime-bar');
+    document.body.appendChild(div);
 
-    var msPerPx = 10000
-    var $timeline = $('<div class="timeline"></div>').click(function(event) {
-      if (event.altKey) {
-        msPerPx *= 1.5
-      } else {
-        msPerPx /= 1.5
-      }
-    })
+    let msPerPx = 10000;
+    const timeline = document.createElement('div');
+    timeline.classList.add('timeline');
+    
+    timeline.addEventListener('click', (event) => {
+      msPerPx = event.altKey ? msPerPx * 1.5 : msPerPx / 1.5;
+    });
+    
+    div.appendChild(timeline);
 
-    $div.append($timeline)
+    const ticksMap = new Map([
+      [0, Hyp.ticksR13],
+      [1, Hyp.ticksWinterGal],
+      [2, Hyp.ticksR11],
+      [3, Hyp.ticksR12],
+      [4, Hyp.ticksR10],
+      ['default', Hyp.ticksR11]
+    ]);
 
-    var ticks
+    const ticks = ticksMap.get(gameId) || ticksMap.get('default');
+    const msPerH = 3600000;
+    let ul;
 
-    if (gameId == 3) {
-      ticks = Hyp.ticksR12
-    } else if (gameId == 1) {
-      ticks = Hyp.ticksWinterGal
-    } else if (gameId == 2) {
-      ticks = Hyp.ticksR11
-    } else if (gameId == 4) {
-      ticks = Hyp.ticksR10
-    } else if (gameId == 0) {
-      ticks = Hyp.ticksR13
-    } else {
-      ticks = Hyp.ticksR11
-    }
+    const updateTimeline = () => {
+      const serverDate = new Date(Date.now() - offsetInMS);
+      timeline.innerHTML = ''; // Efface les éléments précédents
+      
+      if (ul) ul.remove();
+      ul = document.createElement('ul');
+      ul.innerHTML = `<li>ST: ${moment(serverDate).utc().format('YYYY-MM-DD HH:mm:ss')}</li>`;
 
-    var $ul
+      const timelineWidth = timeline.offsetWidth;
 
-    var msPerH = 3600000
+      ticks.forEach((tick, tickIndex) => {
+        let nextDate = tick.getNextDate(serverDate);
+        const msUntilNextDate = nextDate.getTime() - serverDate.getTime();
+        const formattedNextDate = moment(nextDate).utc();
 
-    ;(function() {
-      var serverDate = new Date(new Date().getTime() - offsetInMS)
-      $timeline.empty()
-      if ($ul) {
-        $ul.remove()
-      }
+        const liTick = document.createElement('li');
+        liTick.textContent = `${tick.name}: ${moment(msUntilNextDate).utc().format('HH:mm:ss')}`;
+        liTick.setAttribute('title', formattedNextDate.format('YYYY-MM-DD HH:mm:ss'));
 
-      $ul = $('<ul>')
-      $ul.append(
-        $('<li>').text(
-          'ST: ' +
-            moment(serverDate)
-              .utc()
-              .format('YYYY-MM-DD HH:mm:ss')
-        )
-      )
+        // Gestion des classes
+        const classes = {
+          10000: 'Hyp-blink',
+          60000: 'alert',
+          300000: 'alertLight',
+          600000: 'hlight',
+        };
 
-      var timelineWidth = $timeline.width()
-      $.each(ticks, function(tickIndex, tick) {
-        var nextDate = tick.getNextDate(serverDate)
-        var msUntilNextDate = nextDate.getTime() - serverDate.getTime()
-        nextDate = moment(nextDate).utc()
-        var $li = $('<li>')
-          .text(
-            tick.name +
-              ': ' +
-              moment(msUntilNextDate)
-                .utc()
-                .format('HH:mm:ss')
-          )
-          .attr('title', nextDate.format('YYYY-MM-DD HH:mm:ss'))
-
-        if (msUntilNextDate < 10000) {
-          // 10 seconds
-          $li.addClass('Hyp-blink')
+        for (const [threshold, className] of Object.entries(classes)) {
+          if (msUntilNextDate < threshold) {
+            liTick.classList.add(className);
+            break;
+          }
         }
 
-        if (msUntilNextDate < 60000) {
-          // 1 minute
-          $li.addClass('alert')
-        } else if (msUntilNextDate < 300000) {
-          // 5 minutes
-          $li.addClass('alertLight')
-        } else if (msUntilNextDate < 600000) {
-          // 10 minutes
-          $li.addClass('hlight')
-        }
+        ul.appendChild(liTick);
 
-        $ul.append([' ', $li])
-
-        var left = msUntilNextDate / msPerPx
+        let left = msUntilNextDate / msPerPx;
         while (left < timelineWidth) {
-          $timeline.append(
-            $('<div class="tick hlight"></div>')
-              .css({ left: left, 'padding-top': tickIndex / 2 + 'em' })
-              .attr({ title: tick.name + '\n' + nextDate.format('HH:mm:ss') })
-              .text(tick.name)
-          )
-          nextDate.add(tick.everyNthHour, 'hour')
-          left += (tick.everyNthHour * msPerH) / msPerPx
-        }
-      })
+          const tickDiv = document.createElement('div');
+          tickDiv.classList.add('tick', 'hlight');
+          tickDiv.style.left = `${left}px`;
+          tickDiv.style.paddingTop = `${tickIndex / 2}em`;
+          tickDiv.setAttribute('title', `${tick.name}\n${formattedNextDate.format('HH:mm:ss')}`);
+          tickDiv.textContent = tick.name;
+          timeline.appendChild(tickDiv);
 
-      $div.prepend($ul)
-      window.setTimeout(arguments.callee, 1000)
-    })()
-  })
-}
-displayTicks()
+          nextDate.add(tick.everyNthHour, 'hour');
+          left += (tick.everyNthHour * msPerH) / msPerPx;
+        }
+      });
+
+      div.insertBefore(ul, timeline);
+    };
+
+    const loop = () => {
+      updateTimeline();
+      requestAnimationFrame(loop);
+    };
+
+    requestAnimationFrame(loop); // Démarrer la boucle avec requestAnimationFrame
+
+  } catch (error) {
+    console.error('An error occurred while displaying ticks:', error);
+  }
+};
+
+displayTicks();

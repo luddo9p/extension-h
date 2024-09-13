@@ -133,19 +133,6 @@ Hyp.getControlledPlanets().done(function (planets) {
           moment.duration(Math.ceil(totals.timeToBuild) * 3600000).format(),
         ])
     })
-
-  // Hyp.getFleetsUpkeep().done(function (upkeep) {
-  //   $('#htopmenu2').append(
-  //     $('<li>').append(
-  //       $('<a href="Cash" class="megaTextItem">').append([
-  //         'Deployed fleets: ',
-  //         numeral(upkeep.numDeployed).format('0,0'),
-  //         '/',
-  //         numeral(5 * planets.numPlanets).format('0,0'),
-  //       ])
-  //     )
-  //   )
-  // })
 })
 
 $('.movingFleetGroupTitle ~ tr img[src$="fleetarmy_icon.gif"]').each(function (
@@ -196,114 +183,6 @@ $('[name="destplanetname"], [name="toplanet"], [name="destname"]').autocomplete(
     },
   }
 )
-
-// if ($('.megaCurrentItem[href="/servlet/Fleets?pagetype=factories"]').length == 0) {
-
-//     Hyp.getMovingFleets().done(function(fleets) {
-//         var moveTick;
-
-//         $.each(Hyp.ticks, function(_, tick) {
-//             if (tick.name == 'Move/Control') {
-//                 moveTick = tick;
-//             }
-//         });
-
-//         var nextMoveTickDate = moveTick.getNextDate(new Date);
-
-//         $('.factoryCard').each(function(_, element) {
-//             element = $(element);
-//             var planet = {
-//                     name: element.find('.planet').text()
-//                 },
-//                 total = {
-//                     spaceAvgP: 0,
-//                     groundAvgP: 0
-//                 },
-//                 table, numFleets;
-
-//             if (fleets.toNames[planet.name]) {
-//                 numFleets = fleets.toNames[planet.name].length;
-
-//                 table = $('<table class="stdArray" style="width: 95%;margin:20px auto 10px auto;border:0;color:#AAAAAA">').append([
-//                     $('<thead>').append(
-//                         $('<tr class="stdArray">').append([
-//                             '<th class="hr">ETA</th>',
-//                             '<th class="hc">ETA</th>',
-//                             '<th class="hr">Space AvgP</th>',
-//                             '<th class="hr">Ground AvgP</th>',
-//                             '<th class="hc">Drop</th>',
-//                             '<th class="hc">Change</th>',
-//                             $('<th class="hr">').append(
-//                                 $('<input type="checkbox">').change(function() {
-//                                     var element = $(this);
-//                                     element.closest('table').
-//                                     find('tr:not(.stdArray) input').
-//                                     prop('checked', element.is(':checked'));
-//                                 })
-//                             )
-//                         ])
-//                     )
-//                 ]);
-
-//                 $.each(fleets.toNames[planet.name], function(i, fleet) {
-
-//                     Hyp.updateFleetAvgP(fleet);
-//                     total.spaceAvgP += fleet.spaceAvgP;
-//                     total.groundAvgP += fleet.groundAvgP;
-//                     table.append(
-//                         $('<tr>').addClass('line' + ((i + 1) % 2)).append([
-//                             $('<td class="hr">').text(fleet.eta + 'h'),
-//                             $('<td class="hc">').text(
-//                                 moment(nextMoveTickDate).add(fleet.eta - 1, 'h').utc().format('YYYY-MM-DD HH:mm')
-//                             ),
-//                             $('<td class="hr">').text(numeral(fleet.spaceAvgP).format('0[.]0a')),
-//                             $('<td class="hr">').text(numeral(fleet.groundAvgP).format('0[.]0a')),
-//                             $('<td class="hc">').text(fleet.autodrop ? 'auto drop' : 'on order'),
-//                             $('<td class="hc">').append(
-//                                 $('<a>Change</a>').attr('href',
-//                                     Hyp.getServletUrl('Fleets?changefleet=&floatid=' + fleet.id)
-//                                 )
-//                             ),
-//                             $('<td class="hr">').append(
-//                                 $('<input type="checkbox">').attr('name', 'reroute' + i).val(fleet.id)
-//                             )
-//                         ]).mouseover(function() {
-//                             $(this).addClass('lineCenteredOn');
-//                         }).mouseout(function() {
-//                             $(this).removeClass('lineCenteredOn');
-//                         })
-//                     );
-//                 });
-
-//                 if (numFleets > 1) {
-//                     table.append(
-//                         $('<tr class="stdArray">').append([
-//                             '<td class="hr" colspan="2">Total</td>',
-//                             $('<td class="hr">').text(numeral(total.spaceAvgP).format('0[.]0a')),
-//                             $('<td class="hr">').text(numeral(total.groundAvgP).format('0[.]0a')),
-//                             $('<td colspan="3">')
-//                         ])
-//                     );
-//                 }
-
-//                 table.append(
-//                     '<tr><td class="hr" colspan="7">' +
-//                     '<input type="submit" class="button" name="reroute" value="Reroute"> ' +
-//                     '<input type="submit" class="button" name="delayfleets" value="Delay"> ' +
-//                     'selected fleets</td></tr>'
-//                 );
-
-//                 element.find('.visib_content').append(
-//                     $('<form action="Fleets" method="post">').append(
-//                         table,
-//                         $('<input type="hidden" name="nbfleets">').val(numFleets)
-//                     )
-//                 );
-//             }
-
-//         });
-//     });
-// }
 
 var fleetInfoData
 if (
@@ -435,100 +314,6 @@ var displayCamo = function (camoData) {
   })
 }
 
-// if ($('.megaCurrentItem[href="/servlet/Fleets?pagetype=moving_fleets"]').length == 1) {
-
-//     Hyp.getMovingFleetsFromHtml(document).done(function(fleets) {
-//         var camoData = [];
-
-//         function formatPosition(position) {
-//             return '(' + position.x + ',' + position.y + ')';
-//         }
-
-//         function toggleAll() {
-//             var $this = $(this);
-//             $this
-//                 .closest('tr')
-//                 .nextUntil('.movingFleetGroupTitle')
-//                 .find('input[type=checkbox]')
-//                 .prop({
-//                     checked: $this.prop('checked')
-//                 });
-//         }
-
-//         var $sortByEta = $('.banner [name=sortOrGroup').eq(0);
-//         var groupByEta = $sortByEta.length === 0 || $sortByEta.prop('disabled');
-//         var previousEta = null;
-
-//         chrome.storage.sync.get('camo', function(store) {
-
-//             if (camoTimestamp == undefined || (((new Date).getTime() - camoTimestamp) > 320000)) {
-
-//                 $.each(fleets, function(_, fleet) {
-
-//                     Hyp.getChangeFleet(fleet.id).done(function(camo) {
-//                         var $input = $('input[value="' + fleet.id + '"]');
-//                         var camoTxt = "<br/><div class='camo'>Camouflage mode : ";
-//                         if (camo == "on") {
-//                             camoTxt += "<span class='camo camo-on'>On</span></div>";
-//                         } else {
-//                             camoTxt += "<span class='camo camo-off'>Off</span></div>";
-//                         }
-//                         camoData.push({
-//                             fleet_id: fleet.id,
-//                             camo: camo
-//                         });
-
-//                         $input.parent().prev().append(
-//                             camoTxt
-//                         );
-//                     });
-
-//                     if (_ == (fleets.length - 1)) {
-//                         displayCamo(camoData);
-//                     }
-//                 });
-
-//             } else {
-//                 displayCamo(camoData);
-//             }
-
-//         });
-
-//         $.each(fleets, function(_, fleet) {
-
-//             //console.log(fleet);
-
-//             var distance = {
-//                     x: fleet.to.x - fleet.from.x,
-//                     y: fleet.to.y - fleet.from.y
-//                 },
-//                 eta = Math.max(Math.abs(distance.x), Math.abs(distance.y)) + 2,
-//                 progress = 1 - (fleet.eta - fleet.delay) / eta;
-
-//             position = {
-//                 x: Math.round(fleet.from.x + progress * distance.x),
-//                 y: Math.round(fleet.from.y + progress * distance.y)
-//             };
-//            // console.log(distance.x && distance.y);
-//            // if (distance.x != '' && distance.y != '') {
-
-//                 var $input = $('input[value="' + fleet.id + '"]');
-
-//                 $input.parent().prev().append(
-//                     '<br>From ', formatPosition(fleet.from),
-//                     ' to ', formatPosition(fleet.to),
-//                     ' @ ', formatPosition(position),
-//                     ' (', numeral(progress).format('0[.]0%'), ')'
-//                 );
-//             //}
-
-//             previousEta = fleet.eta;
-
-//         });
-
-//     });
-// }
-
 if (currentPlanetName) {
   var currentPlanetName = $('.planetNameHuge').text()
   var menuItem = $('#htopmenu2').find('.megaTextItem')[1]
@@ -568,7 +353,7 @@ if (currentPlanetName) {
   var x = coords[0].replace('(', '')
   var y = coords[1].replace(')', '')
 
-/* Adding a link to the D2 map to the table. */
+  /* Adding a link to the D2 map to the table. */
   $('.dataarea')
     .eq(0)
     .parent()
@@ -646,7 +431,7 @@ if (currentPlanetName) {
 
     var table = $('<table><col></table>')
     $.each(total, function (na, _) {
-      table.append('<col style="width:70px"/>')
+      table.append('<col style="width:50px"/>')
     })
 
     var tr = $('<tr><th>N/A</th></tr>')

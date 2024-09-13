@@ -377,14 +377,9 @@ async function initSimulation() {
     });
   });
 
-// Calcul du revenu total initial avec AC pour comparaison
 let revenuTotalInitial = calculerRevenuTotalAvecAC(coreData);
-// console.log(`Revenu total initial avec toutes les planètes (incluant l'AC): ${numeral(revenuTotalInitial).format('0,0')}`);
-
-// Lancer la simulation avec AC
 simulerSuppressionEtCalculerNouveauRevenuAvecAC(revenuTotalInitial, coreData);
 
-console.log(coreData);
 
 }
 

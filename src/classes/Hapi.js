@@ -3,7 +3,9 @@ let playerName = document.querySelector('a[rel="playerSubmenu"] b').textContent
 $button = $("<br/><button class='btn btn-primary'>").text(
   playerName + ' : Update the spreadsheet'
 )
-$('.pageTitle').append($button)
+window.setTimeout(() => {
+$(".reset-caches").append($button)
+},100);
 
 async function Hapi() {
   $button.text('Updating the spreadsheet...')
@@ -151,7 +153,7 @@ $button.on('click', () => {
 
 $mapBtn = $("<br/><button class='btn btn-primary'>").text('Generate the list')
 
-$('.pageTitle').append($mapBtn)
+// $('.pageTitle').append($mapBtn)
 
 const onMapClick = async (e) => {
   const log = await Hyp.getSession()

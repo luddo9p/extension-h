@@ -189,7 +189,7 @@ $(document).ready(function () {
           element
             .find('.buttons')
             .append(
-              `<a href="/servlet/Planet?planetid=${planetId}" target="_blank" class="leech-start green">➡️&nbsp;&nbsp;START LEECH</a>`
+              `<a href="/servlet/Planet?planetid=${planetId}" target="_blank" class="leech-start green">➡️&nbsp;&nbsp;LEECH</a>`
             )
         }
       }

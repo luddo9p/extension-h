@@ -44,7 +44,6 @@
         "scripts/contentscripts/menu.js",
         "classes/database.js",
         "scripts/contentscripts/ticks.js",
-        "scripts/contentscripts/textmarkup.js",
         "scripts/contentscripts/battlereports.js",
         "extlibs/bootstrap/js/bootstrap.min.js",
         "classes/Hapi.js",
@@ -54,20 +53,13 @@
         "classes/HapiForeign.js",
         "classes/reset.js",
         "core/utils.js",
-        "scripts/contentscripts/movesCopy.js"
+        "scripts/contentscripts/movesCopy.js",
+        "scripts/contentscripts/scanner.js"
       ],
       "css": [
         "styles/ticks.css",
         "styles/fix-layout.css",
         "styles/datatables.css"
-      ]
-    },
-    {
-      "matches": ["https://hyperiums.com/servlet/Preferences"],
-      "js": [
-        "extlibs/jquery/jquery.js",
-        "extlibs/jquery-ui/jquery-ui.js",
-        "scripts/contentscripts/redirect.js"
       ]
     },
     {
@@ -145,7 +137,9 @@
         "extlibs/jquery-ui/jquery-ui.js",
         "scripts/contentscripts/spread.js",
         "scripts/contentscripts/moves.js",
-        "scripts/contentscripts/militaryPage.js"
+        "scripts/contentscripts/militaryPage.js",
+        "scripts/contentscripts/merger.js",
+        "scripts/contentscripts/droper.js"
       ]
     },
     {
@@ -158,6 +152,17 @@
         "extlibs/jquery/jquery.js",
         "extlibs/jquery-ui/jquery-ui.js",
         "scripts/contentscripts/armygen.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://hyperiums.com/servlet/Maps",
+        "https://hyperiums.com/servlet/Maps?maptype=textualmap"
+      ],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/trading.js"
       ]
     },
     {
@@ -178,7 +183,6 @@
       "js": [
         "extlibs/jquery/jquery.js",
         "extlibs/jquery-ui/jquery-ui.js",
-        "scripts/contentscripts/foreign.js",
         "scripts/contentscripts/copy.js"
       ]
     },
@@ -191,15 +195,6 @@
         "extlibs/jquery-ui/jquery-ui.js",
         "scripts/contentscripts/moving.js"
       ]
-    },
-    {
-      "matches": ["https://hyperiums.com/servlet/Alliance?*"],
-      "js": [
-        "extlibs/jquery/jquery.js",
-        "extlibs/jquery-ui/jquery-ui.js",
-        "scripts/contentscripts/alliance.js"
-      ],
-      "css": ["styles/contentscripts/maps.css"]
     },
     {
       "matches": [

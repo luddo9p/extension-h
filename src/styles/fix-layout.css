@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 body {
   background: #000;
-  webkit-font-smoothing: antialiased !important;;
+  webkit-font-smoothing: antialiased !important;
 }
 body,
 td,
@@ -514,7 +514,7 @@ body > div:nth-child(3) {
   border-radius: 5px;
   text-align: center;
 }
-.army,
+/* .army,
 .plunder,
 .ci,
 .prep-bh,
@@ -537,7 +537,7 @@ body > div:nth-child(3) {
   display: inline-block;
   text-decoration: none;
   height: auto;
-}
+} */
 .army:hover,
 .plunder:hover,
 .ci:hover,
@@ -793,14 +793,14 @@ h4 {
 }
 
 .link-camo.camo-0 {
-  color: crimson ;
+  color: crimson;
 }
 
 .link-camo.camo-1 {
   color: seagreen;
 }
 
-.movingFleetCard td[width="330"] {
+.movingFleetCard td[width='330'] {
   background-color: #141414 !important;
   width: 390px !important;
 }
@@ -831,7 +831,8 @@ h4 {
   display: none;
 }
 
-.recap th, .recap td {
+.recap th,
+.recap td {
   border: 1px solid black;
   padding: 4px;
   text-align: left;
@@ -848,7 +849,6 @@ h4 {
   padding: 5px 0px 7px 0px;
   padding-top: 15px !important;
 }
-
 
 .updated {
   filter: brightness(1.25);
@@ -867,11 +867,10 @@ h4 {
   display: flex;
 }
 
-.flex-line a, .flex-line button {
+.flex-line a,
+.flex-line button {
   margin: 0 5px;
 }
-
-
 
 .eco {
   padding: 5px 10px;
@@ -890,32 +889,122 @@ h4 {
   color: #fff;
 }
 
-.eco-0, .eco-1, .eco-2, .eco-3, .eco-4, .eco-5, .eco-6, .eco-7, .eco-8, .eco-9, .eco-10,
-.eco-11, .eco-12, .eco-13, .eco-14, .eco-15, .eco-16, .eco-17, .eco-18, .eco-19, .eco-20,
-.eco-21, .eco-22, .eco-23, .eco-24, .eco-25, .eco-26, .eco-27, .eco-28, .eco-29, .eco-30,
-.eco-31, .eco-32, .eco-33, .eco-34, .eco-35, .eco-36, .eco-37, .eco-38, .eco-39, .eco-40 {
+.eco-0,
+.eco-1,
+.eco-2,
+.eco-3,
+.eco-4,
+.eco-5,
+.eco-6,
+.eco-7,
+.eco-8,
+.eco-9,
+.eco-10,
+.eco-11,
+.eco-12,
+.eco-13,
+.eco-14,
+.eco-15,
+.eco-16,
+.eco-17,
+.eco-18,
+.eco-19,
+.eco-20,
+.eco-21,
+.eco-22,
+.eco-23,
+.eco-24,
+.eco-25,
+.eco-26,
+.eco-27,
+.eco-28,
+.eco-29,
+.eco-30,
+.eco-31,
+.eco-32,
+.eco-33,
+.eco-34,
+.eco-35,
+.eco-36,
+.eco-37,
+.eco-38,
+.eco-39,
+.eco-40 {
   background: red !important;
 }
 
-.eco-41, .eco-42, .eco-43, .eco-44, .eco-45, .eco-46, .eco-47, .eco-48, .eco-49, .eco-50,
-.eco-51, .eco-52, .eco-53, .eco-54, .eco-55, .eco-56, .eco-57, .eco-58, .eco-59, .eco-60, 
-.eco-61, .eco-62, .eco-63, .eco-64, .eco-65, .eco-66, .eco-67, .eco-68, .eco-69, .eco-70,
-.eco-71, .eco-72, .eco-73, .eco-74, .eco-75, .eco-76, .eco-77, .eco-78, .eco-79, .eco-80 {
+.eco-41,
+.eco-42,
+.eco-43,
+.eco-44,
+.eco-45,
+.eco-46,
+.eco-47,
+.eco-48,
+.eco-49,
+.eco-50,
+.eco-51,
+.eco-52,
+.eco-53,
+.eco-54,
+.eco-55,
+.eco-56,
+.eco-57,
+.eco-58,
+.eco-59,
+.eco-60,
+.eco-61,
+.eco-62,
+.eco-63,
+.eco-64,
+.eco-65,
+.eco-66,
+.eco-67,
+.eco-68,
+.eco-69,
+.eco-70,
+.eco-71,
+.eco-72,
+.eco-73,
+.eco-74,
+.eco-75,
+.eco-76,
+.eco-77,
+.eco-78,
+.eco-79,
+.eco-80 {
   background: orange !important;
 }
 
-.eco-81, .eco-82, .eco-83, .eco-84, .eco-85, .eco-86, .eco-87, .eco-88, .eco-89, .eco-90, 
-.eco-91, .eco-92, .eco-93, .eco-94, .eco-95, .eco-96, .eco-97, .eco-98, .eco-99, .eco-100 {
+.eco-81,
+.eco-82,
+.eco-83,
+.eco-84,
+.eco-85,
+.eco-86,
+.eco-87,
+.eco-88,
+.eco-89,
+.eco-90,
+.eco-91,
+.eco-92,
+.eco-93,
+.eco-94,
+.eco-95,
+.eco-96,
+.eco-97,
+.eco-98,
+.eco-99,
+.eco-100 {
   background: green !important;
 }
 
-
 .movingFleetGroupTitle {
-  border-top: 5px solid #ada15a !important
+  border-top: 5px solid #ada15a !important;
 }
 
 #resetCaches {
-  display:block;
+  display: block;
   margin: 10px auto;
 }
 
@@ -931,25 +1020,25 @@ table .moves {
 }
 
 .moves .row {
-  color: cadetblue;
-  font-weight: bold;
+  background: #111;
+  color: #CCC;
+  font-size: 12px;
+  font-family: monospace;
   display: flex;
   justify-content: start;
   gap: 10px;
-  background: #303028;
-  width: 90%;
+  width: 95%;
   padding: 5px;
 }
 
 .moves .row:nth-child(odd) {
-  background: #2b2b2b;
+  background: #222;
 }
 
 .movingFleetCard:hover {
   filter: invert(0.05);
   cursor: pointer;
 }
-
 
 /* #armiesPanel, #fleetsPanel, #stasisPanel, #hgPanel {
   display: block !important;
@@ -959,11 +1048,13 @@ table .moves {
   display:none;
 } */
 
-.line1,.line0 {
+.line1,
+.line0 {
   cursor: pointer;
 }
 
-.line1:hover,.line0:hover {
+.line1:hover,
+.line0:hover {
   filter: invert(0.05);
 }
 
@@ -975,6 +1066,203 @@ div.militPic img {
   display: none !important;
 }
 
-div[id^="Space"], div[id^="Ground"] {
+div[id^='Space'],
+div[id^='Ground'] {
   height: 180px !important;
+}
+
+.infoCC {
+  padding: 10px;
+  margin-top: 10px;
+  background: #111;
+  color: darkgoldenrod;
+  font-family: monospace;
+  letter-spacing: -1px;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.infoCC:hover {
+  background: #222;
+}
+
+.popup-style {
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  border: 1px solid #555;
+  max-height: 600px;
+  overflow-y: auto;
+  background-color: white;
+  display:flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.5); /* Ajout de transparence */
+  backdrop-filter: blur(10px); /* Ajusté pour réduire le flou */
+  -webkit-backdrop-filter: blur(10px); /* Pour compatibilité Safari */
+  width: 100%;
+  max-width: 800px;
+  
+}
+
+.popup-style button {
+  width: 100px;
+}
+
+.popup-style pre {
+  margin-top: 40px;
+}
+
+
+#scan-form {
+  display:none; 
+}
+@media (min-width: 768px) {
+  #scan-form {
+    position: fixed;
+    top: 200px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.25); /* Ajout de transparence */
+    display: block;
+    padding: 20px;
+    backdrop-filter: blur(10px); /* Ajusté pour réduire le flou */
+    -webkit-backdrop-filter: blur(10px); /* Pour compatibilité Safari */
+    border-radius: 10px; /* Optionnel pour un effet plus esthétique */
+  }
+  #scan-form .rowinput {
+    display: flex;
+
+    gap: 10px;
+  }
+  #scan-form .rowinput input {
+      font-size: 18px;
+      padding: 5px;
+      margin: 5px 0;
+  }
+
+  #scanButton {
+    width: 100%;
+    margin-top: 20px;
+    filter: invert(1);
+  }
+}
+
+.toast {
+  background: yellow;
+  top: 300px;
+  right: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  color: black;
+  position: fixed;
+  z-index: 1000;
+  opacity: 1 !important;
+  display: none;
+}
+
+
+.btn-primary, button, .leech-start {
+  border-radius: 5px;
+  margin: 10px;
+  padding: 7px 18px;
+  font-size: 11px !important;
+  color: #darkgoldenrod !important;
+  background-color: #222 !important;
+  text-decoration: none;
+  margin: 0 5px;
+  text-transform: uppercase;
+  font-family: Roboto, sans-serif;
+  font-weight: 700;
+}
+
+.btn-primary:hover, button:hover {
+  filter: invert(0.1);
+}
+
+ul.tabbernav {
+  max-width: auto;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  border-radius: 10px;
+  background: #111;
+  width: 85%;
+}
+
+.buttons .ci {
+  color: beige !important;
+}
+
+.buttons .tag {
+  color: darkgoldenrod !important;
+}
+
+.buttons .leech-start {
+  color: green !important;
+}
+
+.buttons *:hover {
+  filter: invert(0.1);
+}
+
+.reset-caches {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  align-items: center;
+}
+
+.reset-caches button {
+  height: 20px;
+  margin: 0 !important;
+}
+
+a.planet {
+  text-decoration: none;
+  display: inline-block;
+  line-height: 0.95;
+  border-radius: 5px;
+  padding: 7px;
+}
+
+body > center > table:nth-child(10) > tbody > tr > td:nth-child(1),
+body > center > table:nth-child(2) > tbody > tr > td.hc.vt {
+  display: none;
+}
+
+.banner td {
+  background: none !important;
+}
+
+.addToGroup {
+  display:none;
+}
+
+a.button {
+  border-radius: 5px !important;;
+  border: 1px solid #333 !important;;
+  padding: 5px 5px !important;
+}
+
+
+.trading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.textarea-filter {
+  margin-bottom: 15px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.trading-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
 }

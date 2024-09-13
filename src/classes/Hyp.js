@@ -32,76 +32,93 @@ var Hyp = {
     return this.url('Logout?logout_mode=&logout=Logout')
   },
   generateFleetMovesHTML(moves, planetName) {
-    // Fonction pour calculer l'ETA
     function calculateETA(move, utcDate) {
       const dist = parseInt(move.dist, 10)
       const delay = parseInt(move.delay, 10)
-  
+
       if (isNaN(dist) || isNaN(delay)) {
         console.error('Invalid move.dist or move.delay value')
         return null
       }
-  
-      const etaDate = new Date(utcDate.getTime() + dist * 3600000 + delay * 3600000) // Calcul de l'ETA
-  
+
+      const etaDate = new Date(
+        utcDate.getTime() + dist * 3600000 + delay * 3600000
+      ) // Calcul de l'ETA
+
       if (isNaN(etaDate.getTime())) {
         console.error('Invalid ETA date calculated')
         return null
       }
-  
+
       return etaDate
     }
-  
+
     // Filtrer les mouvements et ajouter l'ETA
     const movesWithETA = moves
       .filter((move) => move.to === planetName)
       .map((move) => {
-  
         const avgp =
           move.nbdest * Hyp.spaceAvgP[1][move.race] +
           move.nbcrui * Hyp.spaceAvgP[2][move.race] +
           move.nbbomb * Hyp.spaceAvgP[4][move.race] +
           move.nbscou * Hyp.spaceAvgP[3][move.race]
-  
+
         // Obtenez la chaîne de date depuis le DOM
-        const serverTimeText = $('.servertime').eq(0).text()
-        console.log('Server time text:', serverTimeText)
-  
-        // Extraire la partie pertinente (ici, "ST: 2024-09-04 10:43:58")
+        const serverTimeText = $('.servertime').eq(0).text().trim()
+        console.log('Exact serverTimeText:', JSON.stringify(serverTimeText))
+
+        if (!serverTimeText) {
+          console.error('Server time element is missing or empty')
+          return null
+        }
+
+        // Extraire la partie pertinente ("Server Time: 2024-09-08 18:01:00")
         const dateMatch = serverTimeText.match(
-          /ST:\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})/
+          /Server\s*Time:\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})/
         )
         if (!dateMatch) {
-          console.error('Date format not found in serverTimeText')
+          console.error(
+            'Date format not found in serverTimeText:',
+            serverTimeText
+          )
           return null // Gérer l'erreur comme nécessaire
         }
-  
+
         // Créez la chaîne de date au format ISO 8601
         const dateString = `${dateMatch[1]}Z`
-  
+
         // Créez un objet Date à partir de la chaîne
         const utcDate = new Date(dateString)
-  
+
+        if (isNaN(utcDate.getTime())) {
+          console.error('Invalid UTC Date:', utcDate)
+          return null
+        }
+
         // Définir etaDate
         const etaDate = calculateETA(move, utcDate)
-  
+
         return {
           avgp,
           nbarm: move.nbarm,
           etaDate,
-          etaTime: (parseInt(move.dist, 10) + parseInt(move.delay, 10)) || 'N/A'
+          etaTime: parseInt(move.dist, 10) + parseInt(move.delay, 10) || 'N/A',
         }
       })
-      .filter(move => move) // Filtrer les mouvements invalides
+      .filter((move) => move) // Filtrer les mouvements invalides
       .sort((a, b) => a.etaDate - b.etaDate) // Trier du plus proche au plus éloigné
-      var pLayerName = $('#htopmenu > li:nth-child(5) > a > div > b')
+
+    var pLayerName = $('#htopmenu > li:nth-child(5) > a > div > b')
       .text()
       .trim()
+
     // Générer le HTML basé sur les mouvements triés
     return movesWithETA
       .map((move) => {
-        const etaString = move.etaDate ? `${move.etaDate.getUTCHours()}:02 ST` : 'N/A' // Utilisez 'N/A' si etaDate est invalide
-  
+        const etaString = move.etaDate
+          ? `${move.etaDate.getUTCHours()}:02 ST`
+          : 'N/A' // Utilisez 'N/A' si etaDate est invalide
+
         return `<div class="row">
                   ${planetName} - 
                   Fleet: ${numeral(move.avgp).format('0[.]0a')} - 
@@ -111,18 +128,19 @@ var Hyp = {
       })
       .join('')
   },
-  
   async getPlayerAttackList(currentPlayer, gameId) {
+    const attackList = JSON.parse(
+      localStorage.getItem(gameId + '-hapi-attack-list')
+    ).attacks
 
-    const attackList = JSON.parse(localStorage.getItem(gameId + '-hapi-attack-list')).attacks;
-  
     const currentPlayerAttacks = attackList
       .filter((attack) => attack.player === currentPlayer)
-      .map((attack) => attack.planet);
-  
-    const ccPlanets = currentPlayerAttacks.length > 0 ? currentPlayerAttacks : [];
-    
-    return ccPlanets;
+      .map((attack) => attack.planet)
+
+    const ccPlanets =
+      currentPlayerAttacks.length > 0 ? currentPlayerAttacks : []
+
+    return ccPlanets
   },
 
   login: function (login, password) {
@@ -1369,6 +1387,8 @@ var Hyp = {
     })
     return promise
   },
+
+
   getFleetsInfo: function (args) {
     var promise = $.Deferred()
     args = args || {}
@@ -1584,10 +1604,29 @@ var Hyp = {
     const result = await $.post('/servlet/Floatorders', {
       merge: 'OK',
       confirm: '',
-      nbarmies: 10,
+      nbarmies: 0,
       mgt_order_done: '',
       planetid: planetId,
     })
+    return result
+  },
+  async mergeAllGas(planetId) {
+    const result = await $.post('/servlet/Floatorders', {
+      merge: 'OK',
+      confirm: '',
+      nbarmies: 1,
+      mgt_order_done: '',
+      planetid: planetId,
+    })
+    return result
+  },
+  async loadArmies(args) {
+    console.log(args)
+    const result = await $.post('/servlet/Floatorders', args)
+    return result
+  },
+  async dropArmies(args) {
+    const result = await $.post('/servlet/Floatorders', args)
     return result
   },
   hapi: function (args) {

@@ -1,26 +1,34 @@
 const globalwtr = async () => {
-  const gameId = await localforage.getItem('currentGameId');
-  const planets = await localforage.getItem(`${gameId}-currentPlanets`);
+  try {
+    const gameId = await localforage.getItem('currentGameId');
+    const planets = await localforage.getItem(`${gameId}-currentPlanets`);
 
-  const xillors = [];
-  const azterks = [];
-  const humans = [];
+    // Sélection de toutes les lignes avec les classes .line1 et .line0
+    const rows = document.querySelectorAll('.line1, .line0');
+    rows.forEach((el) => {
+      const planetLink = el.querySelector('.std');
+      const planetId = planetLink.getAttribute('href').split('=')[1];
+      const planet = planets.data.find(p => p.id === parseInt(planetId));
 
-  console.log(planets);
+      if (planet) {
+        const popCell = document.createElement('td');
+        popCell.innerHTML = `<strong>${planet.pop}M</strong>`;
+        el.appendChild(popCell);
 
-  $('.line1, .line0').each((i, el) => {
-  
-    const $el = $(el);
-    const planetId = $el.find('.std').attr('href').split('=')[1];
-    const planet = planets.data.find(p => p.id === parseInt(planetId));
-    const wtr = planet.wtr;
-    $el.append(`<td><strong>${planet.pop}M</strong></td>`);
-    $el.append(`<td><strong class="eco eco-${planet.eco}">${planet.eco}</strong></td>`);
-    console.log(planet);
-  });
+        const ecoCell = document.createElement('td');
+        ecoCell.innerHTML = `<strong class="eco eco-${planet.eco}">${planet.eco}</strong>`;
+        el.appendChild(ecoCell);
 
-  $('form').before(`
-    <div class="select">Global wtr : 
+        console.log(planet);
+      }
+    });
+
+    // Insertion du sélecteur pour "Global wtr"
+    const formElement = document.querySelector('form');
+    const selectDiv = document.createElement('div');
+    selectDiv.className = 'select';
+    selectDiv.innerHTML = `
+      Global wtr : 
       <select class="thin select-all" name="wtr_0" size="1">
         <option value="0">----</option>
         <option value="0">0</option>
@@ -34,21 +42,33 @@ const globalwtr = async () => {
         <option value="40">40</option>
         <option value="45">45</option>
         <option value="50">50</option>
-      </select>
-    </div><br>`
-  );
+      </select>`;
+    formElement.insertAdjacentElement('beforebegin', selectDiv);
+    formElement.insertAdjacentHTML('beforebegin', '<br>');
 
-  $('form').find('tr').eq(0).append(`
-  <td><center>Pop</center></td><td><center>Eco</center></td>`
-);
+    // Ajout des colonnes "Pop" et "Eco"
+    const firstRow = formElement.querySelector('tr');
+    const popHeader = document.createElement('td');
+    popHeader.innerHTML = '<center>Pop</center>';
+    firstRow.appendChild(popHeader);
 
-  $(document).on('change', '.select-all', (e) => {
-    const $target = $(e.target);
-    const wtr = parseInt($target.val());
-    $('form select').each((i, el) => {
-      $(el).val(wtr).change();
+    const ecoHeader = document.createElement('td');
+    ecoHeader.innerHTML = '<center>Eco</center>';
+    firstRow.appendChild(ecoHeader);
+
+    // Gestionnaire d'événements pour les changements dans le sélecteur "Global wtr"
+    document.addEventListener('change', (e) => {
+      if (e.target.classList.contains('select-all')) {
+        const wtr = parseInt(e.target.value);
+        document.querySelectorAll('form select').forEach((select) => {
+          select.value = wtr;
+          select.dispatchEvent(new Event('change')); // Simuler l'événement "change"
+        });
+      }
     });
-  });
+  } catch (error) {
+    console.error('An error occurred in globalwtr:', error);
+  }
 };
 
 globalwtr();
