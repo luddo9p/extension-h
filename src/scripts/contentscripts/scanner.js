@@ -117,7 +117,9 @@ function extractPlanetStatus(doc) {
       const match = prevSibling.textContent.match(regex);
       sharedBy = match && match[1] ? ` (${match[1]})` : '';
     } else {
-      sharedBy = '';
+      sharedBy = ` (${$('#htopmenu > li:nth-child(5) > a > div > b')
+      .text()
+      .trim()})`;
     }
 
     const planetStatus = parsePlanetTable(element, sharedBy);

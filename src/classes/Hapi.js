@@ -1,7 +1,7 @@
 let playerName = document.querySelector('a[rel="playerSubmenu"] b').textContent
 
-$button = $("<br/><button class='btn btn-primary'>").text(
-  playerName + ' : Update the spreadsheet'
+$button = $("<button class='btn btn-primary'>").html(
+  playerName + ' : Up data &nbsp;📊'
 )
 window.setTimeout(() => {
 $(".reset-caches").append($button)

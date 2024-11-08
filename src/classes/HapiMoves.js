@@ -4,7 +4,7 @@ async function HapiMoves() {
   const cacheKey = `${gameId}-hapiDataCache`
   const updateKey = `${gameId}-lastUpdateTime`
   const now = new Date().getTime()
-  const EXPIRE = 3600000
+  const EXPIRE = 15 * 60 * 1000
 
   // Vérifie si la dernière requête a été faite il y a moins d'une heure
   const lastUpdateTime = parseInt(localStorage.getItem(updateKey), 10)

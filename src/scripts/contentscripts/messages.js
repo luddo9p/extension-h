@@ -18,12 +18,12 @@ function markup(tag, textarea) {
   }
   
   // Gestionnaire pour l'appui sur la touche entrée dans le sujet
-  document.querySelector('input[name="subject"]').addEventListener('keydown', function (event) {
-	if (event.key === 'Enter') {
-	  event.preventDefault();
-	  document.querySelector('textarea').focus();
-	}
-  });
+//   document.querySelector('input[name="subject"]').addEventListener('keydown', function (event) {
+// 	if (event.key === 'Enter') {
+// 	  event.preventDefault();
+// 	  document.querySelector('textarea').focus();
+// 	}
+//   });
   
   // Gestion des boutons et de la sélection des options dans les textareas
   let ownOptGroup, foreignOptGroup, brSelect;

@@ -3,7 +3,7 @@ async function PostForeign() {
   const lastExecutionTimeForeign = localStorage.getItem(
     'lastExecutionTimeForeign'
   )
-  const EXPIRE = 3600000// 5 minutes en millisecondes
+  const EXPIRE = 15 * 60 * 1000// 5 minutes en millisecondes
 
   if (
     lastExecutionTimeForeign &&

@@ -1,98 +1,91 @@
+
+// Fonction pour ajouter la colonne 'Population' à l'en-tête
+const addPopulationHeader = () => {
+  const headerRow = document.querySelector('.nonclickable table tr#stdArray');
+  if (headerRow) {
+    const populationHeader = document.createElement('td');
+    populationHeader.textContent = 'Population';
+    populationHeader.className = 'hc';
+    populationHeader.style.width = '100px';
+    headerRow.appendChild(populationHeader);
+  }
+};
+
+// Fonction pour ajouter les cellules 'Population' aux lignes de données
+const addPopulationCells = () => {
+  const dataRows = document.querySelectorAll('.nonclickable table tr.bgLine');
+  dataRows.forEach(row => {
+    const popCell = document.createElement('td');
+    popCell.className = 'hc population-cell';
+    row.appendChild(popCell);
+  });
+};
+
+// Fonction principale pour récupérer les données et mettre à jour le tableau
 const infiltrations = async function () {
   try {
     const gameId = await localforage.getItem('currentGameId');
     let planets = await localforage.getItem(`${gameId}-currentPlanets`);
 
     let farms = [];
-    const elements = document.querySelectorAll('.nonclickable table tr');
+    const elements = document.querySelectorAll('.nonclickable table tr.bgLine');
 
-    return new Promise((resolve) => {
-      elements.forEach((el, i) => {
-        if (i > 1) {
-          window.setTimeout(() => {
-            const link = el.querySelectorAll('a')[2]?.getAttribute('href');
-            if (link) {
-              fetch(link)
-                .then((response) => response.text())
-                .then((content) => {
-                  const parser = new DOMParser();
-                  const doc = parser.parseFromString(content, 'text/html');
-                  const pop = doc.querySelectorAll('.hlight')[3]?.textContent;
-                  const name = doc.querySelector('.hugetext.bold')?.textContent;
+    let countElements = 0;
+    const totalElements = elements.length;
 
-                  farms.push({
-                    name,
-                    id: parseInt(link.split('?')[1].split('&')[0].replace('planetid=', '')),
-                    pop: pop,
-                  });
-                });
-            }
+    showToast(`Traitement de 0/${totalElements} planètes...`);
 
-            if (i === elements.length - 1) {
-              resolve(farms);
-            }
-          }, i * 400);
+    for (let i = 0; i < elements.length; i++) {
+      const el = elements[i];
+
+      const link = el.querySelectorAll('a')[2]?.getAttribute('href');
+      if (link) {
+        const response = await fetch(link);
+        const content = await response.text();
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(content, 'text/html');
+        const pop = doc.querySelectorAll('.hlight')[3]?.textContent.trim();
+        const name = doc.querySelector('.hugetext.bold')?.textContent.trim();
+
+        farms.push({
+          name,
+          id: parseInt(link.split('?')[1].split('&')[0].replace('planetid=', '')),
+          pop: pop,
+        });
+
+
+        // Mettre à jour la cellule de population dans le tableau HTML
+        const popCell = el.querySelector('.population-cell');
+        if (popCell) {
+          popCell.textContent = pop || 'N/A';
         }
-      });
-    });
+      }
+      localforage.setItem(`${gameId}-farms`, farms);
+      countElements += 1;
+      showToast(`Traitement de ${countElements}/${totalElements} planètes...`);
+
+      // Délai entre chaque requête pour éviter de surcharger le serveur
+      await new Promise((resolve) => setTimeout(resolve, 600));
+    }
+
+    localforage.setItem(`${gameId}-farms`, farms);
+
+    showToast('Toutes les planètes ont été traitées avec succès !');
+    setTimeout(() => {
+      const toast = document.querySelector('.toast');
+      if (toast) {
+        toast.style.display = 'none';
+      }
+    }, 5000);
+
+    return farms;
   } catch (error) {
     console.error('Error in infiltrations:', error);
   }
 };
 
-// Ajout de la structure HTML pour afficher les fermes
-const nonClickableDiv = document.querySelector('.nonclickable');
-if (nonClickableDiv) { // Vérifier si l'élément existe
-  const farmsDiv = document.createElement('div');
-  farmsDiv.className = 'moves banner';
-  farmsDiv.innerHTML = `
-    <table class="farms switches" id="farms">
-      <thead>
-        <tr>
-          <td>Name</td>
-          <td>Pop</td>
-          <td>Variation</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Gathering data...</td>
-        </tr>
-      </tbody>
-    </table>`;
-  nonClickableDiv.insertAdjacentElement('beforebegin', farmsDiv);
-} else {
-  console.error('Element .nonclickable:nth-of-type(3) not found.');
-}
-
-const farms = infiltrations().then(async (farms) => {
-  try {
-    const gameId = await localforage.getItem('currentGameId');
-    const localFarms = await localforage.getItem(`${gameId}-farms-${id}`);
-
-    let timestamp = localFarms ? localFarms.lastUpdate : undefined;
-    if (!timestamp || new Date().getTime() - timestamp >= 86400000) { // 86400 seconds = 24 hours
-      await localforage.setItem(`${gameId}-farms-${id}`, {
-        lastUpdate: new Date().getTime(),
-        data: farms,
-      });
-      console.log('%c *** DB: UPDATE FARMS ***', 'background: green; color: white; padding: 5px 10px');
-    }
-
-    const tbody = document.querySelector('.farms tbody');
-    if (tbody) {
-      tbody.querySelector('td').remove(); // Remove "Gathering data..." row
-
-      farms.forEach((item) => {
-        const farm = localFarms?.data.find((p) => p.name === item.name);
-        const variation = farm ? item.pop - farm.pop : 'N/A';
-
-        const row = document.createElement('tr');
-        row.innerHTML = `<td>${item.name}</td><td>${item.pop}</td><td width="20">${variation}</td>`;
-        tbody.appendChild(row);
-      });
-    }
-  } catch (error) {
-    console.error('Error updating farms:', error);
-  }
-});
+// Appeler les fonctions pour modifier le tableau et récupérer les données
+addPopulationHeader();
+addPopulationCells();
+window.setTimeout(infiltrations(),1000);

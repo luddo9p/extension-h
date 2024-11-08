@@ -52,10 +52,7 @@ const trading = () => {
           planetName = tr.getElementsByTagName('td')[0].innerText.replace('@', '').trim();
         }
       }
-  
-      // Log the extracted planet name for debugging
-      console.log("Extracted planet name from table:", planetName);
-  
+    
       const hasTag = tr.querySelector('.publicTag') ? true : false;
       const isProt = tr.getElementsByTagName('td')[4].innerText.includes('Hyp.');
   
@@ -72,9 +69,7 @@ const trading = () => {
         tr.classList.add('trading-planet');  // Ajout d'une classe générique pour identifier les planètes
       }
     });
-  
-    console.log(planetLists);
-  
+    
     // Gestion des états des filtres
     let filterStates = {
       noBH: false,
@@ -103,7 +98,7 @@ const trading = () => {
           if (tr.getElementsByTagName('a').length === 2) {
             planetNameInTable = tr.getElementsByTagName('td')[0].innerText.replace('@', '').trim();
           } else {
-            planetNameInTable = tr.getElementsByTagName('a')[1].innerText;
+            planetNameInTable = tr.getElementsByTagName('td')[0].innerText.trim();
           }
         }
   

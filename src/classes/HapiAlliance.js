@@ -34,7 +34,7 @@ const updatePlanetsIfNeeded = async () => {
   if (cache) {
     const { lastUpdated, planets } = JSON.parse(cache)
     // Vérifie si plus de 5 minutes se sont écoulées
-    if (now - lastUpdated > 5 * 60 * 1000) {
+    if (now - lastUpdated > 15 * 60 * 1000) {
       console.log('Mise à jour des données car elles sont obsolètes')
       await savePlanets()
     } else {

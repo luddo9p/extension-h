@@ -105,19 +105,28 @@ const setMap = async function () {
               ]
 
               //var find = _.indexOf(store.alliance, planet.name)
-              var foreignFind = foreign.find(
-                (item) => item.planet === planet.name
-              )
+              var foreignFind = false
+              if (foreign) {
+                foreignFind = foreign.find(
+                  (item) => item.planet === planet.name
+                )
+              }
 
               var findAtt = ccPlanets.find((item) => item === planet.name)
 
-              var find = alliance.planets.find(
-                (item) => item.planet === planet.name
-              )
-
-              var switchHyp = allSwitchesHyp.find(
-                (item) => item.id === planet.id
-              )
+              var find = false
+              console.log(alliance)
+              if (!alliance.planets.errors) {
+                find = alliance.planets.find(
+                  (item) => item.planet === planet.name
+                )
+              }
+              var switchHyp = false;
+              if (allSwitchesHyp) {
+                switchHyp = allSwitchesHyp.find(
+                  (item) => item.id === planet.id
+                )
+              }
 
               let foreignInfo = ''
               if (foreignFind) {

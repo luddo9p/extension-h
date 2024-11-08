@@ -226,6 +226,7 @@ const setCash = async function () {
         profitFormat: numeral(parseInt(profit, 10)).format('0,0'),
         profit: parseInt(profit, 10),
         netProfit: parseInt(planetFind.revenu || 0, 10),
+        pop: planetFind.pop,
       })
     }
   })
@@ -238,11 +239,12 @@ const setCash = async function () {
   let totalNetProfitFormat = numeral(totalNetProfit).format('0,0')
 
   const totalInflu = numeral(
-    _.sumBy(_.slice(_.orderBy(incomes, ['total'], ['desc']), 0, 11), 'total')
+    _.sumBy(_.slice(_.orderBy(incomes, ['pop'], ['desc']), 0, 11), 'total')
   ).format('0,0')
   let _wtrs = 0
   let $lis = ''
-  _.orderBy(incomes, ['total'], ['desc']).forEach((row, index) => {
+  console.log(incomes)
+  _.orderBy(incomes, ['profit'], ['desc']).forEach((row, index) => {
     var find = currentPlanets.data.find(
       (item) => item.name === row.planet.trim()
     )
@@ -257,7 +259,7 @@ const setCash = async function () {
     gov = find.governmentId === 1 ? 'auth' : gov
 
     // console.log(find)
-    var overExploited = find.numExploits * 10 > find.pop ? 'overexploited' : ''
+    var overExploited = row.netProfit < 0 ? 'overexploited' : ''
     var govLeft = ''
     if (find.governmentDaysLeft > 0) {
       govLeft = ` (${find.governmentDaysLeft})`

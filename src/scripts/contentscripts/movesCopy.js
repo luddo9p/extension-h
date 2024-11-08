@@ -43,8 +43,8 @@ function copyStatuses() {
 
   // Ajout du bouton pour copier toutes les informations des .infoCC dans l'onglet actif
   const copyAllBtn = document.createElement('button')
-  copyAllBtn.textContent = 'Copy statuses'
-  copyAllBtn.style = 'padding: 5px 10px;margin-bottom: 30px;'
+  copyAllBtn.textContent = 'Copy'
+  copyAllBtn.style = 'padding: 5px 10px; margin: 0px 2px 30px;'
   const container = document.querySelector('.tabberlive')
   container.insertBefore(copyAllBtn, container.firstChild)
 

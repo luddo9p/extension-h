@@ -101,6 +101,7 @@ async function militaryPage() {
   const gameId = await localforage.getItem('currentGameId')
   const cachedData = localStorage.getItem(gameId + '-hapiDataCache')
   const moves = JSON.parse(cachedData).data
+  const farms = await localforage.getItem(`${gameId}-farms`)
 
   const mergeInputs = document.querySelectorAll(
     'td > input[name="merge"]:not(:disabled)'
@@ -159,6 +160,16 @@ async function militaryPage() {
       const x = coords[0].replace('(', '').trim()
       const y = coords[1].replace(')', '').trim()
 
+      if (farms) {
+        const getPop = farms.find((farm) => farm.name === planetName)
+        if (getPop) {
+          card.querySelector(
+            '.planet'
+          ).parentNode.innerHTML += `<span style="font-size:12px; color: #4caf50; font-weight:bold"> (${getPop.pop})</span>`
+        }
+        console.log(getPop)
+      }
+
       const info = extractArmyInfo(card.innerHTML)
 
       if (!info) {
@@ -190,7 +201,8 @@ async function militaryPage() {
         `<br/><td><div class="flex-line">
           <button data-action="${action}" data-id="${planetID}" style="color: ${style}; text-transform:uppercase;font-size:9px;display:block; width:auto;" class="custom-button btn-switch">🔄 ${switchText}</button>
           <button data-action="merge" data-id="${planetID}" style="display:block; width:auto; text-transform:uppercase; font-size:9px" class="custom-button btn-gas">🧰 merge gas</button>
-          <button style="display:block; width:auto; text-transform:uppercase; font-size:9px" data-action="drop" data-id="${planetID}" class="custom-button btn-drop">🚢 drop</button>
+          <button style="display:block; width:auto; text-transform:uppercase; font-size:9px" data-action="drop" data-id="${planetID}" class="custom-button btn-drop">⬇️ drop</button>
+          <button style="display:block; width:auto; text-transform:uppercase; font-size:9px" data-action="load" data-id="${planetID}" class="custom-button btn-load">⬆️ load</button>
         </div></td>`
       )
 

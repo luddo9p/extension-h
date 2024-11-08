@@ -707,11 +707,11 @@ window.setTimeout(() => {
     })
   })
 
-  $('.movingFleetCard').on('click', function (e) {
-    if (!$(this).find('.checkbox').prop('checked')) {
-      $(this).find('.checkbox').prop('checked', true)
-    } else {
-      $(this).find('.checkbox').prop('checked', false)
-    }
-  })
+  // $('.movingFleetCard').on('click', function (e) {
+  //   if (!$(this).find('.checkbox').prop('checked')) {
+  //     $(this).find('.checkbox').prop('checked', true)
+  //   } else {
+  //     $(this).find('.checkbox').prop('checked', false)
+  //   }
+  // })
 }, 100)

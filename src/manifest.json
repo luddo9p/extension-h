@@ -51,10 +51,12 @@
         "classes/HapiAlliance.js",
         "classes/HapiControlled.js",
         "classes/HapiForeign.js",
-        "classes/reset.js",
         "core/utils.js",
+        "classes/reset.js",
         "scripts/contentscripts/movesCopy.js",
-        "scripts/contentscripts/scanner.js"
+        "scripts/contentscripts/scanner.js",
+        "scripts/utils/index.js",
+        "classes/redirect.js"
       ],
       "css": [
         "styles/ticks.css",
@@ -63,18 +65,21 @@
       ]
     },
     {
-      "matches": ["https://hyperiums.com/servlet/Home"],
+      "matches": ["https://*.hyperiums.com/servlet/Home"],
       "js": [
         "extlibs/jquery/jquery.js",
         "extlibs/jquery-ui/jquery-ui.js",
         "scripts/contentscripts/homepage.js",
         "scripts/contentscripts/pop.js",
         "scripts/contentscripts/tag.js",
-        "scripts/contentscripts/moving.js"
+        "scripts/contentscripts/moving.js",
+        "scripts/contentscripts/abandoner.js",
+        "scripts/contentscripts/infiltrater.js",
+        "scripts/contentscripts/tagger.js"
       ]
     },
     {
-      "matches": ["https://hyperiums.com/servlet/Planet?globalgov="],
+      "matches": ["https://*.hyperiums.com/servlet/Planet?globalgov="],
       "js": [
         "extlibs/jquery/jquery.js",
         "extlibs/jquery-ui/jquery-ui.js",
@@ -82,7 +87,7 @@
       ]
     },
     {
-      "matches": ["https://hyperiums.com/servlet/Trading?globalwtr="],
+      "matches": ["https://*.hyperiums.com/servlet/Trading?globalwtr="],
       "js": [
         "extlibs/jquery/jquery.js",
         "extlibs/jquery-ui/jquery-ui.js",
@@ -91,8 +96,8 @@
     },
     {
       "matches": [
-        "https://hyperiums.com/servlet/Cash",
-        "https://hyperiums.com/servlet/Cash?pagetype=statement"
+        "https://*.hyperiums.com/servlet/Cash",
+        "https://*.hyperiums.com/servlet/Cash?pagetype=statement"
       ],
       "js": [
         "extlibs/jquery/jquery.js",
@@ -101,7 +106,7 @@
       ]
     },
     {
-      "matches": ["https://hyperiums.com/servlet/Planet?globalciv="],
+      "matches": ["https://*.hyperiums.com/servlet/Planet?globalciv="],
       "js": [
         "extlibs/jquery/jquery.js",
         "extlibs/jquery-ui/jquery-ui.js",
@@ -110,10 +115,10 @@
     },
     {
       "matches": [
-        "https://hyperiums.com/servlet/Player",
-        "https://hyperiums.com/servlet/Player*",
-        "https://hyperiums.com/servlet/Forums",
-        "https://hyperiums.com/servlet/Forums*"
+        "https://*.hyperiums.com/servlet/Player",
+        "https://*.hyperiums.com/servlet/Player*",
+        "https://*.hyperiums.com/servlet/Forums",
+        "https://*.hyperiums.com/servlet/Forums*"
       ],
       "js": [
         "extlibs/jquery/jquery.js",
@@ -125,12 +130,12 @@
     },
     {
       "matches": [
-        "https://hyperiums.com/servlet/Planetfloats",
-        "https://hyperiums.com/servlet/Planetfloats?*",
-        "https://hyperiums.com/servlet/Floatorders",
-        "https://hyperiums.com/servlet/Floatorders?*",
-        "https://hyperiums.com/servlet/Fleets",
-        "https://hyperiums.com/servlet/Fleets?*"
+        "https://*.hyperiums.com/servlet/Planetfloats",
+        "https://*.hyperiums.com/servlet/Planetfloats?*",
+        "https://*.hyperiums.com/servlet/Floatorders",
+        "https://*.hyperiums.com/servlet/Floatorders?*",
+        "https://*.hyperiums.com/servlet/Fleets",
+        "https://*.hyperiums.com/servlet/Fleets?*"
       ],
       "js": [
         "extlibs/jquery/jquery.js",
@@ -139,14 +144,15 @@
         "scripts/contentscripts/moves.js",
         "scripts/contentscripts/militaryPage.js",
         "scripts/contentscripts/merger.js",
-        "scripts/contentscripts/droper.js"
+        "scripts/contentscripts/droper.js",
+        "scripts/contentscripts/switcher.js"
       ]
     },
     {
       "matches": [
-        "https://hyperiums.com/servlet/Fleets",
-        "https://hyperiums.com/servlet/Fleets?*",
-        "https://hyperiums.com/servlet/Fleets?pagetype=global_armygen"
+        "https://*.hyperiums.com/servlet/Fleets",
+        "https://*.hyperiums.com/servlet/Fleets?*",
+        "https://*.hyperiums.com/servlet/Fleets?pagetype=global_armygen"
       ],
       "js": [
         "extlibs/jquery/jquery.js",
@@ -156,8 +162,8 @@
     },
     {
       "matches": [
-        "https://hyperiums.com/servlet/Maps",
-        "https://hyperiums.com/servlet/Maps?maptype=textualmap"
+        "https://*.hyperiums.com/servlet/Maps",
+        "https://*.hyperiums.com/servlet/Maps?maptype=textualmap"
       ],
       "js": [
         "extlibs/jquery/jquery.js",
@@ -167,8 +173,8 @@
     },
     {
       "matches": [
-        "https://hyperiums.com/servlet/Planetinf",
-        "https://hyperiums.com/servlet/Planetinf?*"
+        "https://*.hyperiums.com/servlet/Planetinf",
+        "https://*.hyperiums.com/servlet/Planetinf?*"
       ],
       "js": [
         "extlibs/jquery/jquery.js",
@@ -178,7 +184,7 @@
     },
     {
       "matches": [
-        "https://hyperiums.com/servlet/Fleets?pagetype=foreign_fleets"
+        "https://*.hyperiums.com/servlet/Fleets?pagetype=foreign_fleets"
       ],
       "js": [
         "extlibs/jquery/jquery.js",
@@ -188,7 +194,17 @@
     },
     {
       "matches": [
-        "https://hyperiums.com/servlet/Fleets?pagetype=moving_fleets"
+        "https://*.hyperiums.com/servlet/Maps?maptype=ecomaps"
+      ],
+      "js": [
+        "extlibs/jquery/jquery.js",
+        "extlibs/jquery-ui/jquery-ui.js",
+        "scripts/contentscripts/overlay.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://*.hyperiums.com/servlet/Fleets?pagetype=moving_fleets"
       ],
       "js": [
         "extlibs/jquery/jquery.js",
@@ -198,8 +214,8 @@
     },
     {
       "matches": [
-        "https://hyperiums.com/servlet/Maps",
-        "https://hyperiums.com/servlet/Maps?*"
+        "https://*.hyperiums.com/servlet/Maps",
+        "https://*.hyperiums.com/servlet/Maps?*"
       ],
       "js": [
         "extlibs/jquery/jquery.js",
@@ -210,7 +226,7 @@
       "css": ["styles/contentscripts/maps.css"]
     },
     {
-      "matches": ["https://hyperiums.com/servlet/Trading?globalexploit="],
+      "matches": ["https://*.hyperiums.com/servlet/Trading?globalexploit="],
       "js": [
         "extlibs/jquery/jquery.js",
         "extlibs/jquery-ui/jquery-ui.js",
@@ -220,8 +236,8 @@
     },
     {
       "matches": [
-        "https://hyperiums.com/servlet/Planetprod",
-        "https://hyperiums.com/servlet/Planetprod?*"
+        "https://*.hyperiums.com/servlet/Planetprod",
+        "https://*.hyperiums.com/servlet/Planetprod?*"
       ],
       "js": [
         "extlibs/jquery/jquery.js",
@@ -238,7 +254,7 @@
   },
 
   "permissions": [
-    "https://hyperiums.com/",
+    "https://*.hyperiums.com/",
     "https://hyp2.hyperiums.com/",
     "cookies",
     "alarms",

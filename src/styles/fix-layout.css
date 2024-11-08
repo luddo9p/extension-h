@@ -513,6 +513,7 @@ body > div:nth-child(3) {
   padding: 10px;
   border-radius: 5px;
   text-align: center;
+  flex-wrap: wrap;
 }
 /* .army,
 .plunder,
@@ -641,7 +642,7 @@ table.tinytext td {
 }
 
 .income-list .overexploited {
-  background-color: #4c0100;
+  background-color: #691900;
 }
 
 .t-center {
@@ -1035,10 +1036,6 @@ table .moves {
   background: #222;
 }
 
-.movingFleetCard:hover {
-  filter: invert(0.05);
-  cursor: pointer;
-}
 
 /* #armiesPanel, #fleetsPanel, #stasisPanel, #hgPanel {
   display: block !important;
@@ -1164,7 +1161,7 @@ div[id^='Ground'] {
 .btn-primary, button, .leech-start {
   border-radius: 5px;
   margin: 10px;
-  padding: 7px 18px;
+  padding: 5px 14px;
   font-size: 11px !important;
   color: #darkgoldenrod !important;
   background-color: #222 !important;
@@ -1265,4 +1262,59 @@ a.button {
   display: flex;
   justify-content: center;
   gap: 15px;
+}
+ul.tabbernav {
+  max-width: 1000px !important;
+}
+
+ul.tabbernav li.tabberactive a {
+  padding: 7px 15px !important;
+  background: #555 !important;
+  border: none !important;
+  color: #CCC !important;
+}
+
+ul.tabbernav li.tabberactive a:hover {
+  color: #AAAA77 !important;
+}
+
+.solidblockmenu {
+background-color: #111 !important;
+padding: 5px 0 !important;
+}
+
+.megaMenu2Div {
+  position: fixed !important;;
+  padding: 5px 0 !important;
+  top: 50px !important;
+  background-color: rgb(0 0 0 / 100%) !important;
+}
+
+.solidblockmenu2 {
+  background-color: rgb(0 0 0 / 10%) !important;
+}
+
+body > center {
+  margin-top: 3em;
+}
+
+div.floatingST.servertime {
+  top: 125px !important
+}
+
+.banner.bannerLarge {
+  display: flex  !important;
+  justify-content: center !important;
+}
+
+input.checkbox {
+  width: 17px;
+  height: 17px;
+
+  cursor: pointer;
+}
+
+
+.attack {
+  background: #610021 !important;
 }

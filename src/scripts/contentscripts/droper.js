@@ -1,31 +1,10 @@
-// Fonction utilitaire pour encoder les données en URL-encoded format
-function encodeParams(params) {
-  return Object.keys(params)
-    .map(
-      (key) => encodeURIComponent(key) + '=' + encodeURIComponent(params[key])
-    )
-    .join('&')
-}
 
-// Fonction pour créer et afficher un toast en haut à droite
-function showToast(message, removeAtEnd = false) {
-  let toast = document.querySelector('.toast') // Vérifie si le toast existe déjà
-  if (!toast) {
-    toast = document.createElement('div')
-    toast.className = 'toast'
-    toast.style.opacity = '1'
-    toast.style.zIndex = '7777'
-    document.body.appendChild(toast)
-  }
-  toast.textContent = message
-  toast.style.display = 'block'
 
-  if(removeAtEnd) {
-    setTimeout(() => {
-      toast.style.display = 'none'
-    }, 5000)
-  }
-}
+const isOwnedPlanets = document.querySelector('.hc.banner') && document.querySelector('.hc.banner').textContent.includes('controlled')
+
+console.log('isOwnedPlanets:', isOwnedPlanets)
+
+
 
 // Fonction générique pour gérer le dépôt des armées
 async function handleDrop(btn) {
@@ -36,7 +15,7 @@ async function handleDrop(btn) {
 
   const gameId = await localforage.getItem('currentGameId')
   const foreignPlanets = await Hyp.getFleetsInfo({
-    data: 'foreign_planets',
+    data: isOwnedPlanets ? 'own_planets': 'foreign_planets',
   })
 
   const planets = document.querySelectorAll(
@@ -142,7 +121,6 @@ async function handleLoad(btn) {
 
     if (match) {
       match.fleets.forEach((fleet) => {
-        console.log(fleet)
         if (fleet.numGroundArmies && fleet.numGroundArmies > 0) {
           totalLoads += 1
           const loadPromise = new Promise((resolve) => {
@@ -202,19 +180,20 @@ async function handleLoad(btn) {
 
 // Fonction principale pour initier le dépôt et le chargement des armées
 const initButtons = () => {
+
   const container = document.querySelector('.tabberlive')
   if (!container) return
 
   // Création du bouton pour déposer les armées
   const btnDrop = document.createElement('button')
-  btnDrop.textContent = 'Drop Armies'
-  btnDrop.style = 'padding: 5px 10px; margin:0 5px; margin-bottom: 30px;'
+  btnDrop.textContent = 'Drop Gas'
+  btnDrop.style = 'padding: 5px 10px; margin:0 2px; margin-bottom: 30px;'
   container.insertBefore(btnDrop, container.firstChild)
 
   // Création du bouton pour charger les armées
   const btnLoad = document.createElement('button')
-  btnLoad.textContent = 'Load Armies'
-  btnLoad.style = 'padding: 5px 10px; margin:0 5px; margin-bottom: 30px;'
+  btnLoad.textContent = 'Load Gas'
+  btnLoad.style = 'padding: 5px 10px; margin:0 2px; margin-bottom: 30px;'
   container.insertBefore(btnLoad, container.firstChild)
 
   console.log('Buttons loaded')
@@ -227,7 +206,134 @@ const initButtons = () => {
   btnLoad.addEventListener('click', () => {
     handleLoad(btnLoad)
   })
+
+  console.log(
+    'Buttons event listeners added',
+    document.querySelector('.btn-drop')
+  )
+
+  document.querySelectorAll('.btn-drop').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault()
+      btn.disabled = true
+      btn.style.opacity = '0.6'
+
+      // Using closest() for better reliability
+      const planetCard = e.target.closest('.planetCard3')
+      if (!planetCard) {
+        console.error('Planet card not found.')
+        btn.disabled = false
+        btn.style.opacity = '1'
+        return
+      }
+
+      const planetLink = planetCard.querySelector('a.planet')
+      const planetName = planetLink.textContent.trim()
+
+
+      showToast('Dropping gas on planet...')
+
+      try {
+        const foreignPlanets = await Hyp.getFleetsInfo({
+          data: isOwnedPlanets ? 'own_planets': 'foreign_planets',
+        })
+        const planetData = foreignPlanets.find((p) => p.name.toString() === planetName)
+
+        console.log('Planet data:', planetData)
+
+        if (planetData) {
+          // Your logic to drop gas
+          // ...
+          planetData.fleets.forEach(async (fleet) => {
+            if (fleet.numCarriedArmies && fleet.numCarriedArmies > 0) {
+              const params = {
+                fleetid: fleet.id,
+                nbarmies: fleet.numCarriedArmies,
+                droparmies: 'Drop armies',
+                planetid: planetLink.href.match(/planetid=(\d+)/)[1],
+              }
+
+              console.log('Dropping gas on planet:', planetName, params)
+              const response = await Hyp.dropArmies(params)
+              console.log('Gas dropped:', response)
+            }
+          });
+
+          showToast('Gas dropped successfully!', true)
+        } else {
+          showToast('No fleets found on this planet.')
+        }
+      } catch (error) {
+        console.error('Error dropping gas:', error)
+        showToast('Error dropping gas on planet.')
+      } finally {
+        btn.disabled = false
+        btn.style.opacity = '1'
+      }
+    })
+  })
+
+  document.querySelectorAll('.btn-load').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault()
+      btn.disabled = true
+      btn.style.opacity = '0.6'
+
+      // Using closest() for better reliability
+      const planetCard = e.target.closest('.planetCard3')
+      if (!planetCard) {
+        console.error('Planet card not found.')
+        btn.disabled = false
+        btn.style.opacity = '1'
+        return
+      }
+
+      const planetLink = planetCard.querySelector('a.planet')
+      const planetName = planetLink.textContent.trim()
+
+
+      showToast('Dropping gas on planet...')
+
+      try {
+        const foreignPlanets = await Hyp.getFleetsInfo({
+          data: isOwnedPlanets ? 'own_planets': 'foreign_planets',
+        })
+        const planetData = foreignPlanets.find((p) => p.name.toString() === planetName)
+
+        console.log('Planet data:', planetData, planetLink.href.match(/planetid=(\d+)/)[1])
+
+        if (planetData) {
+          // Your logic to drop gas
+          // ...
+          planetData.fleets.forEach(async (fleet) => {
+            if (fleet.numGroundArmies && fleet.numGroundArmies > 0) {
+              const params = {
+                nbarmies: fleet.numGroundArmies,
+                randomLoadAll: 'Load All',
+                planetid: planetLink.href.match(/planetid=(\d+)/)[1],
+                isownplanet: 0,
+              }
+
+              console.log('Dropping gas on planet:', planetName, params)
+              const response = await Hyp.dropArmies(params)
+              console.log('Gas loaded:', response)
+            }
+          });
+
+          showToast('Gas loaded successfully!', true)
+        } else {
+          showToast('No fleets found on this planet.')
+        }
+      } catch (error) {
+        console.error('Error loaded gas:', error)
+        showToast('Error loaded gas on planet.')
+      } finally {
+        btn.disabled = false
+        btn.style.opacity = '1'
+      }
+    })
+  })
 }
 
-// Lancer le script avec un délai initial
-window.setTimeout(initButtons, 100)
+// Initialisation des boutons
+window.setTimeout(initButtons, 500)

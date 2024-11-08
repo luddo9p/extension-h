@@ -92,13 +92,13 @@ function showToast(message, removeAtEnd = false) {
     // Création du bouton pour fusionner les flottes
     const btnFleets = document.createElement('button');
     btnFleets.textContent = 'Merge Fleets';
-    btnFleets.style = 'padding: 5px 10px; margin:0 5px; margin-bottom: 30px;';
+    btnFleets.style = 'padding: 5px 10px; margin:0 2px; margin-bottom: 30px;';
     container.insertBefore(btnFleets, container.firstChild);
   
     // Création du bouton pour fusionner le gaz
     const btnGas = document.createElement('button');
     btnGas.textContent = 'Merge Gas';
-    btnGas.style = 'padding: 5px 10px; margin:0 5px; margin-bottom: 30px;';
+    btnGas.style = 'padding: 5px 10px; margin:0 2px; margin-bottom: 30px;';
     container.insertBefore(btnGas, container.firstChild);
   
     console.log('merger.js loaded');

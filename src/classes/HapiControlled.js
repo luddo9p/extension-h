@@ -55,7 +55,7 @@ async function getControlledPlanets() {
     const cacheKey = `${gameId}-hapi-alliance-owned-planets`;
     const updateKey = `${gameId}-last-update-time`;
     const now = new Date().getTime();
-    const EXPIRE = 3600000
+    const EXPIRE = 15 * 60 * 1000
     // Vérifie si les données ont été mises à jour il y a moins de 5 minutes
     const lastUpdateTime = parseInt(localStorage.getItem(updateKey), 10);
     if (lastUpdateTime && now - lastUpdateTime < EXPIRE) {

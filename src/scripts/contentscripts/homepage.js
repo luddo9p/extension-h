@@ -1,9 +1,11 @@
 $(document).ready(function () {
   var $d = $(document)
-  
 
   var $megaWrapper = $(`<div class='dashboard-hyp'></div>`)
   $megaWrapper.insertAfter('#htopmenu')
+
+  const privateTag = document.querySelector('.privateTag') ? document.querySelector('.privateTag').textContent.trim() : 'SPICE'
+
 
   const displayPlanetInfos = async function () {
     const gameId = await localforage.getItem('currentGameId')
@@ -12,13 +14,14 @@ $(document).ready(function () {
     const cachedData = localStorage.getItem(gameId + '-hapiDataCache')
     if (!cachedData) {
       // window.location.href = 'https://hyperiums.com/servlet/Fleets?pagetype=moving_fleets&goback=true';
-      throw new Error('Aucune donnée en cache.');
+      console.warn('Aucune donnée en cache.')
+      alert('go on moving fleets page and comeback')
     }
     const moves = JSON.parse(cachedData).data
 
     planets.data.forEach((el) => {
       if (el.tag.length > 0 && el.tag != undefined && el.tag != '') {
-        window.TAG = 'SPICE'
+        window.TAG = privateTag
         return
       }
     })
@@ -234,18 +237,14 @@ $(document).ready(function () {
           `<button data-action='abandon' data-id="${planetId}"  class="ab yellow">🌌&nbsp;&nbsp;Abandon</button>`
         )
 
+      const movesHTML = Hyp.generateFleetMovesHTML(moves, _planet.name)
 
-        const movesHTML = Hyp.generateFleetMovesHTML(moves, _planet.name);
-
-
-        if (movesHTML) {
-          const $movesTable = $('<div class="moves"></div>');
-          $movesTable.html(movesHTML);
-          element.find('.buttons').append($movesTable);
-        }
-
+      if (movesHTML) {
+        const $movesTable = $('<div class="moves"></div>')
+        $movesTable.html(movesHTML)
+        element.find('.buttons').append($movesTable)
+      }
     })
-
 
     core = [...new Set(core)]
     let today = new Date().toISOString().split('T')[0]
@@ -365,17 +364,10 @@ $(document).ready(function () {
     let _post = {
       planetid: id,
       joinalliance: 'Join',
-      tag: 'spice',
+      tag: privateTag,
     }
     console.log(_post)
-    // if (action === 'Leave') {
-    //   _post = null
-    //   _post = {
-    //     planetid: id,
-    //     quitalliance: action,
-    //     tagid0: tagId,
-    //   }
-    // }
+
     $.post('/servlet/Planet', _post).done((response) => {
       if (action === 'Leave') {
         $this.attr('data-action', 'Join').html('🐼&nbsp;&nbsp;Tag')
@@ -470,9 +462,7 @@ $(document).ready(function () {
         // Hyp.storeData(_newStore)
       })
     })
-
   })
-
 
   Hyp.getSession().then((log) => {
     localforage.setItem('currentGameId', log.gameId).then((go) => {
@@ -493,6 +483,14 @@ $(document).ready(function () {
         await new Promise((r) => setTimeout(r, 100))
         displayPlanetInfos()
         // displayMoves();
+        if($('.reset-caches')) {
+          $('.reset-caches').append(`
+            <button class="btn btn-primary ci-remove">CI to 0</button><button class="btn btn-primary ci-add">CI to 50</button>
+            <button class="btn btn-primary abandon-all">Abandon all</button>
+            <button class="btn btn-primary join-all" data-status="private">Join all</button>
+            <button class="btn btn-primary tag-all-public" data-status="public">Tag all public</button>
+            <button class="btn btn-primary tag-all-private" data-status="private">Tag all private</button>`)
+        }
       }
       getAll()
     })
