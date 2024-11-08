@@ -37,6 +37,11 @@ exports.handler = async (event) => {
   switch (formattedData.player) {
     case 'Gescom':
       range = 'moves!A2:A'
+      return {
+        headers: customHeaders,
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Error' }),
+      }
       break
     case 'Ninurta':
       range = 'moves!B2:B'

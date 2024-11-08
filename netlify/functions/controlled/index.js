@@ -37,22 +37,12 @@ exports.handler = async (event) => {
   switch (formattedData.player) {
     case 'Gescom':
       range = 'controlled!A2:A'
-      return {
-        headers: customHeaders,
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error' }),
-      }
       break
     case 'Ninurta':
       range = 'controlled!B2:B'
       break
     case 'Sidious':
       range = 'controlled!C2:C'
-      return {
-        headers: customHeaders,
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error' }),
-      }
       break
     case 'Synopsia':
       range = 'controlled!D2:D'
