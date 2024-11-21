@@ -8,6 +8,8 @@ const setMap = async function () {
     localStorage.getItem(gameId + '-hapi-alliance-foreign-planets')
   )
 
+  console.log(alliance)
+
   const currentPlayer = await localforage.getItem(gameId + '-currentPlayer')
 
   const ccPlanets = await Hyp.getPlayerAttackList(currentPlayer, gameId)
@@ -106,7 +108,7 @@ const setMap = async function () {
 
               //var find = _.indexOf(store.alliance, planet.name)
               var foreignFind = false
-              if (foreign) {
+              if (foreign.length > 0) {
                 foreignFind = foreign.find(
                   (item) => item.planet === planet.name
                 )

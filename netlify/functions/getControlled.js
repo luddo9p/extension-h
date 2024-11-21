@@ -25,7 +25,7 @@ function extraireNomPlanete(chaine) {
   }
 }
 
-exports.handler = async (event) => {
+exports.handler = async ( ) => {
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,

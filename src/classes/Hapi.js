@@ -153,7 +153,7 @@ $button.on('click', () => {
 
 $mapBtn = $("<br/><button class='btn btn-primary'>").text('Generate the list')
 
-// $('.pageTitle').append($mapBtn)
+$('.pageTitle').append($mapBtn)
 
 const onMapClick = async (e) => {
   const log = await Hyp.getSession()

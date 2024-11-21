@@ -37,17 +37,6 @@ exports.handler = async (event) => {
   switch (formattedData.player) {
     case 'Gescom':
       range = 'moves!A2:A'
-      return {
-        headers: customHeaders,
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error' }),
-      }
-      break
-    case 'Ninurta':
-      range = 'moves!B2:B'
-      break
-    case 'Sidious':
-      range = 'moves!C2:C'
       break
     case 'Synopsia':
       range = 'moves!D2:D'
@@ -58,26 +47,13 @@ exports.handler = async (event) => {
     case 'Varkenslacht':
       range = 'moves!F2:F'
       break
-    case 'Seymour':
-      range = 'moves!G2:G'
-      break
-    case 'Tleilax':
-      range = 'moves!H2:H'
-      break
-    case 'Wakka':
-      range = 'moves!I2:I'
-      break
-    case 'Scratchy007':
-      range = 'moves!J2:J'
-      break
-    case 'Razesty':
-      range = 'moves!K2:K'
-      break
-    case 'FiFi':
-      range = 'moves!L2:L'
-      break
     default:
       // Gérer le cas où le joueur n'est pas reconnu
+      return {
+        headers: customHeaders,
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Error' }),
+      }
       break
   }
 
