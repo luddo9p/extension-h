@@ -35,26 +35,9 @@ exports.handler = async (event) => {
   let range = ''
   let clearRange = ''
   switch (formattedData.player) {
-    case 'Gescom':
-      range = 'foreign!A2:A'
-    case 'Ninurta':
-      range = 'foreign!B2:B'
-      return {
-        headers: customHeaders,
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error' }),
-      }
-      break
-      break
-    case 'Sidious':
-      range = 'foreign!C2:C'
-      return {
-        headers: customHeaders,
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error' }),
-      }
-      break
-      break
+    // case 'Gescom':
+    //   range = 'foreign!A2:A'
+    //   break
     case 'Synopsia':
       range = 'foreign!D2:D'
       break
@@ -64,67 +47,13 @@ exports.handler = async (event) => {
     case 'Varkenslacht':
       range = 'foreign!F2:F'
       break
-    case 'Seymour':
-      range = 'foreign!G2:G'
-      return {
-        headers: customHeaders,
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error' }),
-      }
-      break
-      break
-    case 'Tyrian':
-      range = 'foreign!H2:H'
-      return {
-        headers: customHeaders,
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error' }),
-      }
-      break
-      break
-    case 'Wakka':
-      range = 'foreign!I2:I'
-      return {
-        headers: customHeaders,
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error' }),
-      }
-      break
-      break
-    case 'Scratchy007':
-      range = 'foreign!J2:J'
-      return {
-        headers: customHeaders,
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error' }),
-      }
-      break
-      break
-    case 'Razesty':
-      range = 'foreign!K2:K'
-      return {
-        headers: customHeaders,
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error' }),
-      }
-      break
-      break
-    case 'FiFi':
-      range = 'foreign!L2:L'
-      return {
-        headers: customHeaders,
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error' }),
-      }
-      break
-      break
     default:
       // Gérer le cas où le joueur n'est pas reconnu
       return {
+        statusCode: 200,
         headers: customHeaders,
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error' }),
-      }
+        body: '{ invalid json }',
+      };
       break
       break
   }

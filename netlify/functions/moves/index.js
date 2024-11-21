@@ -35,9 +35,9 @@ exports.handler = async (event) => {
   let range = ''
   let clearRange = ''
   switch (formattedData.player) {
-    case 'Gescom':
-      range = 'moves!A2:A'
-      break
+    // case 'Gescom':
+    //   range = 'moves!A2:A'
+    //   break
     case 'Synopsia':
       range = 'moves!D2:D'
       break
@@ -50,10 +50,10 @@ exports.handler = async (event) => {
     default:
       // Gérer le cas où le joueur n'est pas reconnu
       return {
+        statusCode: 200,
         headers: customHeaders,
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error' }),
-      }
+        body: '{ invalid json }',
+      };
       break
   }
 
