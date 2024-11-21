@@ -38,12 +38,6 @@ exports.handler = async (event) => {
     case 'Gescom':
       range = 'controlled!A2:A'
       break
-    case 'Ninurta':
-      range = 'controlled!B2:B'
-      break
-    case 'Sidious':
-      range = 'controlled!C2:C'
-      break
     case 'Synopsia':
       range = 'controlled!D2:D'
       break
@@ -53,26 +47,13 @@ exports.handler = async (event) => {
     case 'Varkenslacht':
       range = 'controlled!F2:F'
       break
-    case 'Seymour':
-      range = 'controlled!G2:G'
-      break
-    case 'Tleilax':
-      range = 'controlled!H2:H'
-      break
-    case 'Wakka':
-      range = 'controlled!I2:I'
-      break
-    case 'Scratchy007':
-      range = 'controlled!J2:J'
-      break
-    case 'Razesty':
-      range = 'controlled!K2:K'
-      break
-    case 'FiFi':
-      range = 'controlled!L2:L'
-      break
     default:
       // Gérer le cas où le joueur n'est pas reconnu
+      return {
+        headers: customHeaders,
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Error' }),
+      }
       break
   }
 

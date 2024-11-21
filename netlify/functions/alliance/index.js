@@ -52,7 +52,7 @@ exports.handler = async (event) => {
   const spreadsheetId = '1tg5EYvmh8igOLAuhO5ZUJ06mfNwfoHvmJTgiw88f0lk' // L'ID de votre Google Sheet
   try{
 
-        const ranges = ['SPICE!A:B', 'T9H!A:B'];
+        const ranges = ['BS!A:B'];
         let dataCombined = [];
     
         for (let range of ranges) {
