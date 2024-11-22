@@ -35,9 +35,9 @@ exports.handler = async (event) => {
   let range = ''
   let clearRange = ''
   switch (formattedData.player) {
-    // case 'Gescom':
-    //   range = 'foreign!A2:A'
-    //   break
+    case 'Gescom':
+      range = 'foreign!A2:A'
+      break
     case 'Synopsia':
       range = 'foreign!D2:D'
       break

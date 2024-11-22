@@ -1,7 +1,7 @@
 const { google } = require('googleapis')
 
 const customHeaders = {
-  'Access-Control-Allow-Origin': '*', // Autorise toutes les origines
+  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
 }
@@ -21,8 +21,15 @@ exports.handler = async (event) => {
     }
   }
 
+  // Ajout de logs pour le débogage
+  console.log('Event body:', event.body)
+  
   const formattedData = JSON.parse(event.body)
+  console.log('Parsed data:', formattedData)
+  console.log('Player value:', formattedData.player)
+
   const dataToSubmit = formattedData.moves.map((move) => [move])
+  console.log('Data to submit:', dataToSubmit)
 
   const auth = new google.auth.GoogleAuth({
     credentials,
@@ -34,30 +41,41 @@ exports.handler = async (event) => {
   const spreadsheetId = '1tg5EYvmh8igOLAuhO5ZUJ06mfNwfoHvmJTgiw88f0lk'
   let range = ''
   let clearRange = ''
+  
+  // Ajout d'un log avant le switch
+  console.log('Testing switch case for player:', formattedData.player)
+  
   switch (formattedData.player) {
-    // case 'Gescom':
-    //   range = 'moves!A2:A'
-    //   break
+    case 'Gescom':
+      range = 'moves!A2:A'
+      console.log('Matched Gescom case')
+      break
     case 'Synopsia':
       range = 'moves!D2:D'
+      console.log('Matched Synopsia case')
       break
     case 'Vanbuskirk10':
       range = 'moves!E2:E'
+      console.log('Matched Vanbuskirk10 case')
       break
     case 'Varkenslacht':
       range = 'moves!F2:F'
+      console.log('Matched Varkenslacht case')
       break
     default:
-      // Gérer le cas où le joueur n'est pas reconnu
+      console.log('No match found in switch case')
       return {
         statusCode: 200,
         headers: customHeaders,
-        body: '{ invalid json }',
+        body: JSON.stringify({ 
+          error: 'Invalid player name',
+          receivedPlayer: formattedData.player,
+          expectedPlayers: ['Gescom', 'Synopsia', 'Vanbuskirk10', 'Varkenslacht']
+        })
       };
-      break
   }
 
-  clearRange = range // Utiliser la même plage pour nettoyer et mettre à jour les données
+  clearRange = range
 
   try {
     // Nettoyer la colonne
