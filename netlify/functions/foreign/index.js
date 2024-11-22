@@ -38,6 +38,9 @@ exports.handler = async (event) => {
     case 'Gescom':
       range = 'foreign!A2:A'
       break
+      case 'Gaius-Baltar':
+        range = 'controlled!A2:A'
+        break
     case 'Synopsia':
       range = 'foreign!D2:D'
       break
