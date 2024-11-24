@@ -50,9 +50,9 @@ exports.handler = async (event) => {
       range = 'moves!A2:A'
       console.log('Matched Gescom case')
       break
-      case 'Gaius-Baltar':
-        range = 'controlled!A2:A'
-        break
+    case 'Gaius-Baltar':
+      range = 'moves!O2:O'
+      break
     case 'Synopsia':
       range = 'moves!D2:D'
       console.log('Matched Synopsia case')
