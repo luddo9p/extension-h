@@ -39,7 +39,10 @@ exports.handler = async (event) => {
       range = 'foreign!A2:A'
       break
     case 'Gaius-Baltar':
-      range = 'foreign!A2:A'
+      range = 'foreign!M2:M'
+      break
+    case 'Tyrian':
+        range = 'foreign!H2:H'
       break
     case 'Synopsia':
       range = 'foreign!D2:D'

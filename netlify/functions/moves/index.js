@@ -23,7 +23,7 @@ exports.handler = async (event) => {
 
   // Ajout de logs pour le débogage
   console.log('Event body:', event.body)
-  
+
   const formattedData = JSON.parse(event.body)
   console.log('Parsed data:', formattedData)
   console.log('Player value:', formattedData.player)
@@ -41,10 +41,10 @@ exports.handler = async (event) => {
   const spreadsheetId = '1tg5EYvmh8igOLAuhO5ZUJ06mfNwfoHvmJTgiw88f0lk'
   let range = ''
   let clearRange = ''
-  
+
   // Ajout d'un log avant le switch
   console.log('Testing switch case for player:', formattedData.player)
-  
+
   switch (formattedData.player) {
     case 'Gescom':
       range = 'moves!A2:A'
@@ -52,6 +52,9 @@ exports.handler = async (event) => {
       break
     case 'Gaius-Baltar':
       range = 'moves!O2:O'
+      break
+    case 'Tyrian':
+      range = 'moves!H2:H'
       break
     case 'Synopsia':
       range = 'moves!D2:D'
@@ -70,12 +73,17 @@ exports.handler = async (event) => {
       return {
         statusCode: 200,
         headers: customHeaders,
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           error: 'Invalid player name',
           receivedPlayer: formattedData.player,
-          expectedPlayers: ['Gescom', 'Synopsia', 'Vanbuskirk10', 'Varkenslacht']
-        })
-      };
+          expectedPlayers: [
+            'Gescom',
+            'Synopsia',
+            'Vanbuskirk10',
+            'Varkenslacht',
+          ],
+        }),
+      }
   }
 
   clearRange = range
