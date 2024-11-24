@@ -47,9 +47,9 @@ exports.handler = async (event) => {
     case 'Varkenslacht':
       range = 'controlled!F2:F'
       break
-      // case 'Gaius-Baltar':
-      //   range = 'controlled!O2:O'
-      //   break
+      case 'Gaius-Baltar':
+        range = 'controlled!O2:O'
+        break
     default:
       // Gérer le cas où le joueur n'est pas reconnu
       return {
