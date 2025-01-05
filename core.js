@@ -11,7 +11,7 @@ async function accessSpreadsheet() {
 
   const spreadsheetId = '1tg5EYvmh8igOLAuhO5ZUJ06mfNwfoHvmJTgiw88f0lk' // Remplacez par l'ID de votre Google Spreadsheet
 
-  const range = 'Gescom!A1:H42' // Ajustez selon la plage de cellules que vous souhaitez lire
+  const range = 'Skam!A1:H42' // Ajustez selon la plage de cellules que vous souhaitez lire
 
   const response = await googleSheets.spreadsheets.values.get({
     auth,

@@ -46,11 +46,11 @@ exports.handler = async (event) => {
   console.log('Testing switch case for player:', formattedData.player)
 
   switch (formattedData.player) {
-    case 'Gescom':
+    case 'Skam':
       range = 'moves!A2:A'
-      console.log('Matched Gescom case')
+      console.log('Matched Skam case')
       break
-    case 'Gaius-Baltar':
+    case 'Loki':
       range = 'moves!O2:O'
       break
     case 'Tyrian':
@@ -77,7 +77,7 @@ exports.handler = async (event) => {
           error: 'Invalid player name',
           receivedPlayer: formattedData.player,
           expectedPlayers: [
-            'Gescom',
+            'Skam',
             'Synopsia',
             'Vanbuskirk10',
             'Varkenslacht',

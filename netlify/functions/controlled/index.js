@@ -35,7 +35,7 @@ exports.handler = async (event) => {
   let range = ''
   let clearRange = ''
   switch (formattedData.player) {
-    case 'Gescom':
+    case 'Skam':
       range = 'controlled!A2:A'
       break
     case 'Synopsia':
@@ -47,9 +47,12 @@ exports.handler = async (event) => {
     case 'Varkenslacht':
       range = 'controlled!F2:F'
       break
-      case 'Gaius-Baltar':
-        range = 'controlled!O2:O'
+      case 'Loki':
+        range = 'controlled!M2:M'
         break
+      case 'Tyrian':
+        range = 'controlled!H2:H'
+      break
     default:
       // Gérer le cas où le joueur n'est pas reconnu
       return {

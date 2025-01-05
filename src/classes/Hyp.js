@@ -280,7 +280,7 @@ var Hyp = {
   spaceAvgP: [
     // [Human, Azterk, Xillor, H, Average]
     [0, 0, 0, 0, 0], // Factories
-    [61, 73, 67, 0, 73], // Destroyers
+    [69, 73, 67, 0, 73], // Destroyers
     [378, 393, 475, 0, 475], // Cruisers
     [8, 6, 7, 0, 8], // Scouts
     [79, 85, 105, 0, 105], // Bombers
